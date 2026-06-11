@@ -151,3 +151,24 @@ def explain_trend(row: dict[str, Any]) -> str:
     if improving:
         return f"{name} moved in a market-supportive direction, improving the macro input score."
     return f"{name} moved in a less supportive direction, reducing the macro input score."
+
+
+# compatibility wrapper
+def interpret_category(*args, **kwargs):
+
+    try:
+        return explain_trend(*args, **kwargs)
+
+    except Exception:
+        return "No interpretation available"
+
+
+
+# compatibility wrapper
+def interpret_indicator(*args, **kwargs):
+
+    try:
+        return explain_trend(*args, **kwargs)
+
+    except Exception:
+        return "No indicator interpretation available"

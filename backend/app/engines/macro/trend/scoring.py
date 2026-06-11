@@ -55,3 +55,4 @@ def build_trend_engine():
         "change": change
     }
 
+

@@ -600,3 +600,4 @@ def build_high_impact_calendar(*args, **kwargs):
 
     return build_economic_calendar()["events"]
 
+

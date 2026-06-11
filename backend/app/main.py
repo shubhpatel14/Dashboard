@@ -13,34 +13,14 @@ app = FastAPI(
 )
 
 
-app.include_router(
-    macro.router,
-    prefix="/api/macro",
-    tags=["Macro"]
-)
-
-app.include_router(
-    assets.router,
-    prefix="/api/assets",
-    tags=["Assets"]
-)
-
-app.include_router(
-    institutional.router,
-    prefix="/api/institutional",
-    tags=["Institutional"]
-)
-
-app.include_router(
-    health.router,
-    prefix="/health",
-    tags=["Health"]
-)
+app.include_router(macro.router)
+app.include_router(assets.router)
+app.include_router(institutional.router)
+app.include_router(health.router)
 
 
 @app.get("/")
 def root():
     return {
-        "status":"running"
+        "status": "running"
     }
-

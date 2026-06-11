@@ -85,3 +85,4 @@ def macro_category(category: str):
         "history": macro_category_history(slug, score),
     }
 
+

@@ -30,3 +30,4 @@ def get_regime(score):
     else:
         return "🔴 RISK OFF"
 
+

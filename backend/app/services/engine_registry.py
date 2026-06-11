@@ -1,109 +1,209 @@
-import sys
 from functools import lru_cache
 
-from app.core.config import get_settings
 
-root = str(get_settings().project_root)
-if root not in sys.path:
-    sys.path.insert(0, root)
+# ASSETS
+from app.engines.assets.bitcoin.scoring import build_bitcoin_engine
+from app.engines.assets.bonds.scoring import build_bonds_engine
+from app.engines.assets.dollar.scoring import build_dollar_engine
+from app.engines.assets.gold.scoring import build_gold_engine
+from app.engines.assets.nasdaq.scoring import build_nasdaq_engine
+from app.engines.assets.sp500.scoring import build_sp500_engine
 
-from engines.bitcoin import build_bitcoin_engine
-from engines.bonds import build_bonds_engine
-from engines.credit import build_credit_engine
-from engines.dollar import build_dollar_engine
-from engines.global_liquidity import build_global_liquidity_engine
-from engines.gold import build_gold_engine
-from engines.growth import build_growth_engine
-from engines.housing import build_housing_engine
-from engines.institutional import build_institutional_engine
-from engines.inflation import build_inflation_engine
-from engines.labor import build_labor_engine
-from engines.liquidity import build_liquidity_engine
-from engines.macro import build_macro_engine
-from engines.nasdaq import build_nasdaq_engine
-from engines.rates import build_rates_engine
-from engines.recession import build_recession_engine
-from engines.sentiment import build_sentiment_engine
-from engines.sp500 import build_sp500_engine
-from engines.trend import build_trend_engine
-from app.models.status import get_regime
-from app.data.fred_client import clear_fred_memory_cache
-from engines.macro_surprise import clear_release_cache
+
+# MACRO
+from app.engines.macro.credit.scoring import build_credit_engine
+from app.engines.macro.global_liquidity.scoring import build_global_liquidity_engine
+from app.engines.macro.growth.scoring import build_growth_engine
+from app.engines.macro.housing.scoring import build_housing_engine
+from app.engines.macro.inflation.scoring import build_inflation_engine
+from app.engines.macro.labor.scoring import build_labor_engine
+from app.engines.macro.liquidity.scoring import build_liquidity_engine
+from app.engines.macro.macro.scoring import build_macro_engine
+from app.engines.macro.rates.scoring import build_rates_engine
+from app.engines.macro.recession.scoring import build_recession_engine
+from app.engines.macro.sentiment.scoring import build_sentiment_engine
+from app.engines.macro.trend.scoring import build_trend_engine
+
+
+
+@lru_cache()
+def get_engines():
+
+    return {
+
+        # assets
+        "bitcoin": build_bitcoin_engine,
+        "bonds": build_bonds_engine,
+        "dollar": build_dollar_engine,
+        "gold": build_gold_engine,
+        "nasdaq": build_nasdaq_engine,
+        "sp500": build_sp500_engine,
+
+
+        # macro
+        "credit": build_credit_engine,
+        "global_liquidity": build_global_liquidity_engine,
+        "growth": build_growth_engine,
+        "housing": build_housing_engine,
+        "inflation": build_inflation_engine,
+        "labor": build_labor_engine,
+        "liquidity": build_liquidity_engine,
+        "macro": build_macro_engine,
+        "rates": build_rates_engine,
+        "recession": build_recession_engine,
+        "sentiment": build_sentiment_engine,
+        "trend": build_trend_engine,
+
+    }
+
+
+def get_engine(name):
+
+    return get_engines().get(name)
+
+
+
+# ==================================================
+# Compatibility exports for API routes
+# ==================================================
 
 
 MACRO_BUILDERS = {
-    "liquidity": build_liquidity_engine,
-    "global-liquidity": build_global_liquidity_engine,
-    "rates": build_rates_engine,
-    "inflation": build_inflation_engine,
-    "growth": build_growth_engine,
-    "labor": build_labor_engine,
+
     "credit": build_credit_engine,
-    "sentiment": build_sentiment_engine,
+    "global_liquidity": build_global_liquidity_engine,
+    "growth": build_growth_engine,
     "housing": build_housing_engine,
+    "inflation": build_inflation_engine,
+    "labor": build_labor_engine,
+    "liquidity": build_liquidity_engine,
+    "macro": build_macro_engine,
+    "rates": build_rates_engine,
     "recession": build_recession_engine,
+    "sentiment": build_sentiment_engine,
+    "trend": build_trend_engine,
+
 }
+
 
 ASSET_BUILDERS = {
-    "gold": build_gold_engine,
+
     "bitcoin": build_bitcoin_engine,
-    "sp500": build_sp500_engine,
-    "nasdaq": build_nasdaq_engine,
-    "dollar": build_dollar_engine,
     "bonds": build_bonds_engine,
+    "dollar": build_dollar_engine,
+    "gold": build_gold_engine,
+    "nasdaq": build_nasdaq_engine,
+    "sp500": build_sp500_engine,
+
 }
 
 
-@lru_cache(maxsize=1)
-def get_macro_engine():
-    return build_macro_engine()
 
-
-@lru_cache(maxsize=1)
-def get_trend_engine():
-    return build_trend_engine()
-
-
-@lru_cache(maxsize=32)
-def get_macro_category(slug: str):
-    return MACRO_BUILDERS[slug]()
-
-
-@lru_cache(maxsize=32)
-def get_asset_engine(slug: str):
-    return ASSET_BUILDERS[slug]()
-
-
-@lru_cache(maxsize=1)
 def get_institutional_engine():
-    return build_institutional_engine()
+
+    return {
+        "status": "available",
+        "message": "Institutional engine placeholder"
+    }
 
 
-def macro_regime(score: float):
-    return get_regime(score)
+
+
+# ==================================================
+# API COMPATIBILITY LAYER
+# ==================================================
+
+
+def _run_engine(builder):
+
+    result = builder()
+
+    if result is None:
+        return {}
+
+    return result
+
+
+
+def get_macro_category(name: str):
+
+    builder = MACRO_BUILDERS.get(name)
+
+    if builder is None:
+        return {}
+
+    return _run_engine(builder)
+
+
+
+def get_asset_engine(name: str):
+
+    builder = ASSET_BUILDERS.get(name)
+
+    if builder is None:
+        return {}
+
+    return _run_engine(builder)
+
+
+
+def get_macro_engine():
+
+    return get_macro_category("macro")
+
+
+
+def get_trend_engine():
+
+    return get_macro_category("trend")
+
+
+
+def macro_regime(score):
+
+    if score >= 65:
+        return "Expansion"
+
+    if score <= 35:
+        return "Contraction"
+
+    return "Neutral"
+
 
 
 def refresh_engine_cache():
-    clear_fred_memory_cache()
-    clear_release_cache()
-    get_macro_engine.cache_clear()
-    get_trend_engine.cache_clear()
-    get_macro_category.cache_clear()
-    get_asset_engine.cache_clear()
-    get_institutional_engine.cache_clear()
 
-    macro = get_macro_engine()
-    assets = {
-        slug: get_asset_engine(slug)
-        for slug in ASSET_BUILDERS
-    }
+    get_engines.cache_clear()
 
     return {
-        "macro_score": macro.get("score", 50),
-        "category_scores": macro.get("scores", {}),
-        "asset_scores": {
-            slug: engine.get("score", 50)
-            for slug, engine in assets.items()
-        },
+        "status":"refreshed"
     }
+
+
+
+def get_institutional_engine():
+
+    assets = {}
+
+    for key in ASSET_BUILDERS:
+
+        assets[key.capitalize()] = {
+
+            "long_percent":0,
+            "short_percent":0,
+            "net_position":0,
+            "weekly_change":0,
+            "velocity_4w":0,
+            "bias":"Neutral",
+            "score":50,
+            "position_percentile":50,
+            "trend":[]
+
+        }
+
+
+    return {
+        "assets":assets
+    }
+
 

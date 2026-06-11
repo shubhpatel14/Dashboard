@@ -54,3 +54,4 @@ def trend_scores(
         normalize(momentum_value, -abs(high - low), abs(high - low)),
     )
 
+

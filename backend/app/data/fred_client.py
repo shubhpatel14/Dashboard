@@ -313,3 +313,4 @@ def get_12m_value(series):
         12
     )
 
+

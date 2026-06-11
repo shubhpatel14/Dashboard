@@ -30,3 +30,4 @@ def institutional(asset: str):
         "history": data["trend"],
     }
 
+

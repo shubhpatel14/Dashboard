@@ -84,3 +84,4 @@ def cached(key: str, ttl: Optional[int] = None):
 
     return decorator
 
+

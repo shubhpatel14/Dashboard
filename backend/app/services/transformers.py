@@ -103,49 +103,67 @@ def asset_history(asset_slug: str, score: float) -> list[dict[str, Any]]:
     ]
 
 
-def indicators_from_engine(engine: dict[str, Any]) -> list[dict[str, Any]]:
-    data = engine.get("data") or {}
+
+
+
+def indicators_from_engine(engine):
+
     indicators = []
 
-    for key, values in data.items():
-        if not isinstance(values, dict):
-            continue
-        if values.get("error"):
-            continue
+    data = engine.get("data", {})
 
-        score = _safe_float(values.get("score"))
-        interpreted = interpret_indicator(key, values)
-        interpreted["score"] = score
-        interpreted["bias"] = values.get("bias") or _bias(score)
-        indicators.append(interpreted)
+    for key, item in data.items():
+
+        indicators.append({
+            "id": key,
+            "name": item.get("name", key),
+            "current": item.get("current"),
+            "previous": item.get("previous"),
+            "change": item.get("change"),
+            "score": item.get("score", 50),
+            "bias": item.get("bias", "Neutral"),
+            "last_updated": item.get(
+                "last_updated",
+                item.get("last_update", "N/A")
+            )
+        })
 
     return indicators
 
 
-def macro_category_intelligence(
-    category_name: str,
-    score: float,
-    bias: str,
-    indicators: list[dict[str, Any]],
-) -> dict[str, Any]:
-    return interpret_category(category_name, score, clean_label(bias), indicators)
 
+def drivers_from_asset(engine):
 
-def drivers_from_asset(engine: dict[str, Any]) -> list[dict[str, Any]]:
-    indicators = indicators_from_engine(engine)
-    if not indicators:
-        return []
+    drivers = []
 
-    weights = engine.get("weights", {})
-    return [
-        {
+    for item in indicators_from_engine(engine):
+
+        score = item.get("score", 50)
+
+        drivers.append({
+
             "name": item["name"],
-            "score": item["score"],
-            "contribution": round(weights.get(item["name"].upper().replace(" ", "_"), 0), 2),
+
+            "score": score,
+
             "bias": item["bias"],
-        }
-        for item in indicators
-    ]
+
+            "impact":
+                "Positive"
+                if score > 55
+                else "Negative"
+                if score < 45
+                else "Neutral",
+
+            "current": item["current"],
+
+            "change": item["change"],
+
+            "last_updated": item["last_updated"],
+
+        })
+
+    return drivers
 
 
 def macro_summary(macro: dict[str, Any]) -> list[str]:
@@ -170,5 +188,53 @@ def asset_summary(asset_name: str, score: float, drivers: list[dict[str, Any]]) 
     return (
         f"{asset_name} remains {_bias(score).lower()} as {support} provide support, "
         f"while {pressure} create pressure."
+    )
+
+
+
+
+
+# ==================================================
+# Compatibility functions
+# ==================================================
+
+def macro_category_intelligence(name, score, bias, indicators):
+
+    drivers = []
+
+    for i in indicators:
+        if isinstance(i, dict):
+            drivers.append(
+                i.get("name", "Unknown")
+            )
+
+    return {
+        "trend": bias,
+        "summary": f"{name} is currently {bias} with score {score}.",
+        "drivers": drivers,
+    }
+
+
+
+def macro_category_history(slug, score):
+
+    return [
+        {
+            "period": "current",
+            "score": score
+        }
+    ]
+
+
+
+def macro_summary(macro):
+
+    score = macro.get(
+        "score",
+        50
+    )
+
+    return (
+        f"Macro environment score is {score}"
     )
 

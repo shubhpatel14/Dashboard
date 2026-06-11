@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from threading import Thread
 
-from app.api import assets, health, institutional, macro
+from app.api.routes import assets, health, institutional, macro
 from app.core.config import get_settings
 from app.services.engine_registry import (
     ASSET_BUILDERS,
@@ -43,4 +43,5 @@ def _prewarm_engines():
 @app.on_event("startup")
 def prewarm_engine_cache():
     Thread(target=_prewarm_engines, daemon=True).start()
+
 
