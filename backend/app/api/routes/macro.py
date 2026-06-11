@@ -84,3 +84,4 @@ def macro_category(category: str):
         "explanation": intelligence["summary"],
         "history": macro_category_history(slug, score),
     }
+

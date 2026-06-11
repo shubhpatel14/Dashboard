@@ -186,6 +186,11 @@ def get_series(
     return _fetch_series(series_id, limit)
 
 
+def clear_fred_memory_cache():
+
+    _fetch_series.cache_clear()
+
+
 # ==================================================
 # INTERNAL CONVERTER
 # ==================================================

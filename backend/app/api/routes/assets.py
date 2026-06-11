@@ -32,3 +32,4 @@ def asset(asset: str):
         "summary": asset_summary(name, score, drivers),
         "history": asset_history(slug, score),
     }
+

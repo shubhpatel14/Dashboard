@@ -171,3 +171,4 @@ def asset_summary(asset_name: str, score: float, drivers: list[dict[str, Any]]) 
         f"{asset_name} remains {_bias(score).lower()} as {support} provide support, "
         f"while {pressure} create pressure."
     )
+

@@ -15,6 +15,8 @@ from engines.helpers import (
     score_change,
     score_level
 )
+from engines.macro_surprise import release_from_calendar
+from engines.macro_trend import trend_scores
 
 from models.scoring import (
     bias_from_score,
@@ -118,6 +120,19 @@ def _attach_forecast_fields(result, consensus=None):
     return result
 
 
+def _release_or_fred(key, name, category, fallback, lower_is_bullish=False):
+
+    return (
+        release_from_calendar(
+            key,
+            name,
+            category,
+            lower_is_bullish=lower_is_bullish
+        )
+        or fallback()
+    )
+
+
 def _fred_change(code, period, low, high, lower_is_bullish=False):
 
     return _safe_indicator(
@@ -183,14 +198,15 @@ def _build_change_rate_indicator(
         series[previous_base_index]["value"]
     )
     change = current - previous
-    change_rate = pct_change(current, previous) if previous != 0 else change
-    score = score_change_indicator(
+    direction_score, momentum_score = trend_scores(
         current,
-        change_rate,
+        previous,
+        change,
         low,
         high,
         lower_is_bullish=lower_is_bullish
     )
+    score = weighted_average([(direction_score, 60), (momentum_score, 40)])
 
     return _attach_forecast_fields(
         indicator_result(
@@ -199,6 +215,11 @@ def _build_change_rate_indicator(
             change,
             score,
             last_update=get_current_date(series).date().isoformat(),
+            direction_score=direction_score,
+            momentum_score=momentum_score,
+            final_score=score,
+            lower_is_bullish=lower_is_bullish,
+            release_type="macro_trend",
             history={
                 "type": "change",
                 "code": code,
@@ -221,14 +242,15 @@ def _build_absolute_change_indicator(
     current = series[0]["value"] - series[1]["value"]
     previous = series[1]["value"] - series[2]["value"]
     change = current - previous
-    change_rate = pct_change(current, previous) if previous != 0 else change
-    score = score_change_indicator(
+    direction_score, momentum_score = trend_scores(
         current,
-        change_rate,
+        previous,
+        change,
         low,
         high,
         lower_is_bullish=lower_is_bullish
     )
+    score = weighted_average([(direction_score, 60), (momentum_score, 40)])
 
     return _attach_forecast_fields(
         indicator_result(
@@ -237,6 +259,11 @@ def _build_absolute_change_indicator(
             change,
             score,
             last_update=get_current_date(series).date().isoformat(),
+            direction_score=direction_score,
+            momentum_score=momentum_score,
+            final_score=score,
+            lower_is_bullish=lower_is_bullish,
+            release_type="macro_trend",
             history={
                 "type": "change",
                 "code": code,
@@ -524,22 +551,22 @@ def build_macro_engine():
 
     categories = {
         "Inflation": {
-            "CPI MoM": _fred_change("CPIAUCSL", "mom", -1, 1, True),
-            "CPI YoY": _fred_change("CPIAUCSL", "yoy", -1, 6, True),
-            "Core CPI MoM": _fred_change("CPILFESL", "mom", -1, 1, True),
-            "Core CPI YoY": _fred_change("CPILFESL", "yoy", -1, 6, True),
-            "PCE MoM": _fred_change("PCEPI", "mom", -1, 1, True),
-            "PCE YoY": _fred_change("PCEPI", "yoy", -1, 6, True),
-            "Core PCE MoM": _fred_change("PCEPILFE", "mom", -1, 1, True),
-            "Core PCE YoY": _fred_change("PCEPILFE", "yoy", -1, 6, True),
-            "PPI MoM": _fred_change("PPIACO", "mom", -2, 2, True),
-            "PPI YoY": _fred_change("PPIACO", "yoy", -3, 8, True),
-            "Core PPI MoM": _fred_change("PPIFES", "mom", -2, 2, True),
-            "Core PPI YoY": _fred_change("PPIFES", "yoy", -3, 8, True)
+            "CPI MoM": _release_or_fred("CPI_MOM", "CPI MoM", "inflation", lambda: _fred_change("CPIAUCSL", "mom", -1, 1, True), True),
+            "CPI YoY": _release_or_fred("CPI_YOY", "CPI YoY", "inflation", lambda: _fred_change("CPIAUCSL", "yoy", -1, 6, True), True),
+            "Core CPI MoM": _release_or_fred("CORE_CPI_MOM", "Core CPI MoM", "inflation", lambda: _fred_change("CPILFESL", "mom", -1, 1, True), True),
+            "Core CPI YoY": _release_or_fred("CORE_CPI_YOY", "Core CPI YoY", "inflation", lambda: _fred_change("CPILFESL", "yoy", -1, 6, True), True),
+            "PCE MoM": _release_or_fred("PCE_MOM", "PCE MoM", "inflation", lambda: _fred_change("PCEPI", "mom", -1, 1, True), True),
+            "PCE YoY": _release_or_fred("PCE_YOY", "PCE YoY", "inflation", lambda: _fred_change("PCEPI", "yoy", -1, 6, True), True),
+            "Core PCE MoM": _release_or_fred("CORE_PCE_MOM", "Core PCE MoM", "inflation", lambda: _fred_change("PCEPILFE", "mom", -1, 1, True), True),
+            "Core PCE YoY": _release_or_fred("CORE_PCE_YOY", "Core PCE YoY", "inflation", lambda: _fred_change("PCEPILFE", "yoy", -1, 6, True), True),
+            "PPI MoM": _release_or_fred("PPI_MOM", "PPI MoM", "inflation", lambda: _fred_change("PPIACO", "mom", -2, 2, True), True),
+            "PPI YoY": _release_or_fred("PPI_YOY", "PPI YoY", "inflation", lambda: _fred_change("PPIACO", "yoy", -3, 8, True), True),
+            "Core PPI MoM": _release_or_fred("CORE_PPI_MOM", "Core PPI MoM", "inflation", lambda: _fred_change("PPIFES", "mom", -2, 2, True), True),
+            "Core PPI YoY": _release_or_fred("CORE_PPI_YOY", "Core PPI YoY", "inflation", lambda: _fred_change("PPIFES", "yoy", -3, 8, True), True)
         },
         "Labor Market": {
-            "Non-Farm Payrolls (NFP)": _safe_indicator(_payroll_change),
-            "Unemployment Rate": _fred_level("UNRATE", 3.5, 7, True),
+            "Non-Farm Payrolls (NFP)": _release_or_fred("NON_FARM_PAYROLL_CHANGE", "Non Farm Payrolls", "labor", lambda: _safe_indicator(_payroll_change)),
+            "Unemployment Rate": _release_or_fred("UNEMPLOYMENT_RATE", "Unemployment Rate", "labor", lambda: _fred_level("UNRATE", 3.5, 7, True), True),
             "Average Hourly Earnings MoM": _fred_change(
                 "CES0500000003",
                 "mom",
@@ -553,25 +580,16 @@ def build_macro_engine():
                 6
             ),
             "JOLTS Job Openings": _fred_level("JTSJOL", 5000, 12000),
-            "Initial Jobless Claims": _fred_abs_change(
-                "ICSA",
-                -50000,
-                50000,
-                True
-            ),
-            "ADP Employment Change": _safe_indicator(_adp_change)
+            "Initial Jobless Claims": _release_or_fred("INITIAL_CLAIMS_WEEKLY_CHANGE", "Initial Jobless Claims", "labor", lambda: _fred_abs_change("ICSA", -50000, 50000, True), True),
+            "ADP Employment Change": _release_or_fred("ADP_EMPLOYMENT_CHANGE", "ADP Employment Change", "labor", lambda: _safe_indicator(_adp_change))
         },
         "Economic Growth": {
-            "GDP QoQ Annualized": _safe_indicator(_gdp_qoq_annualized),
-            "Retail Sales MoM": _fred_change("RSAFS", "mom", -3, 3),
-            "Core Retail Sales MoM": _fred_change("RSFSXMV", "mom", -3, 3),
-            "ISM Manufacturing PMI": _unavailable_result(
-                "ISM PMI is not available from the current FRED-only provider"
-            ),
-            "ISM Services PMI": _unavailable_result(
-                "ISM Services PMI is not available from the current FRED-only provider"
-            ),
-            "Industrial Production MoM": _fred_change("INDPRO", "mom", -3, 3),
+            "GDP QoQ Annualized": _release_or_fred("GDP_QOQ_ANNUALIZED", "GDP QoQ Annualized", "growth", lambda: _safe_indicator(_gdp_qoq_annualized)),
+            "Retail Sales MoM": _release_or_fred("RETAIL_SALES_MOM", "Retail Sales MoM", "growth", lambda: _fred_change("RSAFS", "mom", -3, 3)),
+            "Core Retail Sales MoM": _release_or_fred("CORE_RETAIL_SALES_MOM", "Core Retail Sales MoM", "growth", lambda: _fred_change("RSFSXMV", "mom", -3, 3)),
+            "ISM Manufacturing PMI": _release_or_fred("ISM_MANUFACTURING_PMI", "ISM Manufacturing PMI", "growth", lambda: _unavailable_result("ISM PMI is not available from the current FRED-only provider")),
+            "ISM Services PMI": _release_or_fred("ISM_SERVICES_PMI", "ISM Services PMI", "growth", lambda: _unavailable_result("ISM Services PMI is not available from the current FRED-only provider")),
+            "Industrial Production MoM": _release_or_fred("INDUSTRIAL_PRODUCTION_MOM", "Industrial Production MoM", "growth", lambda: _fred_change("INDPRO", "mom", -3, 3)),
             "Industrial Production YoY": _safe_indicator(
                 _industrial_production_yoy
             ),
@@ -580,7 +598,7 @@ def build_macro_engine():
         },
         "Monetary Policy": {
             "Fed Funds Rate": _fred_level("FEDFUNDS", 0, 6, True),
-            "FOMC Rate Decision": _safe_indicator(_fomc_rate_decision),
+            "FOMC Rate Decision": _release_or_fred("FED_RATE_DECISION", "FOMC Rate Decision", "rates", lambda: _safe_indicator(_fomc_rate_decision), True),
             "FOMC Statement": _unavailable_result(
                 "Text sentiment requires a news/FOMC text provider"
             ),

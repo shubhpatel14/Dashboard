@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-03T16:47:10.706194",
+  "fetched_at": "2026-06-08T07:58:27.135054",
   "source": "https://www.cftc.gov/files/dea/history/deacot2026.zip",
   "years": [
     2026,
@@ -10,5 +10,5 @@
     2021
   ],
   "history_years": 6,
-  "latest_report": "2026-05-26"
+  "latest_report": "2026-06-02"
 }

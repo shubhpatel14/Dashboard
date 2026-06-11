@@ -29,3 +29,4 @@ def institutional(asset: str):
         "position_percentile": data["position_percentile"],
         "history": data["trend"],
     }
+

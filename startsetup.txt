@@ -1,0 +1,9 @@
+\.venv\Scripts\activate
+
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+
+-- new termial
+
+cd "C:\Users\WIN 10\Desktop\Trishula\Dashboard"
+
+npm run dev -- --hostname 127.0.0.1 --port 3000

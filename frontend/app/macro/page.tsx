@@ -4,6 +4,7 @@ import { fetchApi, macroCategories } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { IndicatorTrendChart, ScoreLine } from "@/components/lazy-charts";
 import { BiasPill, InfoHint, Panel, SectionTitle, StatCard } from "@/components/ui";
+import { EconomicUpdateButton } from "@/components/economic-update-button";
 import type { Indicator, MacroCategory, MacroDriver } from "@/types/api";
 
 export const dynamic = "force-dynamic";
@@ -92,6 +93,9 @@ function normalizeIndicators(indicators: Indicator[]): Indicator[] {
     const current_display = indicator.current_display ?? formatNumber(indicator.current);
     const previous_display = indicator.previous_display ?? formatNumber(indicator.previous);
     const change_display = indicator.change_display ?? formatNumber(indicator.change);
+    const actual_display = indicator.actual_display ?? current_display;
+    const forecast_display = indicator.forecast_display ?? formatNumber(indicator.forecast);
+    const surprise_display = indicator.surprise_display ?? formatNumber(indicator.surprise);
 
     return {
       ...indicator,
@@ -108,6 +112,9 @@ function normalizeIndicators(indicators: Indicator[]): Indicator[] {
       current_display,
       previous_display,
       change_display,
+      actual_display,
+      forecast_display,
+      surprise_display,
       trend,
       trend_state,
       impact: indicator.impact ?? trend,
@@ -182,6 +189,8 @@ function normalizeDrivers(drivers: MacroDriver[] | undefined, indicators: Indica
 }
 
 function IndicatorCard({ indicator }: { indicator: Indicator }) {
+  const isRelease = indicator.release_type === "economic_release";
+
   return (
     <article className={`border bg-surface p-4 shadow-terminal ${trendTone(indicator.trend_state)}`}>
       <div className="flex items-start justify-between gap-3">
@@ -193,20 +202,39 @@ function IndicatorCard({ indicator }: { indicator: Indicator }) {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Current</div>
-          <div className="mt-1 text-lg font-semibold text-ink">{indicator.current_display}</div>
+          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Actual" : "Current"}</div>
+          <div className="mt-1 text-lg font-semibold text-ink">
+            {isRelease ? indicator.actual_display : indicator.current_display}
+          </div>
         </div>
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Previous</div>
-          <div className="mt-1 text-lg font-semibold text-ink">{indicator.previous_display}</div>
+          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Forecast" : "Previous"}</div>
+          <div className="mt-1 text-lg font-semibold text-ink">
+            {isRelease ? indicator.forecast_display : indicator.previous_display}
+          </div>
         </div>
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Change</div>
+          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Previous" : "Change"}</div>
           <div className={`mt-1 text-lg font-semibold ${trendTone(indicator.trend_state)}`}>
-            {indicator.change_display}
+            {isRelease ? indicator.previous_display : indicator.change_display}
           </div>
         </div>
       </div>
+
+      {isRelease ? (
+        <div className="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-2">
+          <div>
+            <div className="text-xs font-semibold uppercase text-muted">Market Surprise</div>
+            <div className={`mt-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
+              {indicator.surprise_display} {indicator.market_surprise}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs font-semibold uppercase text-muted">Trend</div>
+            <div className="mt-1 text-sm font-semibold text-ink">{indicator.change_display}</div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-4 grid gap-3 border-t border-line pt-4 md:grid-cols-[1fr_1fr_90px]">
         <div>
@@ -218,8 +246,8 @@ function IndicatorCard({ indicator }: { indicator: Indicator }) {
           <p className="mt-2 text-sm leading-6 text-muted">{indicator.explanation}</p>
         </div>
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Market Impact</div>
-          <div className="mt-1 text-sm font-semibold text-ink">{indicator.impact}</div>
+          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Interpretation" : "Market Impact"}</div>
+          <div className="mt-1 text-sm font-semibold text-ink">{isRelease ? indicator.market_surprise : indicator.impact}</div>
           <p className="mt-2 text-sm leading-6 text-muted">{indicator.market_impact}</p>
         </div>
         <div>
@@ -251,7 +279,10 @@ export default async function MacroPage({
           <div className="text-xs font-semibold uppercase text-muted">Macro Intelligence</div>
           <h1 className="mt-1 text-2xl font-semibold tracking-normal">{data.name} Intelligence</h1>
         </div>
-        <BiasPill value={data.bias} />
+        <div className="flex flex-wrap items-center gap-2">
+          <EconomicUpdateButton />
+          <BiasPill value={data.bias} />
+        </div>
       </header>
 
       <nav className="flex flex-wrap gap-2" aria-label="Macro modules">

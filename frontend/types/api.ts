@@ -38,10 +38,23 @@ export type Indicator = {
   current: string | number;
   previous: string | number;
   change: string | number;
+  actual?: string | number;
+  forecast?: string | number;
+  surprise?: string | number;
+  trend_change?: string | number;
+  surprise_score?: number;
+  trend_score?: number;
+  final_score?: number;
+  direction_score?: number;
+  momentum_score?: number;
   current_display: string;
   previous_display: string;
   change_display: string;
+  actual_display?: string;
+  forecast_display?: string;
+  surprise_display?: string;
   trend: string;
+  market_surprise?: string;
   trend_state: "positive" | "negative" | "neutral" | string;
   impact: string;
   market_impact: string;
@@ -50,6 +63,7 @@ export type Indicator = {
   info?: string;
   weight: number;
   contribution: number;
+  release_type?: string;
 };
 
 export type MacroDriver = {

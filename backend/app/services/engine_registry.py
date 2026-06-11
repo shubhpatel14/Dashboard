@@ -26,8 +26,8 @@ from engines.recession import build_recession_engine
 from engines.sentiment import build_sentiment_engine
 from engines.sp500 import build_sp500_engine
 from engines.trend import build_trend_engine
-from models.status import get_regime
-from data.fred_client import clear_fred_memory_cache
+from app.models.status import get_regime
+from app.data.fred_client import clear_fred_memory_cache
 from engines.macro_surprise import clear_release_cache
 
 
@@ -106,3 +106,4 @@ def refresh_engine_cache():
             for slug, engine in assets.items()
         },
     }
+

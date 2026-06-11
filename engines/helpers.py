@@ -15,6 +15,7 @@ from models.scoring import (
     pct_change,
     weighted_average
 )
+from engines.macro_trend import trend_scores
 
 
 def percent_change(current, previous):
@@ -96,14 +97,20 @@ def build_change_indicator(
         current = current_level - current_base
         previous = previous_level - previous_base
 
-    change = pct_change(current, previous) if previous != 0 else current - previous
-
-    score = score_change_indicator(
+    change = current - previous
+    direction_score, momentum_score = trend_scores(
         current,
+        previous,
         change,
         low,
         high,
         lower_is_bullish=lower_is_bullish
+    )
+    score = weighted_average(
+        [
+            (direction_score, 60),
+            (momentum_score, 40)
+        ]
     )
 
     return indicator_result(
@@ -112,6 +119,11 @@ def build_change_indicator(
         change,
         score,
         last_update=get_current_date(series).date().isoformat(),
+        direction_score=direction_score,
+        momentum_score=momentum_score,
+        final_score=score,
+        lower_is_bullish=lower_is_bullish,
+        release_type="macro_trend",
         history={
             "type": "change",
             "code": code,
@@ -132,14 +144,14 @@ def build_level_indicator(
     series = get_series(code)
     current = get_current_value(series)
     previous = get_previous_value(series)
-    change = pct_change(current, previous) if previous != 0 else current - previous
+    change = current - previous
     level_score = score_level(
         current,
         low,
         high,
         lower_is_bullish=lower_is_bullish
     )
-    direction_score = normalize(
+    momentum_score = normalize(
         -change if lower_is_bullish else change,
         -10,
         10
@@ -147,7 +159,7 @@ def build_level_indicator(
     score = weighted_average(
         [
             (level_score, 80),
-            (direction_score, 20)
+            (momentum_score, 20)
         ]
     )
 
@@ -157,6 +169,11 @@ def build_level_indicator(
         change,
         score,
         last_update=get_current_date(series).date().isoformat(),
+        direction_score=level_score,
+        momentum_score=momentum_score,
+        final_score=score,
+        lower_is_bullish=lower_is_bullish,
+        release_type="macro_trend",
         history={
             "type": "level",
             "code": code
