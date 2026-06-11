@@ -1,27 +1,11 @@
-const API_URL = "http://127.0.0.1:8000";
+from pathlib import Path
+
+file = Path("lib/api.ts")
+
+text = file.read_text(encoding="utf-8")
 
 
-export async function fetchApi<T>(
-  path: string
-): Promise<T> {
-
-  const response = await fetch(
-    `${API_URL}${path}`,
-    {
-      cache: "no-store",
-    }
-  );
-
-
-  if (!response.ok) {
-    throw new Error(
-      `API request failed: ${response.status} ${API_URL}${path}`
-    );
-  }
-
-
-  return response.json() as Promise<T>;
-}
+add = r'''
 
 
 export const macroCategories = [
@@ -48,3 +32,17 @@ export const assetSlugs = [
   "bonds",
 ];
 
+'''
+
+
+if "export const macroCategories" not in text:
+    text += add
+
+
+file.write_text(
+    text,
+    encoding="utf-8"
+)
+
+
+print("api exports fixed")

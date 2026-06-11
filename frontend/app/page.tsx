@@ -64,7 +64,7 @@ export default async function DashboardPage() {
         <Panel>
           <SectionTitle title="Macro Summary" />
           <div className="space-y-3">
-            {macro.summary.map((line) => (
+            {(Array.isArray(macro.summary) ? macro.summary : [macro.summary]).map((line) => (
               <div key={line} className="flex items-start justify-between gap-4 border-b border-line pb-3 last:border-0">
                 <span className="text-sm text-ink">{line}</span>
                 <span className={toneClass(line)}>●</span>
