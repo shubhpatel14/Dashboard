@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+backend_api.log
+backend_api.err.log
+
+frontend/node_modules/
+frontend/.next/
+frontend/.npm-cache/
+frontend/frontend_next.log
+frontend/frontend_next.err.log
