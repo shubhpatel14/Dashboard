@@ -5,6 +5,8 @@ export type HistoryPoint = {
 };
 
 export type MacroDashboard = {
+  success?: boolean;
+  data_status?: string;
   macro_score: number;
   regime: string;
   trend: string;
@@ -13,9 +15,12 @@ export type MacroDashboard = {
   summary: string[];
   asset_outlooks: Record<string, string>;
   category_scores: Record<string, number>;
+  history?: HistoryPoint[];
 };
 
 export type MacroCategory = {
+  success?: boolean;
+  data_status?: string;
   name: string;
   score: number;
   bias: string;
@@ -64,6 +69,9 @@ export type Indicator = {
   weight: number;
   contribution: number;
   release_type?: string;
+  percentile?: number;
+  z_score?: number;
+  distance_from_average?: number;
 };
 
 export type MacroDriver = {

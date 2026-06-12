@@ -106,15 +106,12 @@ def get_institutional_engine():
         "message": "Institutional engine placeholder"
     }
 
-
-
-
 # ==================================================
-# API COMPATIBILITY LAYER
+# API COMPATIBILITY FUNCTIONS
 # ==================================================
 
 
-def _run_engine(builder):
+def _run(builder):
 
     result = builder()
 
@@ -132,7 +129,7 @@ def get_macro_category(name: str):
     if builder is None:
         return {}
 
-    return _run_engine(builder)
+    return _run(builder)
 
 
 
@@ -143,7 +140,7 @@ def get_asset_engine(name: str):
     if builder is None:
         return {}
 
-    return _run_engine(builder)
+    return _run(builder)
 
 
 
@@ -176,34 +173,36 @@ def refresh_engine_cache():
     get_engines.cache_clear()
 
     return {
-        "status":"refreshed"
+        "status": "success",
+        "message": "engine cache refreshed"
     }
 
 
 
 def get_institutional_engine():
 
+    # temporary bridge until institutional engine migration
+
     assets = {}
 
-    for key in ASSET_BUILDERS:
+    for key,builder in ASSET_BUILDERS.items():
 
-        assets[key.capitalize()] = {
+        name = key.capitalize()
 
-            "long_percent":0,
-            "short_percent":0,
-            "net_position":0,
-            "weekly_change":0,
-            "velocity_4w":0,
-            "bias":"Neutral",
-            "score":50,
-            "position_percentile":50,
-            "trend":[]
+        assets[name] = {
+
+            "long_percent": 0,
+            "short_percent": 0,
+            "net_position": 0,
+            "weekly_change": 0,
+            "velocity_4w": 0,
+            "bias": "Neutral",
+            "score": 50,
+            "position_percentile": 50,
+            "trend": []
 
         }
 
-
     return {
-        "assets":assets
+        "assets": assets
     }
-
-

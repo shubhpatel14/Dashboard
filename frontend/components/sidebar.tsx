@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BarChart3, BriefcaseBusiness, Database, Gauge, Globe2, Landmark, LineChart } from "lucide-react";
 import clsx from "clsx";
 import { assetLabels, assetSlugs, macroCategories } from "@/lib/api";
@@ -32,9 +32,23 @@ function NavLink({
 }
 
 export function Sidebar() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const selectedMacro = searchParams.get("category") ?? "liquidity";
+  const [location, setLocation] = useState({ pathname: "", selectedMacro: "liquidity" });
+
+  useEffect(() => {
+    function syncLocation() {
+      const params = new URLSearchParams(window.location.search);
+      setLocation({
+        pathname: window.location.pathname,
+        selectedMacro: params.get("category") ?? "liquidity"
+      });
+    }
+
+    syncLocation();
+    window.addEventListener("popstate", syncLocation);
+    return () => window.removeEventListener("popstate", syncLocation);
+  }, []);
+
+  const { pathname, selectedMacro } = location;
 
   return (
     <aside className="border-r border-line bg-surface p-4">
@@ -59,14 +73,15 @@ export function Sidebar() {
         </div>
 
         <div>
-          <div className="mb-2 border-t border-line pt-4 text-xs font-semibold uppercase text-muted">
-            Macro Intelligence
-          </div>
+          <div className="mb-2 border-t border-line pt-4 text-xs font-semibold uppercase text-muted">Macro Intelligence</div>
           <div className="space-y-1">
+            <NavLink href="/macro" active={pathname === "/macro" && selectedMacro === "liquidity"}>
+              <Gauge className="h-4 w-4" /> Overview
+            </NavLink>
             {macroCategories.map(([label, slug]) => (
               <NavLink key={slug} href={`/macro?category=${slug}`} active={pathname === "/macro" && selectedMacro === slug}>
                 {slug === "global_liquidity" ? <Globe2 className="h-4 w-4" /> : <Gauge className="h-4 w-4" />}
-                {label}
+                {label === "Labor" ? "Labor Market" : label === "Recession" ? "Recession Monitor" : label}
               </NavLink>
             ))}
           </div>
@@ -74,13 +89,16 @@ export function Sidebar() {
 
         <div>
           <div className="mb-2 border-t border-line pt-4 text-xs font-semibold uppercase text-muted">
-            Asset Models
+            Market Intelligence
           </div>
           <div className="space-y-1">
+            <NavLink href="/" active={pathname === "/"}>
+              <LineChart className="h-4 w-4" /> Asset Dashboard
+            </NavLink>
             {assetSlugs.map((slug) => (
               <NavLink key={slug} href={`/asset/${slug}`} active={pathname === `/asset/${slug}`}>
                 <LineChart className="h-4 w-4" />
-                {assetLabels[slug]}
+                {slug === "bitcoin" ? "Crypto" : assetLabels[slug]}
               </NavLink>
             ))}
           </div>
@@ -92,6 +110,12 @@ export function Sidebar() {
           </div>
           <NavLink href="/institutional" active={pathname === "/institutional"}>
             <Landmark className="h-4 w-4" /> CFTC Positioning
+          </NavLink>
+          <NavLink href="/" active={false}>
+            <Database className="h-4 w-4" /> Data Sources
+          </NavLink>
+          <NavLink href="/" active={false}>
+            <BriefcaseBusiness className="h-4 w-4" /> Settings
           </NavLink>
         </div>
       </nav>

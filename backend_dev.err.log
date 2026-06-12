@@ -1,4 +1,4 @@
-INFO:     Started server process [13944]
+INFO:     Started server process [7792]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
@@ -52,6 +52,6 @@ Traceback (most recent call last):
     result = context.run(func, *args)
   File "C:\Users\WIN 10\Desktop\Trishula\Dashboard\backend\app\core\cache.py", line 75, in wrapper
     value = fn(*args, **kwargs)
-  File "C:\Users\WIN 10\Desktop\Trishula\Dashboard\backend\app\api\routes\macro.py", line 71, in macro_category
-    name = MACRO_LABELS[slug]
-KeyError: 'global_liquidity'
+  File "C:\Users\WIN 10\Desktop\Trishula\Dashboard\backend\app\api\routes\institutional.py", line 18, in institutional
+    data = get_institutional_engine()["assets"][name]
+KeyError: 'SP500'

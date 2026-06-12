@@ -6,14 +6,25 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 3.9s
+ ✓ Ready in 3.5s
+ ○ Compiling /institutional ...
+ ✓ Compiled /_not-found in 19.8s (1643 modules)
+ GET /does-not-exist 404 in 17724ms
  ○ Compiling / ...
- ✓ Compiled / in 5.7s (581 modules)
- GET / 200 in 6080ms
+ ✓ Compiled / in 979ms (1658 modules)
+ GET /does-not-exist 404 in 1085ms
+ GET / 200 in 1371ms
  ○ Compiling /asset/[asset] ...
- GET / 200 in 5296ms
- ✓ Compiled /asset/[asset] in 5.2s (1669 modules)
- GET /institutional 200 in 5536ms
- GET /macro?category=inflation 200 in 5581ms
- GET /asset/gold 200 in 5910ms
- GET / 200 in 209ms
+ ✓ Compiled /asset/[asset] in 863ms (1671 modules)
+ ○ Compiling /macro ...
+ ✓ Compiled /macro in 2.7s (1690 modules)
+ GET /macro?category=inflation 200 in 1830ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 22.6s (1890 modules)
+ GET /_next/static/css/app/layout.css?v=1781265886981 500 in 34389ms
+ GET /_next/static/chunks/webpack.js?v=1781265886981 500 in 34384ms
+ GET /_next/static/chunks/app/layout.js 500 in 33250ms
+ GET /_next/static/chunks/main-app.js?v=1781265886981 500 in 33253ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 33248ms
+ GET /_next/static/chunks/app/error.js 500 in 32243ms
+ GET /_next/static/chunks/app/macro/page.js 404 in 496ms

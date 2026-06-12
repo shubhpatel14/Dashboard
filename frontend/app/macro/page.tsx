@@ -3,8 +3,9 @@ import { Activity, BarChart3, Database, Minus, TrendingDown, TrendingUp } from "
 import { fetchApi, macroCategories } from "@/lib/api";
 import { biasFromScore, clampScore, formatNumber } from "@/lib/format";
 import { ContributionBars as ContributionChart, IndicatorTrendChart, ScoreLine } from "@/components/lazy-charts";
-import { BiasPill, EmptyState, InfoHint, Panel, ScoreBar, SectionTitle, StatCard } from "@/components/ui";
+import { BiasPill, EmptyState, Panel, ScoreBar, SectionTitle, StatCard } from "@/components/ui";
 import { EconomicUpdateButton } from "@/components/economic-update-button";
+import { IndicatorInfoButton } from "@/components/indicator-info";
 import type { Indicator, MacroCategory, MacroDriver } from "@/types/api";
 
 export const dynamic = "force-dynamic";
@@ -191,73 +192,88 @@ function normalizeDrivers(drivers: MacroDriver[] | undefined, indicators: Indica
 function IndicatorCard({ indicator }: { indicator: Indicator }) {
   const isRelease = indicator.release_type === "economic_release";
   const impact = indicator.trend_state === "positive" ? "Positive impact" : indicator.trend_state === "negative" ? "Negative impact" : "Neutral impact";
+  const slug = encodeURIComponent(indicator.key || indicator.code || indicator.name.replace(/\s+/g, "_"));
 
   return (
-    <article className={`border bg-surface p-4 shadow-terminal ${trendTone(indicator.trend_state)}`}>
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="text-base font-semibold text-ink">
-          {indicator.name} <InfoHint text={indicator.info || indicator.market_impact} />
-        </h3>
-        <BiasPill value={indicator.bias} />
+    <article className={`rounded-xl border bg-surface p-3 shadow-terminal ${trendTone(indicator.trend_state)}`}>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <Link href={`/indicator/${slug}`} className="truncate text-sm font-semibold text-ink hover:underline">
+            {indicator.name}
+          </Link>
+          <IndicatorInfoButton indicator={indicator} />
+        </div>
+        <div className="flex items-center gap-2">
+          <BiasPill value={indicator.bias} />
+          <Link href={`/indicator/${slug}`} className="rounded-md border border-line px-2 py-1 text-xs font-semibold text-muted hover:border-ink hover:text-ink">
+            Open
+          </Link>
+        </div>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-6">
+        <div className="rounded-lg border border-line bg-canvas p-2">
           <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Actual" : "Current"}</div>
-          <div className="mt-1 text-lg font-semibold text-ink">
+          <div className="mt-1 text-sm font-semibold text-ink">
             {isRelease ? indicator.actual_display : indicator.current_display}
           </div>
         </div>
-        <div>
+        <div className="rounded-lg border border-line bg-canvas p-2">
           <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Forecast" : "Previous"}</div>
-          <div className="mt-1 text-lg font-semibold text-ink">
+          <div className="mt-1 text-sm font-semibold text-ink">
             {isRelease ? indicator.forecast_display : indicator.previous_display}
           </div>
         </div>
-        <div>
+        <div className="rounded-lg border border-line bg-canvas p-2">
           <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Previous" : "Change"}</div>
-          <div className={`mt-1 text-lg font-semibold ${trendTone(indicator.trend_state)}`}>
+          <div className={`mt-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
             {isRelease ? indicator.previous_display : indicator.change_display}
           </div>
+        </div>
+        <div className="rounded-lg border border-line bg-canvas p-2">
+          <div className="text-xs font-semibold uppercase text-muted">Trend</div>
+          <div className={`mt-1 flex items-center gap-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
+            <TrendIcon state={indicator.trend_state} />
+            {indicator.trend}
+          </div>
+        </div>
+        <div className="rounded-lg border border-line bg-canvas p-2">
+          <div className="text-xs font-semibold uppercase text-muted">Macro Impact</div>
+          <div className={`mt-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>{impact}</div>
+        </div>
+        <div className="rounded-lg border border-line bg-canvas p-2">
+          <div className="text-xs font-semibold uppercase text-muted">Score</div>
+          <div className="mt-1 text-sm font-semibold text-ink">{formatNumber(indicator.score)}/100</div>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-3 md:grid-cols-[1fr_140px_140px_140px] md:items-center">
+        <div>
+          <ScoreBar score={indicator.score} />
+          <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted">{indicator.explanation}</p>
+        </div>
+        <div className="text-xs">
+          <div className="font-semibold uppercase text-muted">Percentile</div>
+          <div className="mt-1 text-ink">{formatNumber(indicator.percentile ?? 50)}%</div>
+        </div>
+        <div className="text-xs">
+          <div className="font-semibold uppercase text-muted">Z-Score</div>
+          <div className="mt-1 text-ink">{formatNumber(indicator.z_score ?? 0)}</div>
+        </div>
+        <div className="text-xs">
+          <div className="font-semibold uppercase text-muted">Distance Avg</div>
+          <div className="mt-1 text-ink">{formatNumber(indicator.distance_from_average ?? 0)}</div>
         </div>
       </div>
 
       {isRelease ? (
-        <div className="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-2">
-          <div>
-            <div className="text-xs font-semibold uppercase text-muted">Market Surprise</div>
-            <div className={`mt-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
-              {indicator.surprise_display} {indicator.market_surprise}
-            </div>
+        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-canvas p-2 sm:grid-cols-2">
+          <div className={`text-xs font-semibold ${trendTone(indicator.trend_state)}`}>
+            Surprise: {indicator.surprise_display} {indicator.market_surprise}
           </div>
-          <div>
-            <div className="text-xs font-semibold uppercase text-muted">Trend</div>
-            <div className="mt-1 text-sm font-semibold text-ink">{indicator.change_display}</div>
-          </div>
+          <div className="text-xs font-semibold text-ink">Trend: {indicator.change_display}</div>
         </div>
       ) : null}
-
-      <div className="mt-4 grid gap-3 border-t border-line pt-4 md:grid-cols-[1fr_1fr_90px]">
-        <div>
-          <div className="text-xs font-semibold uppercase text-muted">Trend</div>
-          <div className={`mt-1 flex items-center gap-2 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
-            <TrendIcon state={indicator.trend_state} />
-            {indicator.trend}
-          </div>
-          <p className="mt-2 text-sm leading-6 text-muted">{indicator.explanation}</p>
-        </div>
-        <div>
-          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Interpretation" : "Market Impact"}</div>
-          <div className="mt-1 text-sm font-semibold text-ink">{isRelease ? indicator.market_surprise : indicator.impact}</div>
-          <p className="mt-2 text-sm leading-6 text-muted">{indicator.market_impact}</p>
-        </div>
-        <div>
-          <div className="text-xs font-semibold uppercase text-muted">Score</div>
-          <div className="mt-1 text-xl font-semibold text-ink">{formatNumber(indicator.score)}/100</div>
-          <div className="mt-2"><ScoreBar score={indicator.score} /></div>
-          <div className={`mt-2 text-xs font-semibold uppercase ${trendTone(indicator.trend_state)}`}>{impact}</div>
-        </div>
-      </div>
     </article>
   );
 }
@@ -284,7 +300,21 @@ export default async function MacroPage({
   searchParams: { category?: string };
 }) {
   const selected = searchParams.category ?? "liquidity";
-  const data = await fetchApi<MacroCategory>(`/macro/${selected}`);
+  const data = await fetchApi<MacroCategory>(`/macro/${selected}`, {
+    fallback: {
+      success: false,
+      data_status: "fallback",
+      name: selected,
+      score: 50,
+      bias: "Neutral",
+      trend: "Stable",
+      summary: "This macro category is temporarily unavailable. Neutral fallback data is being shown.",
+      drivers: [],
+      indicators: [],
+      explanation: "This macro category is temporarily unavailable. Neutral fallback data is being shown.",
+      history: [{ date: "Current", score: 50 }]
+    }
+  });
   const indicators = normalizeIndicators(Array.isArray(data.indicators) ? data.indicators : []);
   const drivers = normalizeDrivers(data.drivers, indicators);
   const history = Array.isArray(data.history) ? data.history : [];
@@ -310,7 +340,7 @@ export default async function MacroPage({
           <Link
             key={slug}
             href={`/macro?category=${slug}`}
-            className={`border px-3 py-2 text-sm ${selected === slug ? "border-ink bg-white text-ink" : "border-line text-muted"}`}
+            className={`rounded-lg border px-3 py-2 text-sm ${selected === slug ? "border-ink bg-ink text-white dark:bg-terminal dark:text-canvas" : "border-line text-muted hover:border-ink"}`}
           >
             {label}
           </Link>

@@ -10,7 +10,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={clsx("border border-line bg-surface p-4 shadow-terminal transition-colors hover:border-slate-300 dark:hover:border-slate-500", className)}>
+    <section className={clsx("rounded-xl border border-line bg-surface p-4 shadow-terminal transition-colors hover:border-slate-300 dark:hover:border-slate-500", className)}>
       {children}
     </section>
   );
@@ -51,7 +51,7 @@ export function StatCard({
 
 export function BiasPill({ value }: { value: string | number }) {
   return (
-    <span className={clsx("inline-flex items-center border bg-surface px-2 py-1 text-xs font-semibold", toneClass(value))}>
+    <span className={clsx("inline-flex items-center rounded-md border bg-surface px-2 py-1 text-xs font-semibold", toneClass(value))}>
       {String(value || "N/A")}
     </span>
   );
@@ -81,30 +81,41 @@ export function ScoreBar({ score, height = "h-2" }: { score: unknown; height?: s
 
 export function MacroGauge({ score }: { score: unknown }) {
   const value = clampScore(score);
-  const rotation = -90 + (value / 100) * 180;
   const regime = regimeFromScore(value);
+  const radius = 54;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (value / 100) * circumference;
+  const color = value < 35 ? "stroke-negative" : value > 65 ? "stroke-positive" : "stroke-neutral";
 
   return (
-    <div className="relative mx-auto flex max-w-[360px] flex-col items-center">
-      <div className="relative h-44 w-full overflow-hidden">
-        <div className="absolute inset-x-4 top-4 h-72 rounded-full border-[24px] border-line" />
-        <div className="absolute left-4 top-4 h-72 w-[calc(100%-2rem)] rounded-full border-[24px] border-transparent border-t-negative border-l-negative" />
-        <div className="absolute left-4 top-4 h-72 w-[calc(100%-2rem)] rounded-full border-[24px] border-transparent border-t-neutral" />
-        <div className="absolute left-4 top-4 h-72 w-[calc(100%-2rem)] rounded-full border-[24px] border-transparent border-t-positive border-r-positive" />
-        <div
-          className="absolute bottom-5 left-1/2 h-1 w-32 origin-left bg-ink transition-transform"
-          style={{ transform: `rotate(${rotation}deg)` }}
-        />
-        <div className="absolute bottom-3 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full border border-line bg-surface" />
+    <div className="flex items-center gap-5">
+      <div className="relative h-36 w-36 shrink-0">
+        <svg className="-rotate-90" viewBox="0 0 140 140" aria-hidden="true">
+          <circle cx="70" cy="70" r={radius} className="fill-none stroke-line" strokeWidth="14" />
+          <circle
+            cx="70"
+            cy="70"
+            r={radius}
+            className={clsx("fill-none transition-all", color)}
+            strokeWidth="14"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className={clsx("text-3xl font-semibold tabular-nums", toneClass(value))}>{formatNumber(value)}</div>
+          <div className="text-[10px] font-semibold uppercase text-muted">Score</div>
+        </div>
       </div>
-      <div className="text-center">
-        <div className={clsx("text-4xl font-semibold tabular-nums", toneClass(value))}>{formatNumber(value)}</div>
-        <div className="mt-1 text-xs font-semibold uppercase text-muted">{regime}</div>
-      </div>
-      <div className="mt-4 grid w-full grid-cols-3 text-center text-[11px] font-semibold uppercase text-muted">
-        <span>Risk Off</span>
-        <span>Neutral</span>
-        <span>Risk On</span>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs font-semibold uppercase text-muted">Risk Regime</div>
+        <div className={clsx("mt-1 text-2xl font-semibold uppercase", toneClass(value))}>{regime}</div>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-semibold uppercase text-muted">
+          <span className="rounded-md border border-negative/40 py-1 text-negative">Stress</span>
+          <span className="rounded-md border border-neutral/40 py-1 text-neutral">Neutral</span>
+          <span className="rounded-md border border-positive/40 py-1 text-positive">Expansion</span>
+        </div>
       </div>
     </div>
   );

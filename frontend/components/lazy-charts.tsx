@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import type { Driver, HistoryPoint, Indicator, InstitutionalResponse } from "@/types/api";
 
 function ChartShell() {
-  return <div className="h-64 w-full border border-line bg-canvas" />;
+  return <div className="h-64 w-full animate-pulse rounded-xl border border-line bg-canvas" />;
 }
 
 export const ScoreLine = dynamic(

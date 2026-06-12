@@ -41,6 +41,12 @@ function chartScore(point: HistoryPoint) {
   return clampScore(point.score ?? point.overall ?? point.macro_score, 50);
 }
 
+function movingAverage(values: number[], index: number, window: number) {
+  const slice = values.slice(Math.max(0, index - window + 1), index + 1);
+  const sum = slice.reduce((total, value) => total + value, 0);
+  return Math.round((sum / Math.max(slice.length, 1)) * 100) / 100;
+}
+
 function EmptyChart() {
   return (
     <div className="flex h-64 items-center justify-center border border-dashed border-line bg-canvas text-sm text-muted">
@@ -50,10 +56,13 @@ function EmptyChart() {
 }
 
 export function ScoreLine({ data, name = "Score" }: { data: HistoryPoint[]; name?: string }) {
+  const scores = Array.isArray(data) ? data.map(chartScore) : [];
   const points = Array.isArray(data)
     ? data.map((point, index) => ({
         date: String(point.date ?? point.Date ?? index + 1),
-        score: chartScore(point)
+        score: scores[index],
+        ma7: movingAverage(scores, index, 7),
+        ma30: movingAverage(scores, index, 30)
       }))
     : [];
 
@@ -73,6 +82,8 @@ export function ScoreLine({ data, name = "Score" }: { data: HistoryPoint[]; name
             formatter={(value) => [`${formatNumber(Number(value))}/100`, name]}
           />
           <Line type="monotone" dataKey="score" stroke={terminal} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} name={name} />
+          <Line type="monotone" dataKey="ma7" stroke="#16A34A" strokeWidth={1.6} dot={false} name="7D MA" />
+          <Line type="monotone" dataKey="ma30" stroke="#D97706" strokeWidth={1.6} dot={false} name="30D MA" />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -119,9 +130,12 @@ export function ContributionBars({ indicators }: { indicators: Indicator[] }) {
     ? indicators.map((indicator) => {
         const score = clampScore(indicator.score);
         const weight = toNumber(indicator.weight, 10);
+        const rawImpact = Number.isFinite(Number(indicator.contribution))
+          ? Number(indicator.contribution)
+          : Math.round((score - 50) * (weight / 100) * 100) / 100;
         return {
           name: indicator.name || "Indicator",
-          impact: Math.round(score * weight) / 100,
+          impact: rawImpact,
           score
         };
       })
@@ -134,17 +148,17 @@ export function ContributionBars({ indicators }: { indicators: Indicator[] }) {
   return (
     <div className="h-80">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={rows} margin={{ left: 0, right: 16, top: 8, bottom: 24 }}>
-          <CartesianGrid stroke={grid} strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" tick={{ fill: muted, fontSize: 10 }} tickLine={false} axisLine={{ stroke: grid }} interval={0} angle={-20} textAnchor="end" height={54} />
-          <YAxis tick={{ fill: muted, fontSize: 11 }} tickLine={false} axisLine={false} width={34} />
+        <BarChart data={rows} layout="vertical" margin={{ left: 18, right: 16, top: 8, bottom: 8 }}>
+          <CartesianGrid stroke={grid} strokeDasharray="3 3" horizontal={false} />
+          <XAxis type="number" tick={{ fill: muted, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis type="category" dataKey="name" tick={{ fill: muted, fontSize: 10 }} tickLine={false} axisLine={false} width={132} />
           <Tooltip
             contentStyle={{ background: "rgb(var(--surface))", border: `1px solid ${grid}` }}
-            formatter={(value) => [`${formatNumber(Number(value))}%`, "Score x weight"]}
+            formatter={(value) => [`${Number(value) >= 0 ? "+" : ""}${formatNumber(Number(value))} pts`, "Contribution"]}
           />
-          <Bar dataKey="impact" radius={[4, 4, 0, 0]} barSize={28}>
+          <Bar dataKey="impact" radius={[4, 4, 4, 4]} barSize={14}>
             {rows.map((row) => (
-              <Cell key={row.name} fill={scoreColor(row.score)} />
+              <Cell key={row.name} fill={row.impact < 0 ? "#DC2626" : row.impact > 0 ? "#16A34A" : "#D97706"} />
             ))}
           </Bar>
         </BarChart>

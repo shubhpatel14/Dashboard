@@ -1,50 +1,789 @@
- ⨯ TypeError: fetch failed
-    at async fetchApi (./lib/api.ts:12:22)
-    at async DashboardPage (./app/page.tsx:85:19)
-digest: "1622530086"
-Cause: Error: connect ECONNREFUSED 127.0.0.1:8000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1615:16)
-    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
-  errno: -4078,
-  code: 'ECONNREFUSED',
-  syscall: 'connect',
-  address: '127.0.0.1',
-  port: 8000
+ ⨯ Error: Cannot find module './876.js'
+Require stack:
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at __webpack_require__.f.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2919
+    at Object.<anonymous> (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2964)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object..js (node:internal/modules/cjs/loader:1708:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at requirePage (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2090:30)
+    at async pipe.req.req (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2056:30)
+    at async DevServer.pipeImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:922:25)
+    at async C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:374:24)
+    at async requestHandlerImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\app\\macro\\page.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
 }
- ⨯ TypeError: fetch failed
-    at async fetchApi (./lib/api.ts:12:22)
-    at async DashboardPage (./app/page.tsx:85:19)
-digest: "1622530086"
-Cause: Error: connect ECONNREFUSED 127.0.0.1:8000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1615:16)
-    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
-  errno: -4078,
-  code: 'ECONNREFUSED',
-  syscall: 'connect',
-  address: '127.0.0.1',
-  port: 8000
+ ⨯ Error: Cannot find module './876.js'
+Require stack:
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at __webpack_require__.f.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2919
+    at Object.<anonymous> (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2964)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object..js (node:internal/modules/cjs/loader:1708:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at requirePage (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2090:30)
+    at async pipe.req.req (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2056:30)
+    at async DevServer.pipeImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:922:25)
+    at async C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:374:24)
+    at async requestHandlerImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\app\\macro\\page.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
 }
- ⨯ lib\api.ts (17:11) @ fetchApi
- ⨯ Error: API request failed: 404 http://127.0.0.1:8000/macro/Labor Market
-    at fetchApi (./lib/api.ts:16:15)
-    at async MacroPage (./app/macro/page.tsx:653:18)
-digest: "4063623224"
-[0m [90m 15 |[39m[0m
-[0m [90m 16 |[39m   [36mif[39m ([33m![39mresponse[33m.[39mok) {[0m
-[0m[31m[1m>[22m[39m[90m 17 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([0m
-[0m [90m    |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 18 |[39m       [32m`API request failed: ${response.status} ${API_URL}${path}`[39m[0m
-[0m [90m 19 |[39m     )[33m;[39m[0m
-[0m [90m 20 |[39m   }[0m
- ⨯ lib\api.ts (17:11) @ fetchApi
- ⨯ Error: API request failed: 500 http://127.0.0.1:8000/macro/global_liquidity
-    at fetchApi (./lib/api.ts:16:15)
-    at async MacroPage (./app/macro/page.tsx:653:18)
-digest: "1591911384"
-[0m [90m 15 |[39m[0m
-[0m [90m 16 |[39m   [36mif[39m ([33m![39mresponse[33m.[39mok) {[0m
-[0m[31m[1m>[22m[39m[90m 17 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([0m
-[0m [90m    |[39m           [31m[1m^[22m[39m[0m
-[0m [90m 18 |[39m       [32m`API request failed: ${response.status} ${API_URL}${path}`[39m[0m
-[0m [90m 19 |[39m     )[33m;[39m[0m
-[0m [90m 20 |[39m   }[0m
+ ⨯ Error: Cannot find module './876.js'
+Require stack:
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at __webpack_require__.f.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2919
+    at Object.<anonymous> (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2964)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object..js (node:internal/modules/cjs/loader:1708:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at requirePage (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2090:30)
+    at async pipe.req.req (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2056:30)
+    at async DevServer.pipeImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:922:25)
+    at async C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:374:24)
+    at async requestHandlerImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\app\\macro\\page.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './876.js'
+Require stack:
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at __webpack_require__.f.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2919
+    at Object.<anonymous> (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2964)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object..js (node:internal/modules/cjs/loader:1708:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at requirePage (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2090:30)
+    at async pipe.req.req (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2056:30)
+    at async DevServer.pipeImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:922:25)
+    at async C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:374:24)
+    at async requestHandlerImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\app\\macro\\page.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './876.js'
+Require stack:
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at __webpack_require__.f.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2919
+    at Object.<anonymous> (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2964)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object..js (node:internal/modules/cjs/loader:1708:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at requirePage (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2090:30)
+    at async pipe.req.req (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2056:30)
+    at async DevServer.pipeImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:922:25)
+    at async C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:374:24)
+    at async requestHandlerImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\app\\macro\\page.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './876.js'
+Require stack:
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:55:36
+    at Function._load (node:internal/modules/cjs/loader:1075:27)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at __webpack_require__.f.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2919
+    at Object.<anonymous> (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\_not-found\page.js:1:2964)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object..js (node:internal/modules/cjs/loader:1708:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+    at mod.require (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:138:16)
+    at requirePage (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2090:30)
+    at async pipe.req.req (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:2056:30)
+    at async DevServer.pipeImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\base-server.js:922:25)
+    at async C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:374:24)
+    at async requestHandlerImpl (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\.next\\server\\app\\macro\\page.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\WIN 10\\Desktop\\Trishula\\Dashboard\\frontend\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ]
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/next' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\next.js', but to 'Error: Can't resolve './vendor-chunks/next' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/next (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\next.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\macro\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-app-loader.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\bundle5.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\compiled\webpack\webpack.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\plugins\define-env-plugin.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\swc\index.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\swc\index.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/next' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\next.js', but to 'Error: Can't resolve './vendor-chunks/next' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/next (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\next.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/next' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\next.js', but to 'Error: Can't resolve './vendor-chunks/next' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/next (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\next.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\clsx.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@swc' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js', but to 'Error: Can't resolve './vendor-chunks/@swc' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@swc (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\@swc.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lucide-react' in C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server for build dependencies doesn't lead to expected result 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js', but to 'Error: Can't resolve './vendor-chunks/lucide-react' in 'C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lucide-react (expected C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\vendor-chunks\lucide-react.js)
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\.next\server\app\page.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\handle-externals.js
+<w>  at file dependencies C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at file C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js
+<w>  at resolve commonjs C:\Users\WIN 10\Desktop\Trishula\Dashboard\frontend\node_modules\next\dist\build\webpack\loaders\next-swc-loader.js

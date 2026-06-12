@@ -1,26 +1,54 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
+const staleCache = new Map<string, unknown>();
+
+type FetchOptions<T> = {
+  fallback?: T;
+  retries?: number;
+};
 
 export async function fetchApi<T>(
-  path: string
+  path: string,
+  options: FetchOptions<T> = {}
 ): Promise<T> {
+  const retries = options.retries ?? 2;
+  let lastError: unknown;
 
-  const response = await fetch(
-    `${API_URL}${path}`,
-    {
-      cache: "no-store",
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const response = await fetch(
+        `${API_URL}${path}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `API request failed: ${response.status} ${API_URL}${path}`
+        );
+      }
+
+      const data = await response.json() as T;
+      staleCache.set(path, data);
+      return data;
+    } catch (error) {
+      lastError = error;
+      if (attempt < retries) {
+        await new Promise((resolve) => setTimeout(resolve, 150 * (attempt + 1)));
+      }
     }
-  );
-
-
-  if (!response.ok) {
-    throw new Error(
-      `API request failed: ${response.status} ${API_URL}${path}`
-    );
   }
 
+  if (staleCache.has(path)) {
+    return staleCache.get(path) as T;
+  }
 
-  return response.json() as Promise<T>;
+  if (options.fallback !== undefined) {
+    return options.fallback;
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(`API request failed: ${API_URL}${path}`);
 }
 
 
