@@ -1,0 +1,19 @@
+
+> trishula-terminal@1.0.0 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 3.9s
+ ○ Compiling / ...
+ ✓ Compiled / in 5.7s (581 modules)
+ GET / 200 in 6080ms
+ ○ Compiling /asset/[asset] ...
+ GET / 200 in 5296ms
+ ✓ Compiled /asset/[asset] in 5.2s (1669 modules)
+ GET /institutional 200 in 5536ms
+ GET /macro?category=inflation 200 in 5581ms
+ GET /asset/gold 200 in 5910ms
+ GET / 200 in 209ms

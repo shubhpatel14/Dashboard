@@ -23,6 +23,22 @@ export const DriverBars = dynamic(
   }
 ) as React.ComponentType<{ drivers: Driver[] }>;
 
+export const ContributionBars = dynamic(
+  () => import("./charts").then((module) => module.ContributionBars),
+  {
+    ssr: false,
+    loading: ChartShell
+  }
+) as React.ComponentType<{ indicators: Indicator[] }>;
+
+export const AssetRadar = dynamic(
+  () => import("./charts").then((module) => module.AssetRadar),
+  {
+    ssr: false,
+    loading: ChartShell
+  }
+) as React.ComponentType<{ drivers: Driver[] }>;
+
 export const IndicatorTrendChart = dynamic(
   () => import("./charts").then((module) => module.IndicatorTrendChart),
   {

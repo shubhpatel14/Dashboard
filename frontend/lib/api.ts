@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 
 export async function fetchApi<T>(
@@ -47,4 +47,15 @@ export const assetSlugs = [
   "dollar",
   "bonds",
 ];
+
+export const assetLabels: Record<string, string> = {
+  gold: "Gold",
+  bitcoin: "Bitcoin",
+  sp500: "SP500",
+  nasdaq: "Nasdaq",
+  dollar: "Dollar",
+  bonds: "Bonds",
+};
+
+export const assets = assetSlugs.map((slug) => assetLabels[slug]);
 

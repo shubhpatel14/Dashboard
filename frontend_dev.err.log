@@ -1,0 +1,50 @@
+ ⨯ TypeError: fetch failed
+    at async fetchApi (./lib/api.ts:12:22)
+    at async DashboardPage (./app/page.tsx:85:19)
+digest: "1622530086"
+Cause: Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1615:16)
+    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -4078,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8000
+}
+ ⨯ TypeError: fetch failed
+    at async fetchApi (./lib/api.ts:12:22)
+    at async DashboardPage (./app/page.tsx:85:19)
+digest: "1622530086"
+Cause: Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1615:16)
+    at TCPConnectWrap.callbackTrampoline (node:internal/async_hooks:130:17) {
+  errno: -4078,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 8000
+}
+ ⨯ lib\api.ts (17:11) @ fetchApi
+ ⨯ Error: API request failed: 404 http://127.0.0.1:8000/macro/Labor Market
+    at fetchApi (./lib/api.ts:16:15)
+    at async MacroPage (./app/macro/page.tsx:653:18)
+digest: "4063623224"
+[0m [90m 15 |[39m[0m
+[0m [90m 16 |[39m   [36mif[39m ([33m![39mresponse[33m.[39mok) {[0m
+[0m[31m[1m>[22m[39m[90m 17 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 18 |[39m       [32m`API request failed: ${response.status} ${API_URL}${path}`[39m[0m
+[0m [90m 19 |[39m     )[33m;[39m[0m
+[0m [90m 20 |[39m   }[0m
+ ⨯ lib\api.ts (17:11) @ fetchApi
+ ⨯ Error: API request failed: 500 http://127.0.0.1:8000/macro/global_liquidity
+    at fetchApi (./lib/api.ts:16:15)
+    at async MacroPage (./app/macro/page.tsx:653:18)
+digest: "1591911384"
+[0m [90m 15 |[39m[0m
+[0m [90m 16 |[39m   [36mif[39m ([33m![39mresponse[33m.[39mok) {[0m
+[0m[31m[1m>[22m[39m[90m 17 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m([0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 18 |[39m       [32m`API request failed: ${response.status} ${API_URL}${path}`[39m[0m
+[0m [90m 19 |[39m     )[33m;[39m[0m
+[0m [90m 20 |[39m   }[0m

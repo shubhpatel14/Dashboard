@@ -5,14 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        surface: "#FFFFFF",
-        canvas: "#F8FAFC",
-        line: "#E5E7EB",
-        ink: "#111827",
-        muted: "#6B7280",
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        canvas: "rgb(var(--canvas) / <alpha-value>)",
+        line: "rgb(var(--line) / <alpha-value>)",
+        ink: "rgb(var(--ink) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
         positive: "#16A34A",
         negative: "#DC2626",
-        neutral: "#D97706"
+        neutral: "#D97706",
+        terminal: "rgb(var(--terminal) / <alpha-value>)"
       },
       boxShadow: {
         terminal: "0 1px 2px rgba(17, 24, 39, 0.06)"

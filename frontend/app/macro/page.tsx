@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Activity, BarChart3, Database, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { fetchApi, macroCategories } from "@/lib/api";
-import { formatNumber } from "@/lib/format";
-import { IndicatorTrendChart, ScoreLine } from "@/components/lazy-charts";
-import { BiasPill, InfoHint, Panel, SectionTitle, StatCard } from "@/components/ui";
+import { biasFromScore, clampScore, formatNumber } from "@/lib/format";
+import { ContributionBars as ContributionChart, IndicatorTrendChart, ScoreLine } from "@/components/lazy-charts";
+import { BiasPill, EmptyState, InfoHint, Panel, ScoreBar, SectionTitle, StatCard } from "@/components/ui";
 import { EconomicUpdateButton } from "@/components/economic-update-button";
 import type { Indicator, MacroCategory, MacroDriver } from "@/types/api";
 
@@ -132,7 +132,7 @@ function roundContribution(score: number, weight: number) {
   return Math.round((score / 100) * weight * 100) / 100;
 }
 
-function ContributionBars({ drivers }: { drivers: MacroDriver[] }) {
+function WeightBars({ drivers }: { drivers: MacroDriver[] }) {
   const maxWeight = Math.max(...drivers.map((driver) => normalizedWeight(driver.weight)), 1);
 
   return (
@@ -190,6 +190,7 @@ function normalizeDrivers(drivers: MacroDriver[] | undefined, indicators: Indica
 
 function IndicatorCard({ indicator }: { indicator: Indicator }) {
   const isRelease = indicator.release_type === "economic_release";
+  const impact = indicator.trend_state === "positive" ? "Positive impact" : indicator.trend_state === "negative" ? "Negative impact" : "Neutral impact";
 
   return (
     <article className={`border bg-surface p-4 shadow-terminal ${trendTone(indicator.trend_state)}`}>
@@ -253,10 +254,28 @@ function IndicatorCard({ indicator }: { indicator: Indicator }) {
         <div>
           <div className="text-xs font-semibold uppercase text-muted">Score</div>
           <div className="mt-1 text-xl font-semibold text-ink">{formatNumber(indicator.score)}/100</div>
+          <div className="mt-2"><ScoreBar score={indicator.score} /></div>
+          <div className={`mt-2 text-xs font-semibold uppercase ${trendTone(indicator.trend_state)}`}>{impact}</div>
         </div>
       </div>
     </article>
   );
+}
+
+function marketInterpretation(data: MacroCategory, indicators: Indicator[]) {
+  if (data.explanation) {
+    return data.explanation;
+  }
+
+  const strongest = [...indicators].sort((a, b) => Math.abs((b.score ?? 50) - 50) - Math.abs((a.score ?? 50) - 50)).slice(0, 2);
+  const names = strongest.map((indicator) => indicator.name.toLowerCase()).join(" while ");
+  const bias = String(data.bias || biasFromScore(data.score)).toLowerCase();
+
+  if (!names) {
+    return `${data.name || "This macro category"} remains ${bias} with a score of ${formatNumber(data.score)}.`;
+  }
+
+  return `${data.name || "Macro pressure"} remains ${bias} as ${names} shape the current signal.`;
 }
 
 export default async function MacroPage({
@@ -269,15 +288,16 @@ export default async function MacroPage({
   const indicators = normalizeIndicators(Array.isArray(data.indicators) ? data.indicators : []);
   const drivers = normalizeDrivers(data.drivers, indicators);
   const history = Array.isArray(data.history) ? data.history : [];
-  const summary = data.summary ?? data.explanation ?? `${data.name} score is ${formatNumber(data.score)}.`;
+  const summary = data.summary ?? marketInterpretation(data, indicators);
   const trend = data.trend ?? trendLabel(trendStateFromScore(Number(data.score)));
+  const lastUpdated = indicators.find((indicator) => indicator.last_update && indicator.last_update !== "N/A")?.last_update ?? "N/A";
 
   return (
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
         <div>
           <div className="text-xs font-semibold uppercase text-muted">Macro Intelligence</div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{data.name} Intelligence</h1>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{String(data.name || selected).toUpperCase()} INTELLIGENCE</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <EconomicUpdateButton />
@@ -297,17 +317,18 @@ export default async function MacroPage({
         ))}
       </nav>
 
-      <section className="grid gap-3 md:grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr]">
+      <section className="grid gap-3 md:grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.6fr]">
         <Panel className="flex flex-col justify-center">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase text-muted">
             <Activity className="h-4 w-4" aria-hidden="true" />
-            What happened
+            Market interpretation
           </div>
           <p className="mt-3 text-lg font-semibold leading-7 text-ink">{summary}</p>
         </Panel>
         <StatCard label="Score" value={`${formatNumber(data.score)}/100`} />
         <StatCard label="Bias" value={data.bias} />
         <StatCard label="Trend" value={trend} />
+        <StatCard label="Last Updated" value={lastUpdated} />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
@@ -325,7 +346,7 @@ export default async function MacroPage({
             title="Component Contribution"
             action={<BarChart3 className="h-4 w-4 text-muted" aria-hidden="true" />}
           />
-          <ContributionBars drivers={drivers} />
+          {indicators.length > 0 ? <ContributionChart indicators={indicators} /> : <WeightBars drivers={drivers} />}
         </Panel>
       </section>
 
@@ -347,9 +368,9 @@ export default async function MacroPage({
           Indicator Intelligence
         </div>
         <div className="grid gap-4">
-          {indicators.map((indicator) => (
+          {indicators.length > 0 ? indicators.map((indicator) => (
             <IndicatorCard key={indicator.key} indicator={indicator} />
-          ))}
+          )) : <EmptyState label="No indicators returned for this macro category" />}
         </div>
       </section>
 

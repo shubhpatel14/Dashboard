@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
+import { API_URL } from "@/lib/api";
 
 export function EconomicUpdateButton() {
   const router = useRouter();
@@ -39,10 +38,10 @@ export function EconomicUpdateButton() {
         type="button"
         onClick={updateEconomicData}
         disabled={loading}
-        className="inline-flex items-center gap-2 border border-line bg-white px-3 py-2 text-sm font-semibold text-ink disabled:opacity-60"
+        className="inline-flex items-center gap-2 border border-line bg-surface px-3 py-2 text-sm font-semibold text-ink hover:border-ink disabled:opacity-60"
       >
         <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
-        🔄 Update Economic Data
+        Update Economic Data
       </button>
       {message ? <span className="text-xs text-muted">{message}</span> : null}
     </div>
