@@ -26,6 +26,7 @@ class Settings(BaseSettings):
 
     # API
     API_KEY: str = os.getenv("API_KEY", "")
+    FMP_API_KEY: str = ""
 
 
     # DATABASE

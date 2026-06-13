@@ -310,33 +310,60 @@ def _normalize_api_row(row):
 
 def fetch_calendar_from_api(start_date, end_date):
 
-    response = requests.get(
-        FMP_ECONOMIC_CALENDAR_URL,
-        params={
-            "from": start_date.isoformat(),
-            "to": end_date.isoformat(),
-            "apikey": NEWS_API_KEY
-        },
-        timeout=20
-    )
-    response.raise_for_status()
 
-    data = response.json()
+    from app.data.investing_calendar import fetch_investing_calendar
 
-    if isinstance(data, dict) and data.get("Error Message"):
-        raise RuntimeError(data["Error Message"])
+
+    data = fetch_investing_calendar()
+
 
     rows = []
 
-    for item in data if isinstance(data, list) else []:
-        normalized = _normalize_api_row(item)
 
-        if normalized:
-            rows.append(normalized)
+    for item in data:
 
-    return rows
+        rows.append(
+            {
+                "date": str(
+                    item.get("date", "N/A")
+                ),
+
+                "time": "N/A",
+
+                "event": str(
+                    item.get("event", "N/A")
+                ),
+
+                "previous": item.get(
+                    "previous"
+                ),
+
+                "forecast": item.get(
+                    "forecast"
+                ),
+
+                "actual": item.get(
+                    "actual"
+                ),
+
+                "surprise": "0",
+
+                "impact": "High",
+
+                "status": "Released",
+
+                "category": "Macro",
+
+                "currency": "USD",
+
+                "surprise_tone": "Neutral",
+
+                "source": "Investing.com",
+            }
+        )
 
 
+    return rows 
 def _fallback_event(
     release_date,
     release_time,
@@ -527,32 +554,102 @@ def build_economic_calendar(
     start_date=None,
     end_date=None,
     horizon_days=90,
-    lookback_days=7
+    lookback_days=7,
 ):
 
     today = date.today()
-    start_date = start_date or today - timedelta(days=lookback_days)
-    end_date = end_date or today + timedelta(days=horizon_days)
+
+    start_date = (
+        start_date
+        or today - timedelta(days=lookback_days)
+    )
+
+    end_date = (
+        end_date
+        or today + timedelta(days=horizon_days)
+    )
+
 
     try:
-        rows = fetch_calendar_from_api(start_date, end_date)
-        source = "Financial Modeling Prep"
+
+        rows = fetch_calendar_from_api(
+            start_date,
+            end_date,
+        )
+
+        source = "Investing.com"
+
+
     except Exception as error:
-        rows = build_fallback_calendar(start_date, end_date)
-        source = f"Fallback Schedule: {error}"
+
+        print(
+            "INVESTING ERROR:",
+            error,
+        )
+
+
+        rows = build_fallback_calendar(
+            start_date,
+            end_date,
+        )
+
+
+        source = (
+            f"Fallback Schedule: {error}"
+        )
+
+
+
+    # sanitize rows before sorting
+    clean_rows = []
+
+
+    for item in rows:
+
+        clean_rows.append(
+            {
+                **item,
+
+                "date": str(
+                    item.get(
+                        "date",
+                        "N/A",
+                    )
+                ),
+
+                "time": str(
+                    item.get(
+                        "time",
+                        "N/A",
+                    )
+                ),
+
+                "event": str(
+                    item.get(
+                        "event",
+                        "N/A",
+                    )
+                ),
+            }
+        )
+
+
 
     return {
+
         "source": source,
+
+
         "events": sorted(
-            rows,
+            clean_rows,
+
             key=lambda item: (
                 item["date"],
                 item["time"],
-                item["event"]
-            )
-        )
+                item["event"],
+            ),
+        ),
     }
-
 
 def get_next_major_event(events):
 
@@ -599,5 +696,3 @@ def format_countdown(event):
 def build_high_impact_calendar(*args, **kwargs):
 
     return build_economic_calendar()["events"]
-
-

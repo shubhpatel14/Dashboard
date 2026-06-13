@@ -23,6 +23,7 @@ from app.engines.macro.rates.scoring import build_rates_engine
 from app.engines.macro.recession.scoring import build_recession_engine
 from app.engines.macro.sentiment.scoring import build_sentiment_engine
 from app.engines.macro.trend.scoring import build_trend_engine
+from app.engines.macro.macro_surprise.scoring import build_macro_surprise
 
 
 
@@ -82,6 +83,7 @@ MACRO_BUILDERS = {
     "recession": build_recession_engine,
     "sentiment": build_sentiment_engine,
     "trend": build_trend_engine,
+    "macro_surprise": build_macro_surprise,
 
 }
 

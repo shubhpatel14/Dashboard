@@ -166,6 +166,70 @@ def _indicator_info(name: str, source: str, measures: str, score: float) -> str:
 
 
 def indicators_from_engine(engine: dict[str, Any] | None) -> list[dict[str, Any]]:
+
+        # =============================
+    # MACRO SURPRISE EVENTS SUPPORT
+    # =============================
+
+    if "events" in engine:
+
+        return [
+
+            {
+                "name": event.get(
+                    "name"
+                ),
+
+                "actual": event.get(
+                    "actual"
+                ),
+
+                "forecast": event.get(
+                    "forecast"
+                ),
+
+                "previous": event.get(
+                    "previous"
+                ),
+
+                "current_display":
+                    f"{event.get('actual')} vs {event.get('forecast')}",
+
+                "surprise": event.get(
+                    "surprise"
+                ),
+
+                "trend": event.get(
+                    "trend"
+                ),
+
+                "trend_state": event.get(
+                    "trend_state"
+                ),
+
+                "score": event.get(
+                    "score"
+                ),
+
+                "bias": event.get(
+                    "bias"
+                ),
+
+                "weight": event.get(
+                    "weight"
+                ),
+
+                "explanation": event.get(
+                    "explanation"
+                ),
+            }
+
+            for event in engine.get(
+                "events",
+                []
+            )
+        ]
+    
     if not isinstance(engine, dict):
         return []
 
@@ -274,29 +338,205 @@ def asset_summary(asset_name: str, score: float, drivers: list[dict[str, Any]]) 
     )
 
 
-def macro_category_intelligence(name: str, score: float, bias: str, indicators: list[dict[str, Any]]) -> dict[str, Any]:
+def macro_category_intelligence(
+    name: str,
+    score: float,
+    bias: str,
+    indicators: list[dict[str, Any]]
+) -> dict[str, Any]:
+
     drivers = []
+
+
+    # ==========================
+    # MACRO SURPRISE SUPPORT
+    # ==========================
+
+    if indicators and "actual" in indicators[0]:
+
+        for indicator in indicators:
+
+            drivers.append(
+                {
+                    "name": indicator.get(
+                        "name",
+                        "Unknown"
+                    ),
+
+                    "trend": indicator.get(
+                        "bias",
+                        "Neutral"
+                    ),
+
+                    "trend_state": indicator.get(
+                        "trend_state",
+                        "neutral"
+                    ),
+
+                    "value": (
+                        f"Actual {indicator.get('actual')} "
+                        f"vs Forecast {indicator.get('forecast')}"
+                    ),
+
+                    "score": _safe_float(
+                        indicator.get(
+                            "score"
+                        ),
+                        50
+                    ),
+
+                    "contribution": indicator.get(
+                        "surprise",
+                        0
+                    ),
+
+                    "weight": indicator.get(
+                        "weight",
+                        10
+                    ),
+
+                    "explanation": indicator.get(
+                        "explanation",
+                        ""
+                    ),
+                }
+            )
+
+
+        strongest = sorted(
+            indicators,
+            key=lambda item:
+            abs(
+                _safe_float(
+                    item.get("score"),
+                    50
+                )
+                - 50
+            ),
+            reverse=True
+        )[:2]
+
+
+        driver_text = " while ".join(
+            clean_label(
+                item.get("name")
+            ).lower()
+
+            for item in strongest
+        )
+
+
+        return {
+
+    "trend": _trend_label(score),
+
+    "summary": (
+        f"{name.replace('_',' ')} is currently "
+        f"{bias.lower()} as {driver_text} "
+        "are driving the latest economic surprise signal."
+    ),
+
+    "drivers": drivers,
+}
+    # ==========================
+    # NORMAL OLD MACRO ENGINES
+    # ==========================
+
     for indicator in indicators:
-        indicator_score = _safe_float(indicator.get("score"), 50)
-        drivers.append({
-            "name": indicator.get("name", "Unknown"),
-            "trend": indicator.get("trend", _trend_label(indicator_score)),
-            "trend_state": indicator.get("trend_state", _trend_state(indicator_score)),
-            "value": indicator.get("current_display", "N/A"),
-            "score": indicator_score,
-            "contribution": indicator.get("contribution", 0),
-            "weight": indicator.get("weight", 10),
-        })
+
+        indicator_score = _safe_float(
+            indicator.get(
+                "score"
+            ),
+            50
+        )
+
+
+        drivers.append(
+            {
+                "name": indicator.get(
+                    "name",
+                    "Unknown"
+                ),
+
+                "trend": indicator.get(
+                    "trend",
+                    _trend_label(
+                        indicator_score
+                    )
+                ),
+
+                "trend_state": indicator.get(
+                    "trend_state",
+                    _trend_state(
+                        indicator_score
+                    )
+                ),
+
+                "value": indicator.get(
+                    "current_display",
+                    "N/A"
+                ),
+
+                "score": indicator_score,
+
+                "contribution": indicator.get(
+                    "contribution",
+                    0
+                ),
+
+                "weight": indicator.get(
+                    "weight",
+                    10
+                ),
+            }
+        )
+
 
     if indicators:
-        strongest = sorted(indicators, key=lambda item: abs(_safe_float(item.get("score")) - 50), reverse=True)[:2]
-        driver_text = " while ".join(clean_label(item.get("name")).lower() for item in strongest)
-        summary = f"{name} remains {bias.lower()} as {driver_text} shape the current macro signal."
+
+        strongest = sorted(
+            indicators,
+            key=lambda item:
+            abs(
+                _safe_float(
+                    item.get("score")
+                )
+                - 50
+            ),
+            reverse=True
+        )[:2]
+
+
+        driver_text = " while ".join(
+            clean_label(
+                item.get("name")
+            ).lower()
+
+            for item in strongest
+        )
+
+
+        summary = (
+            f"{name} remains {bias.lower()} as "
+            f"{driver_text} shape the current macro signal."
+        )
+
+
     else:
-        summary = f"{name} remains {bias.lower()} with limited indicator detail available."
+
+        summary = (
+            f"{name} remains {bias.lower()} "
+            "with limited indicator detail available."
+        )
+
 
     return {
-        "trend": _trend_label(score),
+        "trend": _trend_label(
+            score
+        ),
+
         "summary": summary,
+
         "drivers": drivers,
     }

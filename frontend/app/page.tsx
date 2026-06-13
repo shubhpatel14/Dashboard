@@ -148,6 +148,130 @@ function AiMacroBrief({ summary, categories }: { summary: string[]; categories: 
   );
 }
 
+function MarketPlaybook({
+  categories,
+  assets
+}: {
+  categories: [string, number][];
+  assets: AssetRow[];
+}) {
+
+  const strongest = assets
+    .filter(a => a.score >= 55)
+    .slice(0,3);
+
+  const weakest = assets
+    .filter(a => a.score <=45)
+    .slice(0,3);
+
+
+  const growth =
+    categories.find(([n]) => n==="growth")?.[1] ?? 50;
+
+  const inflation =
+    categories.find(([n]) => n==="inflation")?.[1] ?? 50;
+
+
+  let regime="Balanced Macro";
+
+  if(growth>55 && inflation<50)
+    regime="Goldilocks Expansion";
+
+  else if(growth<50 && inflation>55)
+    regime="Stagflation Risk";
+
+  else if(growth<45 && inflation<45)
+    regime="Recession Pressure";
+
+  else if(growth>55 && inflation>55)
+    regime="Overheating Economy";
+
+
+  return (
+
+    <Panel>
+
+      <SectionTitle title="Market Playbook" />
+
+      <div className="grid gap-4 md:grid-cols-3">
+
+
+        <div>
+          <div className="text-xs uppercase text-muted">
+            Regime
+          </div>
+
+          <div className="mt-2 text-lg font-semibold">
+            {regime}
+          </div>
+        </div>
+
+
+
+        <div>
+
+          <div className="text-xs uppercase text-muted">
+            Favored Assets
+          </div>
+
+          {strongest.length ?
+
+            strongest.map(a=>
+              <div 
+                key={a.asset}
+                className="text-positive font-semibold"
+              >
+                ↑ {a.asset}
+              </div>
+            )
+
+            :
+
+            <div className="text-muted">
+              No strong winners
+            </div>
+
+          }
+
+        </div>
+
+
+
+        <div>
+
+          <div className="text-xs uppercase text-muted">
+            Under Pressure
+          </div>
+
+          {weakest.length ?
+
+            weakest.map(a=>
+              <div 
+                key={a.asset}
+                className="text-negative font-semibold"
+              >
+                ↓ {a.asset}
+              </div>
+            )
+
+            :
+
+            <div className="text-muted">
+              No major stress
+            </div>
+
+          }
+
+
+        </div>
+
+      </div>
+
+    </Panel>
+
+  );
+}
+
 function RegimeTimeline({ score }: { score: number }) {
   const regimes = [
     ["Expansion", score > 65 ? 86 : 42],
@@ -252,7 +376,10 @@ export default async function DashboardPage() {
         </Panel>
       </section>
 
-      <RegimeTimeline score={macroScore} />
+     <MarketPlaybook 
+  categories={categories}
+  assets={assets}
+/>
 
       <Panel>
         <SectionTitle title="Global Macro Heatmap" action={<Database className="h-4 w-4 text-muted" aria-hidden="true" />} />

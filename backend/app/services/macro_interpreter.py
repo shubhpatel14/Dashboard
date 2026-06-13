@@ -75,6 +75,13 @@ def describe_trend(
 
 
 def explain_release(row: dict[str, Any]) -> str:
+    if row.get("bias") == "Neutral":
+
+        return (
+            f"{row.get('name')} came in close to expectations "
+            "and does not materially change the macro outlook."
+        )
+
     name = str(row.get("name") or "The release")
     actual = float(row.get("actual") or 0)
     forecast = float(row.get("forecast") or 0)

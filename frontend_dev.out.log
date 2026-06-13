@@ -28,3 +28,22 @@
  GET /_next/static/chunks/app-pages-internals.js 500 in 33248ms
  GET /_next/static/chunks/app/error.js 500 in 32243ms
  GET /_next/static/chunks/app/macro/page.js 404 in 496ms
+ GET /_next/static/css/app/layout.css?v=1781266105755 404 in 51ms
+ GET /macro?category=inflation 200 in 313ms
+ GET /_next/static/chunks/main-app.js?v=1781266105755 404 in 164ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 161ms
+ GET /_next/static/chunks/app/layout.js 404 in 160ms
+ GET /_next/static/chunks/app/error.js 404 in 157ms
+ GET /_next/static/chunks/app/macro/page.js 404 in 154ms
+ GET /macro?category=inflation 200 in 135ms
+ GET /_next/static/css/app/layout.css?v=1781266107437 404 in 35ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 127ms
+ GET /_next/static/chunks/main-app.js?v=1781266107437 404 in 131ms
+ GET /_next/static/chunks/app/error.js 404 in 124ms
+ GET /_next/static/chunks/app/layout.js 404 in 128ms
+ GET /_next/static/chunks/app/macro/page.js 404 in 121ms
+ ✓ Compiled in 3.1s (1022 modules)
+ ✓ Compiled in 442ms (1022 modules)
+ ✓ Compiled in 373ms (1022 modules)
+ ✓ Compiled in 369ms (1022 modules)
+ ✓ Compiled in 379ms (1022 modules)
