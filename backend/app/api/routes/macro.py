@@ -27,17 +27,34 @@ from app.services.transformers import (
 )
 
 from app.engines.macro.macro_surprise.scoring import (
-    release_from_calendar,
+    build_macro_surprise,
+)
+
+from app.engines.assets.macro_impact import (
+    macro_asset_impact,
+)
+
+from app.engines.assets.allocation import (
+    build_allocation,
+)
+
+from app.engines.macro.regime.engine import (
+    build_macro_regime,
+)
+
+from app.engines.macro.regime.history import (
+    update_regime_history,
 )
 
 
 router = APIRouter(prefix="/macro", tags=["macro"])
+
 logger = logging.getLogger(__name__)
 
 
-# =====================================================
+# ================================
 # MODELS
-# =====================================================
+# ================================
 
 class MacroDashboardResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
@@ -47,6 +64,8 @@ class MacroDashboardResponse(BaseModel):
 
     macro_score: float = 50
     regime: str = "Neutral"
+    regime_detail: dict[str, Any] = {}
+    regime_history: dict[str, Any] = {}
     trend: str = "Neutral"
 
     recession_risk: str = "N/A"
@@ -55,10 +74,12 @@ class MacroDashboardResponse(BaseModel):
     summary: list[str] = []
 
     asset_outlooks: dict[str, Any] = {}
+
+    portfolio_allocation: dict[str, Any] = {}
+
     category_scores: dict[str, Any] = {}
 
     history: list[dict[str, Any]] = []
-
 
 
 class MacroCategoryResponse(BaseModel):
@@ -71,86 +92,66 @@ class MacroCategoryResponse(BaseModel):
 
     score: float = 50
     bias: str = "Neutral"
+
     trend: str = "Stable"
 
     summary: str = ""
 
     drivers: list[dict[str, Any]] = []
+
     indicators: list[dict[str, Any]] = []
 
     explanation: str = ""
 
     history: list[dict[str, Any]] = []
+
     data: list[dict[str, Any]] = []
 
 
 
-class MacroSurpriseResponse(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    success: bool = True
-
-    score: float = 50
-    bias: str = "Neutral"
-
-    events: list[dict[str, Any]] = []
-
-
-
-# =====================================================
+# ================================
 # HELPERS
-# =====================================================
+# ================================
 
-def _safe_score(
-    value: Any,
-    default: float = 50
-) -> float:
+def _safe_score(value, default=50):
 
     try:
         return float(value)
 
-    except (TypeError, ValueError):
+    except Exception:
         return default
 
 
 
-def _empty_category(
-    slug: str,
-    message: str = ""
-):
+def _empty_category(slug, message=""):
 
-    name = (
-        MACRO_LABELS.get(
-            slug,
-            clean_label(slug).title()
-        )
-    )
-
-
-    summary = (
-        message
-        or
-        f"{name} unavailable. Neutral fallback used."
+    name = MACRO_LABELS.get(
+        slug,
+        clean_label(slug).title()
     )
 
 
     return {
 
         "success": True,
+
         "data_status": "fallback",
 
         "name": name,
 
         "score": 50,
+
         "bias": "Neutral",
+
         "trend": "Stable",
 
-        "summary": summary,
+        "summary": message,
 
         "drivers": [],
+
         "indicators": [],
 
-        "explanation": summary,
+        "explanation": message,
 
         "history":[
             {
@@ -159,15 +160,14 @@ def _empty_category(
             }
         ],
 
-        "data":[]
-
+        "data": [],
     }
 
 
 
-# =====================================================
-# UPDATE DATA
-# =====================================================
+# ================================
+# UPDATE
+# ================================
 
 @router.post("/update-economic-data")
 def update_economic_data():
@@ -187,20 +187,18 @@ def update_economic_data():
         "Economic data recalculated",
 
         **result,
-
     }
 
 
 
-# =====================================================
+# ================================
 # DASHBOARD
-# =====================================================
+# ================================
 
 @router.get(
     "/dashboard",
     response_model=MacroDashboardResponse
 )
-@cached("macro-dashboard")
 def macro_dashboard():
 
     try:
@@ -209,59 +207,79 @@ def macro_dashboard():
 
         trend = get_trend_engine() or {}
 
+
         score = _safe_score(
             macro.get("score"),
             50
         )
 
 
+        surprise = build_macro_surprise()
+
+
+        asset_scores = macro_asset_impact(
+            surprise,
+            macro
+        )
+
+        regime_detail = build_macro_regime(
+             macro
+        )
+
+
+        regime_history = update_regime_history(
+            regime_detail
+        )
+
+        portfolio = build_allocation(
+            asset_scores,
+            regime_detail
+        )
+
+
+        print(portfolio)
+
+
     except Exception as exc:
 
-        logger.exception(
-            "Macro dashboard failed"
-        )
+
+        logger.exception(exc)
 
 
         return {
 
-            "success":False,
+            "success": False,
 
-            "data_status":"fallback",
-
-            "error":str(exc),
+            "data_status": "fallback",
 
             "macro_score":50,
 
             "regime":"Neutral",
 
-            "trend":"Stable",
+            "trend":"Neutral",
 
-            "summary":[
-                "Macro engine unavailable"
-            ],
+            "asset_outlooks": {},
 
-            "asset_outlooks":{},
+            "category_scores": {},
 
-            "category_scores":{},
-
-            "history":[],
-
+            "history": [],
         }
 
 
 
     return {
 
-        "success":True,
+        "success": True,
+        
+        "data_status": "connected",
 
-        "data_status":"connected",
 
-        "macro_score":score,
+        "macro_score": score,
+
 
         "regime":
-            clean_label(
-                macro_regime(score)
-            ),
+         regime_detail["regime"],
+
 
         "trend":
             clean_label(
@@ -291,51 +309,39 @@ def macro_dashboard():
                 )
             ),
 
+        "regime_detail":
+            regime_detail,
+
+        
+        "regime_history":
+            regime_history,
+
 
         "summary":
-            macro_summary(macro),
-
-
-        "asset_outlooks":{
-
-            "Gold":
-            macro.get("gold_bias"),
-
-            "SP500":
-            macro.get("equity_bias"),
-
-            "Dollar":
-            macro.get("usd_bias"),
-
-            "Bitcoin":
-            macro.get("outlooks",{})
-            .get(
-                "Bitcoin Outlook",
-                "N/A"
+            macro_summary(
+                macro
             ),
 
-            "Nasdaq":
-            macro.get("outlooks",{})
-            .get(
-                "Nasdaq Outlook",
-                "N/A"
-            ),
 
-            "Bonds":
-            macro.get("outlooks",{})
-            .get(
-                "Bond Yield Outlook",
-                "N/A"
-            ),
+        # 🔥 NEW SMART ASSET ENGINE
+        "asset_outlooks":
+            asset_scores,
 
-        },
+        "portfolio_allocation":
+            portfolio,
 
+        "category_scores": {
 
-        "category_scores":
-            macro.get(
+            **macro.get(
                 "scores",
                 {}
             ),
+
+            "macro_surprise":
+                surprise.get(
+                    "score"
+                ),
+        },
 
 
         "history":
@@ -343,220 +349,21 @@ def macro_dashboard():
                 "trend",
                 score
             ),
-
     }
 
 
 
-# =====================================================
-# MACRO SURPRISE ENGINE
-# =====================================================
-
-@router.get(
-    "/surprise",
-    response_model=MacroSurpriseResponse
-)
-@cached("macro-surprise")
-def macro_surprise():
-
-
-    releases = [
-
-        (
-            "CPI_YOY",
-            "CPI YoY",
-            "inflation"
-        ),
-
-        (
-            "CORE_CPI_YOY",
-            "Core CPI YoY",
-            "inflation"
-        ),
-
-        (
-            "NON_FARM_PAYROLL_CHANGE",
-            "Non Farm Payrolls",
-            "labor"
-        ),
-
-        (
-            "UNEMPLOYMENT_RATE",
-            "Unemployment Rate",
-            "labor"
-        ),
-
-        (
-            "GDP_QOQ_ANNUALIZED",
-            "GDP Growth",
-            "growth"
-        ),
-
-        (
-            "FED_RATE_DECISION",
-            "Fed Rate Decision",
-            "rates"
-        ),
-
-    ]
-
-
-
-    events=[]
-
-
-    for key,name,category in releases:
-
-
-        item = release_from_calendar(
-            key,
-            name,
-            category
-        )
-
-
-        if item:
-
-            item["category"] = category
-
-            events.append(item)
-
-
-
-    if events:
-
-        score = round(
-
-            sum(
-                x["score"]
-                for x in events
-            )
-
-            /
-
-            len(events),
-
-            2
-
-        )
-
-    else:
-
-        score=50
-
-
-
-    if score >=60:
-
-        bias="Bullish"
-
-
-    elif score <=40:
-
-        bias="Bearish"
-
-
-    else:
-
-        bias="Neutral"
-
-
-
-    return {
-
-        "success":True,
-
-        "score":score,
-
-        "bias":bias,
-
-        "events":events,
-
-    }
-
-
-
-# =====================================================
-# CATEGORY (KEEP LAST)
-# =====================================================
-
-class MacroSurpriseResponse(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    success: bool = True
-    score: float = 50
-    bias: str = "Neutral"
-    events: list[dict[str, Any]] = []
-
-
-from app.engines.macro.macro_surprise.scoring import release_from_calendar
-
-
-@router.get("/surprise", response_model=MacroSurpriseResponse)
-@cached("macro-surprise")
-def macro_surprise():
-
-    releases = [
-        ("CPI_YOY", "CPI YoY", "inflation"),
-        ("CORE_CPI_YOY", "Core CPI YoY", "inflation"),
-        ("NON_FARM_PAYROLL_CHANGE", "Non Farm Payrolls", "labor"),
-        ("UNEMPLOYMENT_RATE", "Unemployment Rate", "labor"),
-        ("GDP_QOQ_ANNUALIZED", "GDP Growth", "growth"),
-        ("FED_RATE_DECISION", "Fed Rate Decision", "rates"),
-    ]
-
-    events = []
-
-    for key, name, category in releases:
-
-        item = release_from_calendar(
-            key,
-            name,
-            category,
-        )
-
-        if item:
-            item["category"] = category
-            events.append(item)
-
-
-    if events:
-        score = round(
-            sum(x["score"] for x in events)
-            /
-            len(events),
-            2,
-        )
-
-    else:
-        score = 50
-
-
-    if score >= 60:
-        bias = "Bullish"
-
-    elif score <= 40:
-        bias = "Bearish"
-
-    else:
-        bias = "Neutral"
-
-
-    return {
-        "success": True,
-        "score": score,
-        "bias": bias,
-        "events": events,
-    }
+# ================================
+# CATEGORY ROUTE
+# KEEP LAST
+# ================================
 
 @router.get(
     "/{category}",
     response_model=MacroCategoryResponse
 )
-@cached("macro-category")
-def macro_category(
-    category:str
-):
+def macro_category(category:str):
+
 
     slug = (
         category
@@ -573,8 +380,8 @@ def macro_category(
         )
 
 
-
     try:
+
 
         engine = (
             get_macro_category(slug)
@@ -583,8 +390,7 @@ def macro_category(
 
 
         score = _safe_score(
-            engine.get("score"),
-            50
+            engine.get("score")
         )
 
 
@@ -602,28 +408,20 @@ def macro_category(
         )
 
 
-        indicators = (
-            indicators_from_engine(
-                engine
-            )
+        indicators = indicators_from_engine(
+            engine
         )
 
 
-        intelligence = (
-            macro_category_intelligence(
-                name,
-                score,
-                bias,
-                indicators
-            )
+        intelligence = macro_category_intelligence(
+            name,
+            score,
+            bias,
+            indicators,
         )
 
 
     except Exception as exc:
-
-        logger.exception(
-            "Macro category failed"
-        )
 
 
         return _empty_category(
@@ -635,18 +433,20 @@ def macro_category(
 
     return {
 
-        "success":True,
+        "success": True,
 
         "data_status":"connected",
 
-        "name":name,
+        "name": name,
 
-        "score":score,
+        "score": score,
 
-        "bias":bias,
+        "bias": bias,
+
 
         "trend":
             intelligence["trend"],
+
 
         "summary":
             intelligence["summary"],
@@ -673,5 +473,4 @@ def macro_category(
 
         "data":
             indicators,
-
     }

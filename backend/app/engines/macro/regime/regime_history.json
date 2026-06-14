@@ -1,0 +1,22 @@
+{
+  "regime": "Late Cycle Slowdown",
+  "confidence": 16.72,
+  "description": "Growth remains positive but liquidity is tightening and risk appetite is weak.",
+  "favored_assets": [
+    "Gold",
+    "Quality Stocks",
+    "Cash"
+  ],
+  "risks": [
+    "Growth slowdown",
+    "Market volatility"
+  ],
+  "inputs": {
+    "growth": 57.97,
+    "inflation": 40.44,
+    "liquidity": 47.38,
+    "policy": 47.83,
+    "sentiment": 36.7
+  },
+  "started_at": "2026-06-14T23:06:26.582354"
+}
