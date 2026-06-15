@@ -5,6 +5,10 @@ import { asArray, biasFromScore, clampScore, formatNumber, regimeFromScore, titl
 import { BiasPill, EmptyState, MacroGauge, Panel, ScoreBar, SectionTitle } from "@/components/ui";
 import { TerminalActions } from "@/components/terminal-actions";
 import type { AssetResponse, HistoryPoint, MacroDashboard } from "@/types/api";
+import MacroRegimeCard from "@/components/macro/macro-regime-card";
+import MacroSurpriseMonitor from "@/components/macro/macro-surprise-monitor"; 
+import PortfolioAllocation from "@/components/macro/portfolio-allocation";
+
 
 export const dynamic = "force-dynamic";
 
@@ -376,11 +380,23 @@ export default async function DashboardPage() {
         </Panel>
       </section>
 
-     <MarketPlaybook 
+     <div className="grid gap-5 lg:grid-cols-2">
+
+  <MacroRegimeCard data={macro}/>
+
+<MacroSurpriseMonitor data={macro}/>
+
+
+  <PortfolioAllocation
+    data={macro}
+  />
+
+</div>
+
+<MarketPlaybook
   categories={categories}
   assets={assets}
 />
-
       <Panel>
         <SectionTitle title="Global Macro Heatmap" action={<Database className="h-4 w-4 text-muted" aria-hidden="true" />} />
         <div className="overflow-x-auto terminal-scrollbar">
@@ -465,3 +481,7 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
+
+
+

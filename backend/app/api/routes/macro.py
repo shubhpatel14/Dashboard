@@ -42,6 +42,10 @@ from app.engines.macro.regime.engine import (
     build_macro_regime,
 )
 
+from app.engines.macro.final_score import (
+    build_final_macro_score,
+)
+
 from app.engines.macro.regime.history import (
     update_regime_history,
 )
@@ -76,6 +80,8 @@ class MacroDashboardResponse(BaseModel):
     asset_outlooks: dict[str, Any] = {}
 
     portfolio_allocation: dict[str, Any] = {}
+
+    macro_surprises: list[dict[str, Any]] = []
 
     category_scores: dict[str, Any] = {}
 
@@ -208,13 +214,18 @@ def macro_dashboard():
         trend = get_trend_engine() or {}
 
 
-        score = _safe_score(
-            macro.get("score"),
-            50
+        surprise = build_macro_surprise()
+
+
+        final_macro = build_final_macro_score(
+            macro,
+            surprise
         )
 
 
-        surprise = build_macro_surprise()
+        score = final_macro[
+            "score"
+        ]
 
 
         asset_scores = macro_asset_impact(
@@ -329,6 +340,14 @@ def macro_dashboard():
 
         "portfolio_allocation":
             portfolio,
+
+
+        # ?? ECONOMIC RELEASE SURPRISE MONITOR
+        "macro_surprises":
+            surprise.get(
+                "events",
+                []
+            ),
 
         "category_scores": {
 
@@ -474,3 +493,6 @@ def macro_category(category:str):
         "data":
             indicators,
     }
+
+
+

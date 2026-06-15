@@ -1,4 +1,19 @@
 from fastapi import APIRouter, HTTPException
+from app.engines.assets.final_score import (
+    blend_macro_score,
+)
+
+from app.engines.assets.macro_impact import (
+    macro_asset_impact,
+)
+
+from app.engines.macro.macro_surprise.scoring import (
+    build_macro_surprise,
+)
+
+from app.services.engine_registry import (
+    get_macro_engine,
+)
 
 from app.core.cache import cached
 
@@ -35,6 +50,31 @@ def asset(asset: str):
 
     engine = get_asset_engine(slug)
 
+    macro = get_macro_engine()
+
+    surprise = build_macro_surprise()
+
+
+    macro_assets = macro_asset_impact(
+        surprise,
+        macro
+    )
+
+
+    asset_key = DISPLAY_NAMES.get(
+        slug,
+        slug.upper()
+    )
+
+
+    if asset_key in macro_assets:
+
+        engine = blend_macro_score(
+            engine,
+            macro_assets[asset_key],
+            0.30
+        )
+
     score = engine.get(
         "score",
         50
@@ -53,7 +93,26 @@ def asset(asset: str):
 
         "asset": name,
 
-        "asset_score": score,
+        "asset_score": engine.get(
+            "score",
+            50
+        ),
+
+
+        "raw_score": engine.get(
+            "raw_score"
+        ),
+
+
+        "macro_score": engine.get(
+            "macro_score"
+        ),
+
+
+        "macro_drivers": engine.get(
+            "macro_drivers",
+            []
+        ),
 
         "outlook": engine.get(
             "outlook",

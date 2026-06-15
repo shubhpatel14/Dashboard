@@ -3,7 +3,6 @@ from app.engines.macro.inflation.scoring import build_inflation_engine
 from app.engines.macro.liquidity.scoring import build_liquidity_engine
 from app.engines.macro.rates.scoring import build_rates_engine
 from app.engines.macro.sentiment.scoring import build_sentiment_engine
-
 from app.engines.helpers.asset_helpers import driver_row, weighted_asset_result
 
 
@@ -30,4 +29,10 @@ def build_gold_engine():
         ]
     )
 
+    from app.engines.assets.final_score import blend_macro_score
+    from app.engines.assets.macro_impact import macro_asset_impact
+    from app.services.engine_registry import get_macro_engine
+    from app.engines.macro.macro_surprise.scoring import build_macro_surprise
 
+
+ 

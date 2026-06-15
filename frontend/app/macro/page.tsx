@@ -299,8 +299,27 @@ export default async function MacroPage({
 }: {
   searchParams: { category?: string };
 }) {
+
+
   const selected = searchParams.category ?? "liquidity";
-  const data = await fetchApi<MacroCategory>(`/macro/${selected}`, {
+
+
+  // ===============================
+  // MAIN MACRO DASHBOARD ENGINE
+  // regime + assets + allocation
+  // ===============================
+
+
+
+
+  // ===============================
+  // CATEGORY ENGINE
+  // inflation/labor/liquidity etc
+  // ===============================
+
+  const data = await fetchApi<MacroCategory>(
+    `/macro/${selected}`,
+    {
     fallback: {
       success: false,
       data_status: "fallback",
@@ -323,7 +342,10 @@ export default async function MacroPage({
   const lastUpdated = indicators.find((indicator) => indicator.last_update && indicator.last_update !== "N/A")?.last_update ?? "N/A";
 
   return (
+
     <div className="space-y-5">
+
+
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
         <div>
           <div className="text-xs font-semibold uppercase text-muted">Macro Intelligence</div>
