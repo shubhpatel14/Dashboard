@@ -5,8 +5,7 @@ import { asArray, biasFromScore, clampScore, formatNumber, regimeFromScore, titl
 import { BiasPill, EmptyState, MacroGauge, Panel, ScoreBar, SectionTitle } from "@/components/ui";
 import { TerminalActions } from "@/components/terminal-actions";
 import type { AssetResponse, HistoryPoint, MacroDashboard } from "@/types/api";
-import MacroRegimeCard from "@/components/macro/macro-regime-card";
-import MacroSurpriseMonitor from "@/components/macro/macro-surprise-monitor"; 
+import MacroRegimeCard from "@/components/macro/macro-regime-card"; 
 import PortfolioAllocation from "@/components/macro/portfolio-allocation";
 
 
@@ -382,14 +381,14 @@ export default async function DashboardPage() {
 
      <div className="grid gap-5 lg:grid-cols-2">
 
-  <MacroRegimeCard data={macro}/>
-
-<MacroSurpriseMonitor data={macro}/>
+  <MacroRegimeCard
+    data={macro}
+  />
 
 
   <PortfolioAllocation
     data={macro}
-  />
+  />  
 
 </div>
 
@@ -481,7 +480,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-
-
-
-
