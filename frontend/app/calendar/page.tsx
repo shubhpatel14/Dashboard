@@ -26,7 +26,26 @@ type CalendarEvent = {
 export default function CalendarPage() {
 
 
-  const [data,setData] = useState<any>(null);
+  const [data,setData] =
+    useState<any>(null);
+
+
+  const [impact,setImpact] =
+    useState("All");
+
+
+  const [dateFilter,setDateFilter] =
+    useState("All");
+
+
+  const [fromDate,setFromDate] =
+    useState("");
+
+
+  const [toDate,setToDate] =
+    useState("");
+
+
 
 
 
@@ -48,6 +67,9 @@ export default function CalendarPage() {
 
 
 
+
+
+
   if(!data){
 
 
@@ -65,13 +87,156 @@ export default function CalendarPage() {
 
 
 
-  const rows:CalendarEvent[] = [
+
+
+
+
+  let rows:CalendarEvent[] = [
 
     ...(data.upcoming || []),
 
     ...(data.released || [])
 
   ];
+
+
+
+
+
+  // =========================
+  // FILTERS
+  // =========================
+
+
+  const today =
+    new Date();
+
+
+  const tomorrow =
+    new Date();
+
+
+  tomorrow.setDate(
+    today.getDate()+1
+  );
+
+
+
+
+
+  rows = rows.filter(
+    (e)=>{
+
+
+      // impact filter
+
+      if(
+        impact !== "All" &&
+        e.importance !== impact
+      ){
+
+        return false;
+
+      }
+
+
+
+
+      if(
+        !e.date
+      ){
+
+        return false;
+
+      }
+
+
+
+      const d =
+        new Date(
+          e.date
+        );
+
+
+
+
+
+      if(
+        dateFilter === "Today"
+      ){
+
+
+        return (
+          d.toDateString()
+          ===
+          today.toDateString()
+        );
+
+      }
+
+
+
+
+
+      if(
+        dateFilter === "Tomorrow"
+      ){
+
+
+        return (
+          d.toDateString()
+          ===
+          tomorrow.toDateString()
+        );
+
+      }
+
+
+
+
+
+
+      if(
+        dateFilter === "Custom"
+      ){
+
+
+        if(
+          fromDate &&
+          d < new Date(fromDate)
+        ){
+
+          return false;
+
+        }
+
+
+
+        if(
+          toDate &&
+          d > new Date(toDate)
+        ){
+
+          return false;
+
+        }
+
+
+      }
+
+
+
+
+      return true;
+
+
+    }
+  );
+
+
+
+
+
 
 
 
@@ -89,9 +254,28 @@ export default function CalendarPage() {
     }
 
 
-    return "★★";
+
+    if(
+      impact==="Medium"
+    ){
+
+      return "★★";
+
+    }
+
+
+
+    return "★";
+
 
   };
+
+
+
+
+
+
+
 
 
 
@@ -101,7 +285,9 @@ export default function CalendarPage() {
     <main className="space-y-5">
 
 
+
       {/* HEADER */}
+
 
       <header>
 
@@ -120,9 +306,10 @@ export default function CalendarPage() {
         </h1>
 
 
+
         <p className="text-sm text-muted">
 
-          Upcoming and released macro events powered by Investing.com
+          Live macro events powered by Investing.com
 
         </p>
 
@@ -132,69 +319,63 @@ export default function CalendarPage() {
 
 
 
+
+
+
+
+
       {/* SUMMARY */}
+
 
       <div className="grid grid-cols-3 gap-4">
 
 
+
         <div className="rounded-xl border border-line bg-panel p-4">
 
-
           <p className="text-xs text-muted">
-
-            Upcoming Events
-
+            Total Events
           </p>
-
 
           <h2 className="text-xl font-bold">
 
-            {data.upcoming_count}
+            {rows.length}
 
           </h2>
-
 
         </div>
 
 
 
+
         <div className="rounded-xl border border-line bg-panel p-4">
 
-
           <p className="text-xs text-muted">
-
-            Released Events
-
+            Filter
           </p>
-
 
           <h2 className="text-xl font-bold">
 
-            {data.released_count}
+            {impact}
 
           </h2>
-
 
         </div>
 
 
 
+
         <div className="rounded-xl border border-line bg-panel p-4">
 
-
           <p className="text-xs text-muted">
-
             Source
-
           </p>
-
 
           <h2 className="text-xl font-bold">
 
             Investing.com
 
           </h2>
-
 
         </div>
 
@@ -206,7 +387,132 @@ export default function CalendarPage() {
 
 
 
+
+
+
+
+      {/* FILTER BAR */}
+
+
+      <div className="flex flex-wrap gap-3 rounded-xl border border-line bg-panel p-4">
+
+
+
+        <select
+
+          value={impact}
+
+          onChange={
+            e=>setImpact(e.target.value)
+          }
+
+          className="rounded border bg-background p-2"
+        >
+
+
+          <option>All</option>
+
+          <option>High</option>
+
+          <option>Medium</option>
+
+          <option>Low</option>
+
+
+        </select>
+
+
+
+
+
+
+        <select
+
+          value={dateFilter}
+
+          onChange={
+            e=>setDateFilter(e.target.value)
+          }
+
+          className="rounded border bg-background p-2"
+
+        >
+
+
+          <option>All</option>
+
+          <option>Today</option>
+
+          <option>Tomorrow</option>
+
+          <option>Custom</option>
+
+
+        </select>
+
+
+
+
+
+
+
+        {
+          dateFilter==="Custom" && (
+
+            <>
+
+
+              <input
+
+                type="date"
+
+                value={fromDate}
+
+                onChange={
+                  e=>setFromDate(e.target.value)
+                }
+
+                className="rounded border bg-background p-2"
+
+              />
+
+
+
+
+              <input
+
+                type="date"
+
+                value={toDate}
+
+                onChange={
+                  e=>setToDate(e.target.value)
+                }
+
+                className="rounded border bg-background p-2"
+
+              />
+
+
+            </>
+
+          )
+        }
+
+
+
+      </div>
+
+
+
+
+
+
+
+
+
       {/* TABLE */}
+
 
       <section className="overflow-hidden rounded-xl border border-line bg-panel">
 
@@ -214,75 +520,29 @@ export default function CalendarPage() {
         <table className="w-full text-sm">
 
 
+
           <thead className="border-b border-line bg-background">
 
 
-            <tr>
+          <tr>
 
+            <th className="p-3 text-left">Date</th>
 
-              <th className="p-3 text-left">
+            <th className="p-3 text-left">Time</th>
 
-                Date
+            <th className="p-3 text-left">Country</th>
 
-              </th>
+            <th className="p-3 text-left">Event</th>
 
+            <th className="p-3 text-center">Impact</th>
 
-              <th className="p-3 text-left">
+            <th className="p-3 text-right">Actual</th>
 
-                Time
+            <th className="p-3 text-right">Forecast</th>
 
-              </th>
+            <th className="p-3 text-right">Previous</th>
 
-
-              <th className="p-3 text-left">
-
-                Country
-
-              </th>
-
-
-
-              <th className="p-3 text-left">
-
-                Event
-
-              </th>
-
-
-
-              <th className="p-3 text-center">
-
-                Impact
-
-              </th>
-
-
-
-              <th className="p-3 text-right">
-
-                Actual
-
-              </th>
-
-
-
-              <th className="p-3 text-right">
-
-                Forecast
-
-              </th>
-
-
-
-              <th className="p-3 text-right">
-
-                Previous
-
-              </th>
-
-
-
-            </tr>
+          </tr>
 
 
           </thead>
@@ -291,158 +551,132 @@ export default function CalendarPage() {
 
 
 
+
           <tbody>
 
 
-            {rows.map(
-              (
-                e,
-                index
-              )=>(
+          {rows.map(
+            (e,index)=>(
 
 
-              <tr
+            <tr
 
-                key={
-                  e.event+
-                  e.date+
-                  index
-                }
+              key={index}
 
-                className="border-b border-line hover:bg-background"
+              className="border-b border-line hover:bg-background"
 
-              >
+            >
 
 
+              <td className="p-3 text-muted">
 
-                <td className="p-3 text-muted">
+                {e.date}
 
+              </td>
 
-                  {e.date || "-"}
 
 
-                </td>
+              <td className="p-3">
 
+                {e.time}
 
+              </td>
 
 
-                <td className="p-3">
 
 
-                  {e.time || "-"}
+              <td className="p-3">
 
+                🇺🇸 {e.country}
 
-                </td>
+              </td>
 
 
 
 
-                <td className="p-3">
 
+              <td className="p-3 font-medium">
 
-                  🇺🇸 {e.country || "US"}
+                {e.event}
 
 
-                </td>
+                <div className="text-xs text-muted">
 
+                  {e.source}
 
+                </div>
 
 
-                <td className="p-3 font-medium">
+              </td>
 
 
-                  {e.event}
 
 
-                  <div className="text-xs text-muted">
 
 
-                    {e.source}
+              <td className="p-3 text-center">
 
 
-                  </div>
+                <span
 
+                  className={
+                    e.importance==="High"
+                    ?"text-red-500"
+                    :"text-orange-400"
+                  }
 
+                >
 
-                </td>
+                  {impactStars(e.importance)}
 
+                </span>
 
 
+              </td>
 
-                <td className="p-3 text-center">
 
 
-                  <span
 
-                    className={
-                      e.importance==="High"
-                      ?"text-red-500"
-                      :"text-orange-400"
-                    }
 
-                  >
 
+              <td className="p-3 text-right font-semibold">
 
-                    {impactStars(
-                      e.importance
-                    )}
+                {e.actual ?? "-"}
 
+              </td>
 
-                  </span>
 
 
-                </td>
 
+              <td className="p-3 text-right">
 
+                {e.forecast ?? "-"}
 
+              </td>
 
 
-                <td className="p-3 text-right font-semibold">
 
 
-                  {e.actual ?? "-"}
+              <td className="p-3 text-right text-muted">
 
+                {e.previous ?? "-"}
 
-                </td>
+              </td>
 
 
 
 
-                <td className="p-3 text-right">
+            </tr>
 
 
-                  {e.forecast ?? "-"}
-
-
-                </td>
-
-
-
-
-                <td className="p-3 text-right text-muted">
-
-
-                  {e.previous ?? "-"}
-
-
-                </td>
-
-
-
-
-              </tr>
-
-
-            ))}
+          ))}
 
 
 
           </tbody>
 
 
-
         </table>
-
 
 
       </section>
@@ -453,6 +687,5 @@ export default function CalendarPage() {
 
 
   );
-
 
 }

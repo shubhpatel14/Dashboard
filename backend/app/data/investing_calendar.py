@@ -11,16 +11,21 @@ def clean(x):
     if not x:
         return None
 
+
     value = x.get_text(
         " ",
         strip=True
     )
 
+
     if value in [
         "",
-        "&nbsp;"
+        "&nbsp;",
+        "-"
     ]:
+
         return None
+
 
     return value
 
@@ -40,9 +45,10 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
     )
 
 
+
     start = (
         datetime.now()
-        - timedelta(days=30)
+        - timedelta(days=10)
     ).strftime(
         "%Y-%m-%d"
     )
@@ -56,28 +62,36 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
     )
 
 
+
     payload = {
+
 
         "dateFrom":
             start,
 
+
         "dateTo":
             end,
+
 
         "timeZone":
             "55",
 
+
         "timeFilter":
             "timeRemain",
+
 
         "limit_from":
             "0",
 
-        "country[]":
-            [
-                "5"
-            ],
 
+        # USA
+        "country[]":
+            "5",
+
+
+        # low medium high
         "importance[]":
             [
                 "1",
@@ -88,7 +102,9 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
     }
 
 
-    r = scraper.post(
+
+
+    response = scraper.post(
 
         url,
 
@@ -96,33 +112,38 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
 
         headers={
 
+
             "User-Agent":
                 "Mozilla/5.0",
+
 
             "X-Requested-With":
                 "XMLHttpRequest",
 
+
             "Referer":
                 "https://www.investing.com/economic-calendar/",
 
-        }
+        },
+
+        timeout=20
 
     )
 
 
-    data = r.json()
 
-
-    html = data.get(
+    html = response.json().get(
         "data",
         ""
     )
+
 
 
     soup = BeautifulSoup(
         html,
         "html.parser"
     )
+
 
 
     events = []
@@ -132,21 +153,33 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
 
 
 
-    for row in soup.find_all("tr"):
 
 
-        # date separator
+    for row in soup.find_all(
+        "tr"
+    ):
+
+
+
+        # --------------------
+        # DATE HEADER
+        # --------------------
+
 
         if "theDay" in row.get(
             "class",
             []
         ):
 
+
             current_date = row.get_text(
                 strip=True
             )
 
+
             continue
+
+
 
 
 
@@ -157,92 +190,196 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
             "eventRowId"
         ):
 
+
             continue
 
 
 
-        time = clean(
-            row.find(
-                "td",
-                class_="time"
-            )
+
+
+        # --------------------
+        # DATE + TIME
+        # --------------------
+
+
+        raw_datetime = row.get(
+            "data-event-datetime"
         )
 
 
 
-        currency = clean(
-            row.find(
-                "td",
-                class_="flagCur"
+        event_date = current_date
+
+        event_time = "All Day"
+
+
+
+
+        if raw_datetime:
+
+
+            raw_datetime = raw_datetime.replace(
+                "/",
+                "-"
             )
+
+
+            parts = raw_datetime.split()
+
+
+
+            event_date = parts[0]
+
+
+
+            if len(parts) > 1:
+
+
+                event_time = parts[1][:5]
+
+
+
+
+
+
+
+
+        # --------------------
+        # IMPORTANCE
+        # --------------------
+
+
+        impact_cell = row.find(
+            "td",
+            class_="sentiment"
         )
 
 
 
-        event = clean(
-            row.find(
-                "td",
-                class_="event"
+        stars = 1
+
+
+
+
+        if impact_cell:
+
+
+            html = str(
+                impact_cell
             )
+
+
+
+            if "bull3" in html:
+
+
+                stars = 3
+
+
+
+            elif "bull2" in html:
+
+
+                stars = 2
+
+
+
+
+
+        importance = (
+
+            "High"
+
+            if stars == 3
+
+            else "Medium"
+
+            if stars == 2
+
+            else "Low"
+
         )
 
 
 
-        actual = clean(
-            row.find(
-                "td",
-                class_="act"
-            )
-        )
 
 
-        forecast = clean(
-            row.find(
-                "td",
-                class_="fore"
-            )
-        )
+        if event_date is None:
 
-
-        previous = clean(
-            row.find(
-                "td",
-                class_="prev"
-            )
-        )
-
+            continue
 
 
         events.append(
 
             {
 
+
                 "date":
-                    current_date,
+                    event_date,
+
 
                 "time":
-                    time,
+                    event_time,
+
 
                 "country":
-                    "United States",
+                    "US",
+
 
                 "currency":
-                    currency,
+                    clean(
+                        row.find(
+                            "td",
+                            class_="flagCur"
+                        )
+                    ),
+
+
 
                 "event":
-                    event,
+                    clean(
+                        row.find(
+                            "td",
+                            class_="event"
+                        )
+                    ),
+
+
 
                 "actual":
-                    actual,
+                    clean(
+                        row.find(
+                            "td",
+                            class_="act"
+                        )
+                    ),
+
+
 
                 "forecast":
-                    forecast,
+                    clean(
+                        row.find(
+                            "td",
+                            class_="fore"
+                        )
+                    ),
+
+
 
                 "previous":
-                    previous,
+                    clean(
+                        row.find(
+                            "td",
+                            class_="prev"
+                        )
+                    ),
 
-                "impact":
-                    "High",
+
+
+                "importance":
+                    importance,
+
+
 
                 "source":
                     "Investing.com",
@@ -250,6 +387,33 @@ def fetch_investing_calendar() -> list[dict[str, Any]]:
             }
 
         )
+
+
+
+
+
+
+    events = sorted(
+
+        events,
+
+        key=lambda x: (
+
+            x.get(
+                "date"
+            )
+            or "",
+
+
+            x.get(
+                "time"
+            )
+            or ""
+
+        )
+
+    )
+
 
 
 

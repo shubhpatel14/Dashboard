@@ -1,47 +1,19 @@
-from datetime import date, timedelta, datetime
+from datetime import datetime
 
 
-from app.data.economic_calendar import (
-    build_economic_calendar as fetch_calendar,
+from app.data.investing_calendar import (
+    fetch_investing_calendar,
 )
 
 
 
-def event_importance(name):
-
-    high = [
-        "CPI",
-        "PCE",
-        "Payroll",
-        "FOMC",
-        "GDP",
-        "Powell",
-        "PMI",
-        "Retail",
-        "Interest Rate",
-        "Rate Decision"
-    ]
-
-
-    if any(
-        x.lower() in str(name).lower()
-        for x in high
-    ):
-
-        return "High"
-
-
-    return "Medium"
-
-
-
-def parse_date(x):
+def parse_date(row):
 
     try:
 
         return datetime.strptime(
-            x.get("date"),
-            "%d/%m/%Y"
+            row.get("date"),
+            "%Y-%m-%d"
         )
 
     except Exception:
@@ -50,147 +22,105 @@ def parse_date(x):
 
 
 
+
 def build_economic_calendar():
 
 
-    today = date.today()
+    events = fetch_investing_calendar()
 
 
-    calendar = fetch_calendar(
-        today - timedelta(days=7),
-        today + timedelta(days=30),
-    )
+    calendar = []
 
-
-    events = calendar.get(
-        "events",
-        []
-    )
-
-
-    upcoming = []
-
-    released = []
 
 
     for e in events:
 
 
-        name = (
-            e.get("event")
-            or e.get("name")
-            or ""
+        calendar.append(
+
+            {
+
+                "date":
+                    e.get("date"),
+
+
+                "time":
+                    e.get("time")
+                    or "All Day",
+
+
+                "event":
+                    e.get("event"),
+
+
+                "country":
+                    e.get("country"),
+
+
+                "importance":
+                    e.get("importance"),
+
+
+                "actual":
+                    e.get("actual"),
+
+
+                "forecast":
+                    e.get("forecast"),
+
+
+                "previous":
+                    e.get("previous"),
+
+
+                "source":
+                    e.get("source"),
+
+            }
+
         )
 
 
-        row = {
-
-            "date":
-                e.get("date"),
 
 
-            "time":
-                e.get("time"),
+    # OLD → TODAY → FUTURE
+    # 06 → 16 → 25
 
+    calendar = sorted(
 
-            "event":
-                name,
+        calendar,
 
+        key=lambda x: (
 
-            "country":
-                e.get(
-                    "country"
-                ),
+            parse_date(x),
 
+            x.get("time") or ""
 
-            "importance":
-                event_importance(
-                    name
-                ),
+        )
 
-
-            "actual":
-                e.get(
-                    "actual"
-                ),
-
-
-            "forecast":
-                e.get(
-                    "forecast"
-                ),
-
-
-            "previous":
-                e.get(
-                    "previous"
-                ),
-
-
-            "source":
-                e.get(
-                    "source"
-                ),
-
-        }
-
-
-        event_date = parse_date(
-            row
-        ).date()
-
-
-        if (
-            event_date >= today
-            and row["actual"] in [
-                None,
-                "",
-                "N/A",
-                "Pending"
-            ]
-        ):
-
-            upcoming.append(
-                row
-            )
-
-        else:
-
-            released.append(
-                row
-            )
-
-
-
-    upcoming = sorted(
-        upcoming,
-        key=parse_date
     )
 
-
-    released = sorted(
-        released,
-        key=parse_date,
-        reverse=True
-    )
 
 
 
     return {
 
+
+        # keep frontend compatibility
+
         "upcoming_count":
-            len(upcoming),
+            len(calendar),
 
 
         "released_count":
-            len(released),
+            0,
 
 
         "upcoming":
-            upcoming,
+            calendar,
 
 
         "released":
-            released,
+            [],
 
     }
