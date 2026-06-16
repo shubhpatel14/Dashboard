@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, ConfigDict
-
+from app.engines.macro.category_final_score import (
+    build_category_final_score,
+)
 from app.core.cache import cached, clear_cache
 
 from app.services.engine_registry import (
@@ -98,6 +100,12 @@ class MacroCategoryResponse(BaseModel):
 
     score: float = 50
     bias: str = "Neutral"
+
+    core_score: Optional[float] = None
+
+    surprise_score: Optional[float] = None
+
+    surprise_events: list[Any] = []
 
     trend: str = "Stable"
 
@@ -407,6 +415,14 @@ def macro_category(category:str):
             or {}
         )
 
+        surprise = build_macro_surprise()
+
+
+        engine = build_category_final_score(
+            slug,
+            engine,
+            surprise
+        )
 
         score = _safe_score(
             engine.get("score")
@@ -459,6 +475,24 @@ def macro_category(category:str):
         "name": name,
 
         "score": score,
+                
+        "core_score":
+            engine.get(
+                "core_score"
+            ),
+
+
+        "surprise_score":
+            engine.get(
+                "surprise_score"
+            ),
+
+
+        "surprise_events":
+            engine.get(
+                "surprise_events",
+                []
+            ),
 
         "bias": bias,
 

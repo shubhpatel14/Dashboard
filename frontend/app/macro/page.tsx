@@ -377,7 +377,21 @@ export default async function MacroPage({
           </div>
           <p className="mt-3 text-lg font-semibold leading-7 text-ink">{summary}</p>
         </Panel>
-        <StatCard label="Score" value={`${formatNumber(data.score)}/100`} />
+        <StatCard label="Final Score" value={`${formatNumber(data.score)}/100`} />
+      {data.core_score !== undefined && (
+      <StatCard
+        label="Core Macro"
+        value={`${formatNumber(data.core_score)}/100`}
+      />
+    )}
+
+
+    {data.surprise_score !== undefined && (
+      <StatCard
+        label="Economic Surprise"
+        value={`${formatNumber(data.surprise_score)}/100`}
+      />
+    )}  
         <StatCard label="Bias" value={data.bias} />
         <StatCard label="Trend" value={trend} />
         <StatCard label="Last Updated" value={lastUpdated} />
@@ -461,3 +475,8 @@ export default async function MacroPage({
     </div>
   );
 }
+
+
+
+
+

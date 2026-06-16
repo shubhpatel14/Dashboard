@@ -8,6 +8,13 @@ export type MacroDashboard = {
   success?: boolean;
   data_status?: string;
   macro_score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   regime: string;
   trend: string;
   recession_risk: string;
@@ -23,6 +30,13 @@ export type MacroCategory = {
   data_status?: string;
   name: string;
   score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   bias: string;
   trend: string;
   summary: string;
@@ -39,6 +53,13 @@ export type Indicator = {
   source: string;
   measures: string;
   score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   bias: string;
   current: string | number;
   previous: string | number;
@@ -47,7 +68,6 @@ export type Indicator = {
   forecast?: string | number;
   surprise?: string | number;
   trend_change?: string | number;
-  surprise_score?: number;
   trend_score?: number;
   final_score?: number;
   direction_score?: number;
@@ -80,6 +100,13 @@ export type MacroDriver = {
   trend_state: "positive" | "negative" | "neutral" | string;
   value: string;
   score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   contribution: number;
   weight: number;
 };
@@ -87,6 +114,13 @@ export type MacroDriver = {
 export type AssetResponse = {
   asset: string;
   asset_score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   outlook: string;
   drivers: Driver[];
   summary: string;
@@ -96,6 +130,13 @@ export type AssetResponse = {
 export type Driver = {
   name: string;
   score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   contribution: number;
   bias: string;
 };
@@ -109,6 +150,14 @@ export type InstitutionalResponse = {
   four_week_velocity: number;
   bias: string;
   score: number;
+
+  core_score?: number;
+
+  surprise_score?: number;
+
+  surprise_events?: any[];
+
   position_percentile: number;
   history: Record<string, string | number>[];
 };
+
