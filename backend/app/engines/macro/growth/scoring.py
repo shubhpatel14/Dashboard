@@ -6,6 +6,10 @@ from app.data.fred_client import (
     get_12m_value
 )
 
+from app.engines.macro.scoring.auto_score import (
+    auto_score_indicator
+)
+
 from app.engines.helpers.helpers import (
     build_change_indicator,
     finalize_engine,
@@ -87,6 +91,7 @@ def build_growth_engine():
             10
         )
     )
+    
 
     indicators = {
         "RETAIL_SALES_MOM": {

@@ -65,11 +65,98 @@ def _trend_state(score: float) -> str:
     return "neutral"
 
 
-def _trend_label(score: float) -> str:
+def _trend_label(
+    score,
+    current=None,
+    previous=None,
+    name=""
+):
+
+
+    if (
+        current is not None
+        and previous is not None
+    ):
+
+
+        name = (
+            str(name)
+            .upper()
+        )
+
+
+        lower_good = [
+
+            "CPI",
+            "INFLATION",
+            "UNEMPLOYMENT",
+            "CLAIMS",
+            "RATES",
+
+        ]
+
+
+
+        higher_good = [
+
+            "GDP",
+            "PMI",
+            "PAYROLL",
+            "M2",
+            "LIQUIDITY",
+
+        ]
+
+
+
+        if any(
+            x in name
+            for x in lower_good
+        ):
+
+
+            return (
+
+                "Improving"
+
+                if current < previous
+
+                else "Weakening"
+
+            )
+
+
+
+
+        if any(
+            x in name
+            for x in higher_good
+        ):
+
+
+            return (
+
+                "Improving"
+
+                if current > previous
+
+                else "Weakening"
+
+            )
+
+
+
+
     if score >= 60:
+
         return "Improving"
+
+
     if score <= 40:
-        return "Worsening"
+
+        return "Weakening"
+
+
     return "Stable"
 
 
@@ -143,13 +230,214 @@ def asset_history(asset_slug: str, score: float) -> list[dict[str, Any]]:
     ]
 
 
-def _indicator_explanation(name: str, score: float, current: Any, previous: Any) -> str:
-    bias = _bias(score).lower()
-    return (
-        f"{name} is reading {clean_label(current)} versus {clean_label(previous)} previously. "
-        f"The current signal is {bias} for the macro model because it contributes to growth, inflation, "
-        "liquidity, or risk appetite conditions."
+def build_indicator_summary(
+    item
+):
+
+
+    name = item.get(
+        "name",
+        item.get(
+            "indicator",
+            ""
+        )
     )
+
+
+    current = item.get(
+        "current"
+    )
+
+
+    previous = item.get(
+        "previous"
+    )
+
+
+    score = item.get(
+        "score",
+        50
+    )
+
+
+
+    # ============================
+    # SMART MACRO DIRECTION ENGINE
+    # ============================
+
+
+    name_check = (
+        str(name)
+        .upper()
+    )
+
+
+    trend = "Stable"
+
+    bias = "neutral"
+
+    macro_impact = "Neutral impact"
+
+
+
+    try:
+
+
+        lower_good = any(
+
+            x in name_check
+
+            for x in [
+
+                "CPI",
+                "PCE",
+                "INFLATION",
+                "UNEMPLOYMENT",
+                "CLAIMS",
+                "FED_FUNDS",
+                "RATE",
+
+            ]
+
+        )
+
+
+
+
+        higher_good = any(
+
+            x in name_check
+
+            for x in [
+
+                "GDP",
+                "PMI",
+                "PAYROLL",
+                "M2",
+                "LIQUIDITY",
+                "SALES",
+                "RESERVES",
+
+            ]
+
+        )
+
+
+
+
+
+        if lower_good:
+
+
+            improving = (
+                current < previous
+            )
+
+
+
+        elif higher_good:
+
+
+            improving = (
+                current > previous
+            )
+
+
+
+        else:
+
+
+            improving = (
+                score >= 50
+            )
+
+
+
+
+
+
+        if improving:
+
+
+            trend = "Improving"
+
+            bias = "bullish"
+
+            macro_impact = "Positive impact"
+
+
+
+        else:
+
+
+            trend = "Weakening"
+
+            bias = "bearish"
+
+            macro_impact = "Negative impact"
+
+
+
+
+    except Exception:
+
+
+        pass
+
+
+
+
+
+
+
+    return {
+
+
+        "name":
+            name,
+
+
+        "current":
+            current,
+
+
+        "previous":
+            previous,
+
+
+        "score":
+            score,
+
+
+        "trend":
+            trend,
+
+
+        "bias":
+            bias.capitalize(),
+
+
+        "macro_impact":
+            macro_impact,
+
+
+
+        "summary":
+
+            f"{name} is reading "
+            f"{current} versus {previous} previously. "
+            f"The current signal is {bias} "
+            f"for the macro model.",
+
+
+
+        "explanation":
+
+            "Formula: indicator direction + "
+            "current reading versus previous reading "
+            "with macro rules applied.",
+
+    }
 
 
 def _indicator_info(name: str, source: str, measures: str, score: float) -> str:
@@ -164,64 +452,121 @@ def _indicator_info(name: str, source: str, measures: str, score: float) -> str:
         f"Source: {source or 'Internal macro data pipeline'}."
     )
 
+def _indicator_explanation(
+    name,
+    score,
+    current,
+    previous
+):
 
-def indicators_from_engine(engine: dict[str, Any] | None) -> list[dict[str, Any]]:
 
-        # =============================
+    bias = _bias(
+        score
+    )
+
+
+    try:
+
+        change = (
+            float(current)
+            -
+            float(previous)
+        )
+
+
+        direction = (
+
+            "increased"
+
+            if change > 0
+
+            else "decreased"
+
+        )
+
+
+        return (
+
+            f"{name} has {direction} "
+            f"from {previous} to {current}. "
+            f"The macro model currently reads "
+            f"{bias} with a score of {score}."
+
+        )
+
+
+    except Exception:
+
+
+        return (
+
+            f"{name} currently has "
+            f"a {bias} macro signal "
+            f"with score {score}."
+
+        )
+
+
+def indicators_from_engine(
+    engine: dict[str, Any] | None
+) -> list[dict[str, Any]]:
+
+
+    # =============================
     # MACRO SURPRISE EVENTS SUPPORT
     # =============================
 
-    if "events" in engine:
+    if (
+        isinstance(engine, dict)
+        and "events" in engine
+    ):
 
         return [
 
             {
-                "name": event.get(
-                    "name"
-                ),
+                "name":
+                    event.get("name"),
 
-                "actual": event.get(
-                    "actual"
-                ),
 
-                "forecast": event.get(
-                    "forecast"
-                ),
+                "actual":
+                    event.get("actual"),
 
-                "previous": event.get(
-                    "previous"
-                ),
+
+                "forecast":
+                    event.get("forecast"),
+
+
+                "previous":
+                    event.get("previous"),
+
 
                 "current_display":
                     f"{event.get('actual')} vs {event.get('forecast')}",
 
-                "surprise": event.get(
-                    "surprise"
-                ),
 
-                "trend": event.get(
-                    "trend"
-                ),
+                "trend":
+                    event.get("trend"),
 
-                "trend_state": event.get(
-                    "trend_state"
-                ),
 
-                "score": event.get(
-                    "score"
-                ),
+                "trend_state":
+                    event.get("trend_state"),
 
-                "bias": event.get(
-                    "bias"
-                ),
 
-                "weight": event.get(
-                    "weight"
-                ),
+                "score":
+                    event.get("score"),
 
-                "explanation": event.get(
-                    "explanation"
-                ),
+
+                "bias":
+                    event.get("bias"),
+
+
+                "weight":
+                    event.get("weight"),
+
+
+                "explanation":
+                    event.get("explanation"),
+
             }
 
             for event in engine.get(
@@ -229,61 +574,431 @@ def indicators_from_engine(engine: dict[str, Any] | None) -> list[dict[str, Any]
                 []
             )
         ]
-    
-    if not isinstance(engine, dict):
+
+
+
+
+
+    if not isinstance(
+        engine,
+        dict
+    ):
+
         return []
 
-    data = engine.get("data", {})
-    if not isinstance(data, dict):
+
+
+    data = engine.get(
+        "data",
+        {}
+    )
+
+
+    if not isinstance(
+        data,
+        dict
+    ):
+
         return []
 
-    indicators: list[dict[str, Any]] = []
-    count = max(len(data), 1)
 
-    for index, (key, item) in enumerate(data.items()):
-        if not isinstance(item, dict):
+
+
+
+    indicators = []
+
+    count = max(
+        len(data),
+        1
+    )
+
+
+
+
+
+
+    for index, (key,item) in enumerate(
+        data.items()
+    ):
+
+
+        if not isinstance(
+            item,
+            dict
+        ):
+
             continue
 
-        score = _safe_float(item.get("score"), 50)
-        weight = _safe_float(item.get("weight"), round(100 / count, 2))
-        name = clean_label(item.get("name", key), key)
-        source = clean_label(item.get("source", item.get("provider", "Internal model")))
-        measures = clean_label(item.get("measures", item.get("description", "macro conditions")))
-        current = item.get("current", item.get("actual", "N/A"))
-        previous = item.get("previous", "N/A")
-        change = item.get("change", item.get("trend_change", "N/A"))
-        state = item.get("trend_state") or _trend_state(score)
 
-        indicators.append({
-            "key": clean_label(item.get("key", key), f"indicator-{index}"),
-            "name": name,
-            "code": clean_label(item.get("code", key)),
-            "source": source,
-            "measures": measures,
-            "score": score,
-            "bias": clean_label(item.get("bias", _bias(score))),
-            "current": current,
-            "previous": previous,
-            "change": change,
-            "current_display": clean_label(item.get("current_display", current)),
-            "previous_display": clean_label(item.get("previous_display", previous)),
-            "change_display": clean_label(item.get("change_display", change)),
-            "trend": clean_label(item.get("trend", _trend_label(score))),
-            "trend_state": clean_label(state, _trend_state(score)),
-            "impact": clean_label(item.get("impact", _impact(score))),
-            "market_impact": clean_label(item.get("market_impact", _impact(score))),
-            "last_update": clean_label(item.get("last_update", item.get("last_updated", "N/A"))),
-            "explanation": clean_label(item.get("explanation", _indicator_explanation(name, score, current, previous))),
-            "info": _indicator_info(name, source, measures, score),
-            "weight": weight,
-            "contribution": round((score - 50) * (weight / 100), 2),
-            "percentile": _safe_float(item.get("percentile"), 50),
-            "z_score": _safe_float(item.get("z_score"), 0),
-            "distance_from_average": _safe_float(item.get("distance_from_average"), 0),
-        })
+
+
+
+
+        score = _safe_float(
+            item.get("score"),
+            50
+        )
+
+
+        weight = _safe_float(
+            item.get("weight"),
+            round(
+                100/count,
+                2
+            )
+        )
+
+
+
+        name = clean_label(
+            item.get(
+                "name",
+                key
+            ),
+            key
+        )
+
+
+
+        source = clean_label(
+            item.get(
+                "source",
+                item.get(
+                    "provider",
+                    "Internal model"
+                )
+            )
+        )
+
+
+
+        measures = clean_label(
+            item.get(
+                "measures",
+                item.get(
+                    "description",
+                    "macro conditions"
+                )
+            )
+        )
+
+
+
+        current = item.get(
+            "current",
+            item.get(
+                "actual",
+                None
+            )
+        )
+
+
+
+        previous = item.get(
+            "previous",
+            None
+        )
+
+
+
+        change = item.get(
+            "change",
+            item.get(
+                "trend_change",
+                "N/A"
+            )
+        )
+
+
+
+
+
+        # ======================================
+        # NEW SMART MACRO DIRECTION ENGINE
+        # ======================================
+
+
+        smart_trend = _trend_label(
+
+            score,
+
+            current,
+
+            previous,
+
+            name
+
+        )
+
+
+
+
+        if smart_trend == "Improving":
+
+
+            smart_bias = "Bullish"
+
+            smart_impact = "Positive macro impact"
+
+            smart_state = "positive"
+
+
+
+        elif smart_trend == "Weakening":
+
+
+            smart_bias = "Bearish"
+
+            smart_impact = "Negative macro impact"
+
+            smart_state = "negative"
+
+
+
+        else:
+
+
+            smart_bias = "Neutral"
+
+            smart_impact = "Neutral macro impact"
+
+            smart_state = "neutral"
+
+
+
+
+
+
+
+
+        indicators.append(
+
+            {
+
+
+                "key":
+                    clean_label(
+                        item.get(
+                            "key",
+                            key
+                        )
+                    ),
+
+
+
+                "name":
+                    name,
+
+
+                "code":
+                    clean_label(
+                        item.get(
+                            "code",
+                            key
+                        )
+                    ),
+
+
+
+                "source":
+                    source,
+
+
+
+                "measures":
+                    measures,
+
+
+
+                "score":
+                    score,
+
+
+
+                # FIXED VALUES
+
+                "bias":
+                    smart_bias,
+
+
+                "trend":
+                    smart_trend,
+
+
+                "impact":
+                    smart_impact,
+
+
+                "market_impact":
+                    smart_impact,
+
+
+                "trend_state":
+                    smart_state,
+
+
+
+
+
+
+                "current":
+                    current,
+
+
+                "previous":
+                    previous,
+
+
+                "change":
+                    change,
+
+
+
+
+                "current_display":
+                    clean_label(
+                        item.get(
+                            "current_display",
+                            current
+                        )
+                    ),
+
+
+
+                "previous_display":
+                    clean_label(
+                        item.get(
+                            "previous_display",
+                            previous
+                        )
+                    ),
+
+
+
+                "change_display":
+                    clean_label(
+                        item.get(
+                            "change_display",
+                            change
+                        )
+                    ),
+
+
+
+
+
+                "last_update":
+                    clean_label(
+                        item.get(
+                            "last_update",
+                            item.get(
+                                "last_updated",
+                                "N/A"
+                            )
+                        )
+                    ),
+
+
+
+
+
+                "explanation":
+
+                    clean_label(
+
+                        item.get(
+
+                            "explanation",
+
+                            _indicator_explanation(
+                                name,
+                                score,
+                                current,
+                                previous
+                            )
+
+                        )
+
+                    ),
+
+
+
+
+                "info":
+
+                    _indicator_info(
+                        name,
+                        source,
+                        measures,
+                        score
+                    ),
+
+
+
+
+                "weight":
+                    weight,
+
+
+
+                "contribution":
+
+                    round(
+
+                        (score-50)
+
+                        *
+
+                        (
+                            weight/100
+                        ),
+
+                        2
+
+                    ),
+
+
+
+                "percentile":
+
+                    _safe_float(
+                        item.get(
+                            "percentile"
+                        ),
+                        50
+                    ),
+
+
+
+                "z_score":
+
+                    _safe_float(
+                        item.get(
+                            "z_score"
+                        ),
+                        0
+                    ),
+
+
+
+                "distance_from_average":
+
+                    _safe_float(
+                        item.get(
+                            "distance_from_average"
+                        ),
+                        0
+                    ),
+
+            }
+
+        )
+
+
+
+
 
     return indicators
-
 
 def drivers_from_asset(engine: dict[str, Any] | None) -> list[dict[str, Any]]:
     drivers: list[dict[str, Any]] = []

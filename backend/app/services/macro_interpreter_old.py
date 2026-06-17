@@ -2,10 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.engines.macro.scoring.rules import (
-    INDICATOR_RULES,
-)
-
 
 def score_bias(score: float) -> str:
     if score >= 80:
@@ -155,53 +151,13 @@ def explain_trend(row: dict[str, Any]) -> str:
     name = str(row.get("name") or "This indicator")
     change = float(row.get("change") or 0)
     lower_is_bullish = bool(row.get("lower_is_bullish"))
-    clean_name = (
-    str(name)
-    .upper()
-    .replace(" ", "_")
-)
-
-
-    rule = INDICATOR_RULES.get(
-        clean_name,
-        None
-    )
-
-
-    if rule:
-
-         improving = (
-
-            change > 0
-
-            if rule["higher_is_better"]
-
-        else change < 0
-
-        )
-
-
-    else:
-
-        improving = (
-
-            change < 0
-
-            if lower_is_bullish
-
-            else change > 0
-
-        )   
+    improving = change < 0 if lower_is_bullish else change > 0
 
     if abs(change) < 0.0001:
         return f"{name} was broadly stable versus the previous reading."
     if improving:
-
-         impact = "Positive impact"
-
-    else:
-
-        impact = "Negative impact"
+        return f"{name} moved in a market-supportive direction, improving the macro input score."
+    return f"{name} moved in a less supportive direction, reducing the macro input score."
 
 
 # compatibility wrapper

@@ -24,6 +24,9 @@ from app.engines.macro.recession.scoring import build_recession_engine
 from app.engines.macro.sentiment.scoring import build_sentiment_engine
 from app.engines.macro.trend.scoring import build_trend_engine
 from app.engines.macro.macro_surprise.scoring import build_macro_surprise
+from app.services.macro_score_normalizer import (
+    normalize_macro_scores
+)
 
 
 
@@ -116,6 +119,11 @@ def get_institutional_engine():
 def _run(builder):
 
     result = builder()
+
+
+    return normalize_macro_scores(
+        result
+    )
 
     if result is None:
         return {}

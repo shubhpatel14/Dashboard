@@ -215,7 +215,7 @@ export function Sidebar() {
 
 
 
-            <NavLink
+            {/* <NavLink
 
               href="/macro"
 
@@ -233,7 +233,7 @@ export function Sidebar() {
               Overview
 
 
-            </NavLink>
+            </NavLink> */}
 
 
 
