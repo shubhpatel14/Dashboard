@@ -37,11 +37,3 @@ def build_dollar_score(macro):
         }
 
     )
-
-
-
-
-def build_dollar_engine(macro):
-
-    return build_dollar_score(macro)
-
