@@ -121,6 +121,33 @@ def normalize_macro_scores(
             "bias"
         ]
 
+        # ==========================
+# HISTORICAL INTELLIGENCE V4
+# ==========================
+
+        item["percentile"] = result.get(
+            "percentile",
+            50
+        )
+
+
+        item["z_score"] = result.get(
+            "z_score",
+            0
+        )
+
+
+        item["historical_average"] = result.get(
+            "historical_average",
+            0
+        )
+
+
+        item["distance_avg"] = result.get(
+            "distance_avg",
+            0
+        )
+
 
 
         item["level_score"] = result[

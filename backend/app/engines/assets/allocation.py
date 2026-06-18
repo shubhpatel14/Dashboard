@@ -57,15 +57,15 @@ def normalize(
 # PORTFOLIO ALLOCATION ENGINE
 # ======================================================
 
+# ======================================================
+# PORTFOLIO ALLOCATION ENGINE V2
+# ======================================================
+
 def build_allocation(
     asset_scores: dict[str, Any],
     regime: dict[str, Any],
 ):
 
-
-    # --------------------------------
-    # BASE 60/40 STYLE PORTFOLIO
-    # --------------------------------
 
     weights = {
 
@@ -85,99 +85,166 @@ def build_allocation(
 
 
 
-    regime_name = (
-        regime
-        .get(
-            "regime",
-            "Neutral"
-        )
+    regime_name = regime.get(
+        "regime",
+        "Neutral"
+    )
+
+
+
+    probabilities = regime.get(
+        "probabilities",
+        {}
     )
 
 
 
     # =================================
-    # REGIME TILTS
+    # NEW REGIME ENGINE V2 TILTS
     # =================================
 
 
-    if regime_name == "Goldilocks":
+    if regime_name == "Expansion":
+
 
         weights["SP500"] += 10
+
+        weights["Nasdaq"] += 10
+
+        weights["Bitcoin"] += 5
+
+
+        weights["Bonds"] -= 10
+
+        weights["Dollar"] -= 5
+
+
+
+
+
+    elif regime_name == "Recovery":
+
+
+        weights["SP500"] += 7
 
         weights["Nasdaq"] += 5
 
         weights["Bitcoin"] += 5
 
-        weights["Gold"] -= 5
+        weights["Gold"] += 3
+
+
+        weights["Dollar"] -= 5
 
 
 
-    elif regime_name == "Reflation":
-
-        weights["SP500"] += 5
-
-        weights["Gold"] += 5
-
-        weights["Bitcoin"] += 5
-
-        weights["Bonds"] -= 10
 
 
+    elif regime_name == "Slowdown":
 
-    elif regime_name == "Late Cycle Slowdown":
+
+        weights["Bonds"] += 10
 
         weights["Gold"] += 10
 
-        weights["Bonds"] += 5
-
         weights["Dollar"] += 5
 
+
         weights["Nasdaq"] -= 10
+
+        weights["Bitcoin"] -= 5
+
+
 
 
 
     elif regime_name == "Stagflation":
 
+
         weights["Gold"] += 20
 
         weights["Dollar"] += 10
 
-        weights["SP500"] -= 15
+
+        weights["SP500"] -= 10
 
         weights["Nasdaq"] -= 10
 
+        weights["Bonds"] -= 5
 
 
-    elif regime_name == "Deflationary Slowdown":
+
+
+
+    elif regime_name == "Recession":
+
 
         weights["Bonds"] += 20
 
+        weights["Gold"] += 10
+
         weights["Dollar"] += 10
+
 
         weights["SP500"] -= 15
 
-        weights["Bitcoin"] -= 5
-
-
-
-    elif regime_name == "Liquidity Stress":
-
-        weights["Gold"] += 15
-
-        weights["Dollar"] += 15
-
-        weights["Bitcoin"] -= 5
-
         weights["Nasdaq"] -= 10
 
+        weights["Bitcoin"] -= 5
+
 
 
 
     # =================================
-    # SCORE BASED ADJUSTMENT
+    # PROBABILITY ADJUSTMENT
     # =================================
 
-    for asset, data in asset_scores.items():
+
+    recession_prob = probabilities.get(
+        "Recession",
+        0
+    )
+
+
+    expansion_prob = probabilities.get(
+        "Expansion",
+        0
+    )
+
+
+
+    if recession_prob > 30:
+
+
+        weights["Gold"] += 5
+
+        weights["Bonds"] += 5
+
+        weights["SP500"] -= 5
+
+
+
+
+    if expansion_prob > 35:
+
+
+        weights["SP500"] += 5
+
+        weights["Nasdaq"] += 5
+
+        weights["Bonds"] -= 5
+
+
+
+
+
+
+    # =================================
+    # ASSET SCORE TILT
+    # =================================
+
+
+    for asset,data in asset_scores.items():
 
 
         score = float(
@@ -193,19 +260,53 @@ def build_allocation(
         ) / 5
 
 
-        if asset in weights:
 
-            weights[asset] += adjustment
-
+        name = asset.capitalize()
 
 
-    # no negatives
+        mapping = {
+
+            "Sp500":
+                "SP500",
+
+            "Nasdaq":
+                "Nasdaq",
+
+            "Gold":
+                "Gold",
+
+            "Bitcoin":
+                "Bitcoin",
+
+            "Bonds":
+                "Bonds",
+
+            "Dollar":
+                "Dollar"
+
+        }
+
+
+
+        if name in mapping:
+
+
+            weights[
+                mapping[name]
+            ] += adjustment
+
+
+
+
+
 
     for asset in weights:
+
 
         weights[asset] = clamp(
             weights[asset]
         )
+
 
 
 
@@ -215,17 +316,22 @@ def build_allocation(
 
 
 
+
     return {
 
+
         "allocation":
+
             final,
 
 
         "regime":
+
             regime_name,
 
 
         "largest_positions":
+
             sorted(
                 final.items(),
                 key=lambda x:x[1],
@@ -233,10 +339,12 @@ def build_allocation(
             )[:3],
 
 
+
         "explanation":
+
             (
-                f"Portfolio tilted for "
-                f"{regime_name} conditions."
+                f"Portfolio dynamically allocated "
+                f"for {regime_name} regime."
             )
 
     }

@@ -1,33 +1,102 @@
-from app.engines.macro.credit.scoring import build_credit_engine
-from app.engines.macro.growth.scoring import build_growth_engine
-from app.engines.macro.housing.scoring import build_housing_engine
-from app.engines.macro.inflation.scoring import build_inflation_engine
-from app.engines.macro.labor.scoring import build_labor_engine
-from app.engines.macro.liquidity.scoring import build_liquidity_engine
-from app.engines.macro.sentiment.scoring import build_sentiment_engine
-
-from app.engines.helpers.asset_helpers import driver_row, weighted_asset_result
+from app.engines.assets.scorecard import (
+    build_scorecard
+)
 
 
-def build_sp500_engine():
 
-    liquidity = build_liquidity_engine()
-    inflation = build_inflation_engine()
-    growth = build_growth_engine()
-    labor = build_labor_engine()
-    credit = build_credit_engine()
-    sentiment = build_sentiment_engine()
-    housing = build_housing_engine()
-    return weighted_asset_result(
-        [
-            {"key": "GROWTH", "weight": 25, **driver_row("Growth", growth["score"])},
-            {"key": "LIQUIDITY", "weight": 20, **driver_row("Liquidity", liquidity["score"])},
-            {"key": "LABOR", "weight": 15, **driver_row("Labor", labor["score"])},
-            {"key": "CREDIT", "weight": 15, **driver_row("Credit", credit["score"])},
-            {"key": "INFLATION", "weight": 10, **driver_row("Inflation", inflation["score"])},
-            {"key": "SENTIMENT", "weight": 10, **driver_row("Sentiment", sentiment["score"])},
-            {"key": "HOUSING", "weight": 5, **driver_row("Housing", housing["score"])},
-        ]
+
+def build_sp500_score(
+    macro
+):
+
+
+    score = (
+
+
+        # liquidity drives multiples
+
+        macro["liquidity"]
+        *
+        0.35
+
+
+        +
+
+
+        # earnings cycle
+
+        macro["growth"]
+        *
+        0.30
+
+
+        +
+
+
+        # credit conditions
+
+        macro["credit"]
+        *
+        0.20
+
+
+        +
+
+
+        # rates pressure
+
+        macro["rates"]
+        *
+        0.15
+
+
     )
 
+
+
+
+    return build_scorecard(
+
+
+        asset=
+            "S&P 500",
+
+
+        score=
+            score,
+
+
+        drivers={
+
+
+            "liquidity":
+
+                macro["liquidity"],
+
+
+            "growth":
+
+                macro["growth"],
+
+
+            "credit":
+
+                macro["credit"],
+
+
+            "rates":
+
+                macro["rates"]
+
+
+        }
+
+
+    )
+
+
+
+def build_sp500_engine(macro):
+
+    return build_sp500_score(macro)
 

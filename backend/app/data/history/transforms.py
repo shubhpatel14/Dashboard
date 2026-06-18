@@ -3,6 +3,61 @@ def percent_change(
     periods
 ):
 
+    result = []
+
+
+    for i in range(
+        periods,
+        len(rows)
+    ):
+
+
+        current = rows[i]["value"]
+
+        previous = rows[i-periods]["value"]
+
+
+        if (
+            current is None
+            or
+            previous is None
+            or
+            previous == 0
+        ):
+
+            continue
+
+
+        result.append(
+            {
+                "date":
+                    rows[i]["date"],
+
+                "value":
+                    (
+                        (
+                            current
+                            -
+                            previous
+                        )
+                        /
+                        previous
+                    )
+                    *
+                    100
+            }
+        )
+
+
+    return result
+
+
+
+
+def difference(
+    rows,
+    periods=1
+):
 
     result = []
 
@@ -13,43 +68,30 @@ def percent_change(
     ):
 
 
-        previous = rows[i-periods]["value"]
-
         current = rows[i]["value"]
 
+        previous = rows[i-periods]["value"]
 
-        if previous == 0:
+
+        if (
+            current is None
+            or
+            previous is None
+        ):
 
             continue
 
 
-        change = (
-            (
-                current
-                /
-                previous
-            )
-            -
-            1
-        ) * 100
-
-
-
         result.append(
-
             {
-
                 "date":
                     rows[i]["date"],
 
                 "value":
-                    round(
-                        change,
-                        2
-                    )
-
+                    current
+                    -
+                    previous
             }
-
         )
 
 

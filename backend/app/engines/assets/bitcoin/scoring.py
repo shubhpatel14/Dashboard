@@ -1,42 +1,42 @@
-from app.engines.macro.liquidity.scoring import build_liquidity_engine
-from app.engines.macro.global_liquidity.scoring import build_global_liquidity_engine
-from app.engines.macro.sentiment.scoring import build_sentiment_engine
-from app.engines.macro.credit.scoring import build_credit_engine
-from app.engines.macro.rates.scoring import build_rates_engine
 
-from app.engines.helpers.asset_helpers import driver_row, weighted_asset_result
+from app.engines.assets.scorecard import build_scorecard
 
 
-def build_bitcoin_engine():
+def build_bitcoin_score(macro):
 
-    liquidity = build_liquidity_engine()
-    global_liquidity = build_global_liquidity_engine()
-    sentiment = build_sentiment_engine()
-    credit = build_credit_engine()
-    rates = build_rates_engine()
+    score = (
 
-    # ------------------------------
-    # Dollar Score
-    # Higher dollar = bad for BTC
-    # ------------------------------
+        macro["liquidity"] * 0.55
 
-    usd_score = global_liquidity["data"]["USD_INDEX"]["score"]
+        +
 
-    # ------------------------------
-    # Real Yield Score
-    # Higher real yields = bad BTC
-    # ------------------------------
+        macro["rates"] * 0.25
 
-    real_yield_score = rates["data"]["TEN_YEAR_REAL_YIELD_LEVEL"]["score"]
+        +
 
-    return weighted_asset_result(
-        [
-            {"key": "LIQUIDITY", "weight": 30, **driver_row("Liquidity", liquidity["score"])},
-            {"key": "GLOBAL_LIQUIDITY", "weight": 25, **driver_row("Global Liquidity", global_liquidity["score"])},
-            {"key": "USD", "weight": 15, **driver_row("USD", usd_score, global_liquidity["data"]["USD_INDEX"])},
-            {"key": "REAL_YIELD", "weight": 15, **driver_row("Real Yield", real_yield_score, rates["data"]["TEN_YEAR_REAL_YIELD_LEVEL"])},
-            {"key": "SENTIMENT", "weight": 15, **driver_row("Sentiment", sentiment["score"], sentiment["data"]["VIX_LEVEL"])},
-        ]
+        macro["growth"] * 0.20
+
     )
 
+
+    return build_scorecard(
+
+        "Bitcoin",
+
+        score,
+
+        {
+            "liquidity": macro["liquidity"],
+            "rates": macro["rates"],
+            "growth": macro["growth"]
+        }
+
+    )
+
+
+
+
+def build_bitcoin_engine(macro):
+
+    return build_bitcoin_score(macro)
 

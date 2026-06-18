@@ -1,38 +1,45 @@
-from app.engines.macro.global_liquidity.scoring import build_global_liquidity_engine
-from app.engines.macro.inflation.scoring import build_inflation_engine
-from app.engines.macro.liquidity.scoring import build_liquidity_engine
-from app.engines.macro.rates.scoring import build_rates_engine
-from app.engines.macro.sentiment.scoring import build_sentiment_engine
-from app.engines.helpers.asset_helpers import driver_row, weighted_asset_result
+
+from app.engines.assets.scorecard import build_scorecard
 
 
-def build_gold_engine():
+def build_gold_score(macro):
 
-    liquidity = build_liquidity_engine()
-    global_liquidity = build_global_liquidity_engine()
-    inflation = build_inflation_engine()
-    rates = build_rates_engine()
-    sentiment = build_sentiment_engine()
+    score = (
 
-    usd = global_liquidity["data"]["USD_INDEX"]
-    real_yield = rates["data"]["TEN_YEAR_REAL_YIELD_LEVEL"]
-    inflation_pressure_score = 100 - inflation["score"]
-    risk_score = 100 - sentiment["score"]
+        macro["inflation"] * 0.35
 
-    return weighted_asset_result(
-        [
-            {"key": "REAL_YIELD", "weight": 35, **driver_row("Real Yield", real_yield["score"], real_yield)},
-            {"key": "LIQUIDITY", "weight": 30, **driver_row("Liquidity", liquidity["score"])},
-            {"key": "USD", "weight": 20, **driver_row("USD", usd["score"], usd)},
-            {"key": "INFLATION", "weight": 10, **driver_row("Inflation Pressure", inflation_pressure_score, inflation["data"]["CPI_YOY"])},
-            {"key": "RISK", "weight": 5, **driver_row("Risk", risk_score, sentiment["data"]["VIX_LEVEL"])},
-        ]
+        +
+
+        (100 - macro["rates"]) * 0.35
+
+        +
+
+        (100 - macro["growth"]) * 0.15
+
+        +
+
+        (100 - macro["credit"]) * 0.15
     )
 
-    from app.engines.assets.final_score import blend_macro_score
-    from app.engines.assets.macro_impact import macro_asset_impact
-    from app.services.engine_registry import get_macro_engine
-    from app.engines.macro.macro_surprise.scoring import build_macro_surprise
+
+    return build_scorecard(
+
+        "Gold",
+
+        score,
+
+        {
+            "inflation": macro["inflation"],
+            "rates": macro["rates"],
+            "risk": 100-macro["credit"]
+        }
+
+    )
 
 
- 
+
+
+def build_gold_engine(macro):
+
+    return build_gold_score(macro)
+

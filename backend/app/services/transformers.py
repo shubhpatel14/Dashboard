@@ -958,6 +958,10 @@ def indicators_from_engine(
                     ),
 
 
+                # =========================
+                # HISTORICAL INTELLIGENCE V4
+                # =========================
+
 
                 "percentile":
 
@@ -981,15 +985,41 @@ def indicators_from_engine(
 
 
 
-                "distance_from_average":
+                "historical_average":
 
                     _safe_float(
                         item.get(
-                            "distance_from_average"
+                            "historical_average"
                         ),
                         0
                     ),
 
+
+
+                "distance_avg":
+
+                    _safe_float(
+                        item.get(
+                            "distance_avg"
+                        ),
+                        0
+                    ),
+
+
+
+                # keep old frontend compatibility
+
+                "distance_from_average":
+
+                    _safe_float(
+                        item.get(
+                            "distance_avg",
+                            item.get(
+                                "distance_from_average"
+                            )
+                        ),
+                        0
+                    ),
             }
 
         )
@@ -1255,3 +1285,47 @@ def macro_category_intelligence(
 
         "drivers": drivers,
     }
+
+
+def difference(
+    rows,
+    periods=1
+):
+
+    result = []
+
+
+    for i in range(
+        periods,
+        len(rows)
+    ):
+
+
+        current = rows[i]["value"]
+
+        previous = rows[i-periods]["value"]
+
+
+        if (
+            current is None
+            or
+            previous is None
+        ):
+
+            continue
+
+
+        result.append(
+            {
+                "date":
+                    rows[i]["date"],
+
+                "value":
+                    current
+                    -
+                    previous
+            }
+        )
+
+
+    return result

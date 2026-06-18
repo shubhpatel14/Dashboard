@@ -2,6 +2,10 @@ from app.engines.macro.scoring_v3.rules import (
     INDICATOR_RULES
 )
 
+from app.services.macro_statistics import (
+    macro_statistics
+)
+
 
 
 def clamp(
@@ -247,73 +251,20 @@ def macro_score(
     name,
     current,
     previous,
-    forecast=None
+    consensus=None
 ):
 
 
-    key = (
-
-        str(name)
-
-        .upper()
-
-        .replace(
-            " ",
-            "_"
-        )
-
-    )
-
-
-
-
     rule = INDICATOR_RULES.get(
-        key
+        name,
+        {}
     )
-
-
-
-
-    if rule is None:
-
-
-        return {
-
-            "score":50,
-
-            "bias":"Neutral",
-
-            "level":50,
-
-            "trend_score":50,
-
-            "momentum":50,
-
-            "surprise":50
-
-        }
-
-
-
-
-
-    current = float(
-        current
-    )
-
-
-    previous = float(
-        previous
-    )
-
-
 
 
     level = calculate_level_score(
         current,
         rule
     )
-
 
 
     trend = calculate_trend_score(
@@ -323,52 +274,118 @@ def macro_score(
     )
 
 
-
     momentum = calculate_momentum_score(
         current,
         previous
     )
 
 
-
     surprise = calculate_surprise_score(
         current,
-        forecast,
+        consensus,
         rule
     )
 
 
+    # ==============================
+    # HISTORICAL DATABASE INTELLIGENCE
+    # ==============================
+
+
+    stats = macro_statistics(
+        name,
+        current
+    )
+
+
+    percentile = stats.get(
+        "percentile",
+        50
+    )
+
+
+    z_score = stats.get(
+        "z_score",
+        0
+    )
+
+
+    if rule.get(
+        "lower_is_bullish"
+    ):
+
+
+        percentile_score = (
+            100
+            -
+            percentile
+        )
+
+
+    else:
+
+
+        percentile_score = percentile
 
 
 
+    z_score_factor = max(
 
-    final_score = (
+        0,
 
-        level * 0.4
-
-        +
-
-        trend * 0.3
-
-        +
-
-        momentum * 0.2
-
-        +
-
-        surprise * 0.1
+        100
+        -
+        abs(
+            z_score
+        )
+        *
+        20
 
     )
 
 
 
+    final = (
 
-    final_score = round(
-        final_score,
-        2
+        level * 0.25
+
+        +
+
+        trend * 0.20
+
+        +
+
+        momentum * 0.15
+
+        +
+
+        surprise * 0.10
+
+        +
+
+        percentile_score * 0.20
+
+        +
+
+        z_score_factor * 0.10
+
     )
 
 
+
+    if final >= 60:
+
+        bias = "Bullish"
+
+
+    elif final <= 40:
+
+        bias = "Bearish"
+
+
+    else:
+
+        bias = "Neutral"
 
 
 
@@ -376,40 +393,53 @@ def macro_score(
 
 
         "score":
-            final_score,
+            round(
+                final,
+                2
+            ),
 
 
         "bias":
-
-            "Bullish"
-
-            if final_score >= 60
-
-            else
-
-            "Bearish"
-
-            if final_score <=40
-
-            else
-
-            "Neutral",
-
+            bias,
 
 
         "level":
-            round(level,2),
+            level,
 
 
         "trend_score":
-            round(trend,2),
+            trend,
 
 
         "momentum":
-            round(momentum,2),
+            momentum,
 
 
         "surprise":
-            round(surprise,2),
+            surprise,
+
+
+        # V4 DATA
+
+        "percentile":
+            percentile,
+
+
+        "z_score":
+            z_score,
+
+
+        "historical_average":
+            stats.get(
+                "average",
+                0
+            ),
+
+
+        "distance_avg":
+            stats.get(
+                "distance_avg",
+                0
+            ),
 
     }

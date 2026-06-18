@@ -1,31 +1,47 @@
-from app.engines.macro.growth.scoring import build_growth_engine
-from app.engines.macro.inflation.scoring import build_inflation_engine
-from app.engines.macro.labor.scoring import build_labor_engine
-from app.engines.macro.rates.scoring import build_rates_engine
-from app.engines.macro.sentiment.scoring import build_sentiment_engine
 
-from app.engines.helpers.asset_helpers import driver_row, weighted_asset_result
+from app.engines.assets.scorecard import build_scorecard
 
 
-def build_dollar_engine():
+def build_dollar_score(macro):
 
-    rates = build_rates_engine()
-    inflation = build_inflation_engine()
-    growth = build_growth_engine()
-    labor = build_labor_engine()
-    sentiment = build_sentiment_engine()
-    rate_differential_score = 100 - rates["score"]
-    inflation_score = 100 - inflation["score"]
-    sentiment_score = 100 - sentiment["score"]
+    score=(
 
-    return weighted_asset_result(
-        [
-            {"key": "RATES", "weight": 35, **driver_row("Rates", rate_differential_score, rates["data"]["TEN_YEAR_YIELD_LEVEL"])},
-            {"key": "GROWTH", "weight": 25, **driver_row("Growth", growth["score"])},
-            {"key": "INFLATION", "weight": 15, **driver_row("Inflation", inflation_score, inflation["data"]["CPI_YOY"])},
-            {"key": "LABOR", "weight": 15, **driver_row("Labor", labor["score"])},
-            {"key": "SENTIMENT", "weight": 10, **driver_row("Sentiment", sentiment_score, sentiment["data"]["VIX_LEVEL"])},
-        ]
+        macro["rates"] * 0.35
+
+        +
+
+        (100-macro["growth"]) * 0.20
+
+        +
+
+        (100-macro["credit"]) * 0.25
+
+        +
+
+        (100-macro["liquidity"]) * 0.20
+
     )
 
+
+    return build_scorecard(
+
+        "US Dollar",
+
+        score,
+
+        {
+            "rates":macro["rates"],
+            "risk":100-macro["credit"],
+            "growth_weakness":100-macro["growth"],
+            "liquidity_tightness":100-macro["liquidity"]
+        }
+
+    )
+
+
+
+
+def build_dollar_engine(macro):
+
+    return build_dollar_score(macro)
 

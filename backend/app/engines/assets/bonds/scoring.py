@@ -1,27 +1,46 @@
-from app.engines.macro.growth.scoring import build_growth_engine
-from app.engines.macro.inflation.scoring import build_inflation_engine
-from app.engines.macro.rates.scoring import build_rates_engine
-from app.engines.macro.recession.scoring import build_recession_engine
 
-from app.engines.helpers.asset_helpers import driver_row, weighted_asset_result
+from app.engines.assets.scorecard import build_scorecard
 
 
-def build_bonds_engine():
+def build_bonds_score(macro):
 
-    rates = build_rates_engine()
-    inflation = build_inflation_engine()
-    growth = build_growth_engine()
-    recession = build_recession_engine()
-    recession_risk_score = 100 - recession["score"]
-    slowing_growth_score = 100 - growth["score"]
+    score=(
 
-    return weighted_asset_result(
-        [
-            {"key": "RATES", "weight": 35, **driver_row("Rates", rates["score"], rates["data"]["TEN_YEAR_YIELD_LEVEL"])},
-            {"key": "INFLATION", "weight": 30, **driver_row("Inflation", inflation["score"], inflation["data"]["CPI_YOY"])},
-            {"key": "RECESSION", "weight": 20, **driver_row("Recession Risk", recession_risk_score, recession["data"]["YIELD_CURVE"])},
-            {"key": "GROWTH", "weight": 15, **driver_row("Growth Slowdown", slowing_growth_score, growth["data"]["GDP_QOQ_ANNUALIZED"])},
-        ]
+        (100-macro["growth"]) * 0.30
+
+        +
+
+        (100-macro["inflation"]) * 0.25
+
+        +
+
+        (100-macro["rates"]) * 0.30
+
+        +
+
+        (100-macro["credit"]) * 0.15
     )
 
+
+    return build_scorecard(
+
+        "Bonds",
+
+        score,
+
+        {
+            "growth_slowdown":100-macro["growth"],
+            "inflation_cooling":100-macro["inflation"],
+            "rates":100-macro["rates"],
+            "risk":100-macro["credit"]
+        }
+
+    )
+
+
+
+
+def build_bonds_engine(macro):
+
+    return build_bonds_score(macro)
 

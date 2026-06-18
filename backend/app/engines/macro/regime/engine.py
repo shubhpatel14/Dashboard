@@ -351,7 +351,7 @@ def build_macro_regime(
                 inflation,
 
 
-            "liquidity":
+            "liquidity":    
                 liquidity,
     
 
@@ -365,3 +365,173 @@ def build_macro_regime(
         }
 
     }
+
+
+def classify_regime(
+    inflation,
+    growth,
+    liquidity,
+    rates,
+    credit
+):
+
+
+    # ========================
+    # RECESSION
+    # ========================
+
+    if (
+        growth < 40
+        and
+        credit < 40
+    ):
+
+        return {
+            "regime": "Recession",
+            "risk": "Risk-Off",
+            "confidence": 85
+        }
+
+
+
+
+    # ========================
+    # STAGFLATION
+    # ========================
+
+    if (
+        inflation < 40
+        and
+        growth < 45
+    ):
+
+        return {
+            "regime": "Stagflation",
+            "risk": "Risk-Off",
+            "confidence": 80
+        }
+
+
+
+
+    # ========================
+    # EXPANSION
+    # ========================
+
+    if (
+        growth > 60
+        and
+        liquidity > 55
+        and
+        credit > 55
+    ):
+
+        return {
+            "regime": "Expansion",
+            "risk": "Risk-On",
+            "confidence": 85
+        }
+
+
+
+
+    # ========================
+    # RECOVERY
+    # ========================
+
+    if (
+        growth > 50
+        and
+        liquidity > 60
+    ):
+
+        return {
+            "regime": "Recovery",
+            "risk": "Risk-On",
+            "confidence": 75
+        }
+
+
+
+
+    # ========================
+    # DEFAULT
+    # ========================
+
+    return {
+        "regime": "Slowdown",
+        "risk": "Neutral",
+        "confidence": 60
+    }
+
+
+def asset_bias(
+    regime
+):
+
+
+    mapping = {
+
+
+        "Expansion": {
+
+            "stocks": "Bullish",
+            "gold": "Neutral",
+            "bonds": "Bearish",
+            "dollar": "Neutral",
+            "bitcoin": "Bullish"
+
+        },
+
+
+        "Recovery": {
+
+            "stocks": "Bullish",
+            "gold": "Neutral",
+            "bonds": "Neutral",
+            "dollar": "Bearish",
+            "bitcoin": "Bullish"
+
+        },
+
+
+        "Slowdown": {
+
+            "stocks": "Neutral",
+            "gold": "Bullish",
+            "bonds": "Bullish",
+            "dollar": "Neutral",
+            "bitcoin": "Neutral"
+
+        },
+
+
+        "Stagflation": {
+
+            "stocks": "Bearish",
+            "gold": "Bullish",
+            "bonds": "Bearish",
+            "dollar": "Bullish",
+            "bitcoin": "Neutral"
+
+        },
+
+
+        "Recession": {
+
+            "stocks": "Bearish",
+            "gold": "Bullish",
+            "bonds": "Bullish",
+            "dollar": "Bullish",
+            "bitcoin": "Bearish"
+
+        }
+
+
+    }
+
+
+    return mapping.get(
+        regime,
+        {}
+    )
