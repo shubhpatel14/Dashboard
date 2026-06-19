@@ -96,7 +96,24 @@ def build_sp500_score(
 
 
 
-def build_sp500_engine(macro):
 
-    return build_sp500_score(macro)
 
+
+def build_sp500_engine():
+
+    from app.services.regime_service import (
+        build_regime_engine
+    )
+
+
+    regime = build_regime_engine()
+
+
+    macro = regime[
+        "macro"
+    ]
+
+
+    return build_sp500_score(
+        macro
+    )

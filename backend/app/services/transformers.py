@@ -1030,24 +1030,185 @@ def indicators_from_engine(
 
     return indicators
 
-def drivers_from_asset(engine: dict[str, Any] | None) -> list[dict[str, Any]]:
-    drivers: list[dict[str, Any]] = []
+def drivers_from_asset(
+    engine: dict[str, Any] | None
+) -> list[dict[str, Any]]:
 
-    for item in indicators_from_engine(engine):
-        score = _safe_float(item.get("score"), 50)
-        drivers.append({
-            "name": item.get("name", "Unknown"),
-            "score": score,
-            "bias": item.get("bias", _bias(score)),
-            "contribution": item.get("contribution", 0),
-            "impact": _impact(score),
-            "current": item.get("current", "N/A"),
-            "change": item.get("change", "N/A"),
-            "last_updated": item.get("last_update", "N/A"),
-        })
+
+    if not isinstance(
+        engine,
+        dict
+    ):
+
+        return []
+
+
+
+    raw = engine.get(
+        "drivers",
+        {}
+    )
+
+
+
+    drivers = []
+
+
+
+    # ===============================
+    # NEW ASSET SCORECARD SUPPORT
+    # ===============================
+
+    if isinstance(
+        raw,
+        dict
+    ):
+
+
+        for name,value in raw.items():
+
+
+            score = _safe_float(
+                value,
+                50
+            )
+
+
+            drivers.append(
+                {
+
+                    "name":
+                        clean_label(
+                            name
+                        ),
+
+
+                    "score":
+                        score,
+
+
+                    "value":
+                        score,
+
+
+                    "bias":
+                        _bias(
+                            score
+                        ),
+
+
+                    "contribution":
+                        round(
+                            score-50,
+                            2
+                        ),
+
+
+                    "impact":
+                        _impact(
+                            score
+                        ),
+
+
+                    "current":
+                        score,
+
+
+                    "change":
+                        round(
+                            score-50,
+                            2
+                        ),
+
+
+                    "last_updated":
+                        "Current"
+
+                }
+
+            )
+
+
+        return drivers
+
+
+
+
+
+    # OLD ENGINE SUPPORT
+
+    for item in indicators_from_engine(
+        engine
+    ):
+
+
+        score = _safe_float(
+            item.get("score"),
+            50
+        )
+
+
+        drivers.append(
+            {
+
+                "name":
+                    item.get(
+                        "name",
+                        "Unknown"
+                    ),
+
+
+                "score":
+                    score,
+
+
+                "bias":
+                    item.get(
+                        "bias",
+                        _bias(score)
+                    ),
+
+
+                "contribution":
+                    item.get(
+                        "contribution",
+                        0
+                    ),
+
+
+                "impact":
+                    _impact(
+                        score
+                    ),
+
+
+                "current":
+                    item.get(
+                        "current",
+                        "N/A"
+                    ),
+
+
+                "change":
+                    item.get(
+                        "change",
+                        "N/A"
+                    ),
+
+
+                "last_updated":
+                    item.get(
+                        "last_update",
+                        "N/A"
+                    ),
+
+            }
+
+        )
+
+
 
     return drivers
-
 
 def macro_summary(macro: dict[str, Any] | None) -> list[str]:
     if not isinstance(macro, dict):

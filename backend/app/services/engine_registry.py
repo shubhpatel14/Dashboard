@@ -116,22 +116,27 @@ def get_institutional_engine():
 # ==================================================
 
 
-def _run(builder):
+def _run(
+    builder
+):
+
 
     result = builder()
 
 
-    return normalize_macro_scores(
-        result
-    )
 
-    if result is None:
-        return {}
+    # already new asset format
+    if (
+        isinstance(result, dict)
+        and
+        "bullish_drivers" in result
+    ):
+
+        return result
+
+
 
     return result
-
-
-
 def get_macro_category(name: str):
 
     builder = MACRO_BUILDERS.get(name)

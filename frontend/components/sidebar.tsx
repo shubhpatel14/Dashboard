@@ -359,7 +359,7 @@ export function Sidebar() {
 
 
 
-            <NavLink
+            {/* <NavLink
               href="/"
               active={false}
             >
@@ -371,10 +371,7 @@ export function Sidebar() {
               Asset Dashboard
 
 
-            </NavLink>
-
-
-
+            </NavLink> */}
 
 
             {assetSlugs.map(

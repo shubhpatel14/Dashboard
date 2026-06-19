@@ -39,7 +39,24 @@ def build_gold_score(macro):
 
 
 
-def build_gold_engine(macro):
 
-    return build_gold_score(macro)
 
+
+def build_gold_engine():
+
+    from app.services.regime_service import (
+        build_regime_engine
+    )
+
+
+    regime = build_regime_engine()
+
+
+    macro = regime[
+        "macro"
+    ]
+
+
+    return build_gold_score(
+        macro
+    )

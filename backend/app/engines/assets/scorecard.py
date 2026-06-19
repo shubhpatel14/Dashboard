@@ -1,22 +1,21 @@
 def clamp(
     value,
-    minimum=0,
-    maximum=100
+    low=0,
+    high=100
 ):
 
     return max(
-        minimum,
+        low,
         min(
-            value,
-            maximum
+            high,
+            value
         )
     )
 
 
 
 
-
-def classify_asset(
+def classify(
     score
 ):
 
@@ -41,8 +40,8 @@ def classify_asset(
         return "Bearish"
 
 
-
     return "Neutral"
+
 
 
 
@@ -56,9 +55,88 @@ def build_scorecard(
 ):
 
 
-    score = clamp(
-        score
+    score = round(
+        clamp(score),
+        2
     )
+
+
+    bullish = []
+
+    bearish = []
+
+    components = []
+
+    radar = []
+
+
+
+    for name,value in drivers.items():
+
+
+        value = round(
+            value,
+            2
+        )
+
+
+        item = {
+
+            "name":
+                name,
+
+
+            "score":
+                value,
+
+
+            "value":
+                value,
+
+
+            "impact":
+                round(
+                    value-50,
+                    2
+                )
+
+        }
+
+
+        components.append(
+            item
+        )
+
+
+        radar.append(
+
+            {
+                "indicator":
+                    name,
+
+
+                "value":
+                    value
+            }
+
+        )
+
+
+
+        if value >= 55:
+
+            bullish.append(
+                item
+            )
+
+
+        elif value <=45:
+
+            bearish.append(
+                item
+            )
+
+
 
 
 
@@ -66,27 +144,68 @@ def build_scorecard(
 
 
         "asset":
-
             asset,
 
 
         "score":
-
-            round(
-                score,
-                2
-            ),
+            score,
 
 
         "bias":
-
-            classify_asset(
+            classify(
                 score
             ),
 
 
-        "drivers":
+        "outlook":
+            classify(
+                score
+            ),
 
-            drivers
+
+
+        # original raw data
+
+        "drivers":
+            drivers,
+
+
+
+        # frontend compatibility
+
+        "bullish_drivers":
+            bullish,
+
+
+        "bearish_drivers":
+            bearish,
+
+
+        "components":
+            components,
+
+
+        "radar":
+            radar,
+
+
+        "trend":
+            "Neutral",
+
+
+        "history":[
+
+            {
+                "date":"Current",
+
+                "score":score
+            }
+
+        ],
+
+
+        "explanation":
+
+            f"{asset} macro score is {score} with {classify(score)} outlook."
 
     }

@@ -33,7 +33,24 @@ def build_nasdaq_score(macro):
 
 
 
-def build_nasdaq_engine(macro):
 
-    return build_nasdaq_score(macro)
 
+
+def build_nasdaq_engine():
+
+    from app.services.regime_service import (
+        build_regime_engine
+    )
+
+
+    regime = build_regime_engine()
+
+
+    macro = regime[
+        "macro"
+    ]
+
+
+    return build_nasdaq_score(
+        macro
+    )

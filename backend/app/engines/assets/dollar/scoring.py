@@ -37,3 +37,30 @@ def build_dollar_score(macro):
         }
 
     )
+
+
+# =================================
+# ENGINE REGISTRY COMPATIBILITY
+# =================================
+
+
+
+
+def build_dollar_engine():
+
+    from app.services.regime_service import (
+        build_regime_engine
+    )
+
+
+    regime = build_regime_engine()
+
+
+    macro = regime[
+        "macro"
+    ]
+
+
+    return build_dollar_score(
+        macro
+    )
