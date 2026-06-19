@@ -1,24 +1,31 @@
 
-from app.engines.assets.scorecard import build_scorecard
+from app.engines.assets.scorecard import (
+    build_scorecard
+)
 
 
-def build_gold_score(macro):
+from app.engines.assets.factors import (
+    build_asset_factors
+)
+
+
+
+
+def build_gold_score(
+    macro
+):
+
+
+    factors = build_asset_factors(
+        "gold",
+        macro
+    )
+
 
     score = (
 
-        macro["inflation"] * 0.35
+        weighted_score(factors)
 
-        +
-
-        (100 - macro["rates"]) * 0.35
-
-        +
-
-        (100 - macro["growth"]) * 0.15
-
-        +
-
-        (100 - macro["credit"]) * 0.15
     )
 
 
@@ -28,11 +35,7 @@ def build_gold_score(macro):
 
         score,
 
-        {
-            "inflation": macro["inflation"],
-            "rates": macro["rates"],
-            "risk": 100-macro["credit"]
-        }
+        factors
 
     )
 
@@ -40,9 +43,8 @@ def build_gold_score(macro):
 
 
 
-
-
 def build_gold_engine():
+
 
     from app.services.regime_service import (
         build_regime_engine
@@ -60,3 +62,4 @@ def build_gold_engine():
     return build_gold_score(
         macro
     )
+

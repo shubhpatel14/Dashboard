@@ -1,20 +1,30 @@
 
-from app.engines.assets.scorecard import build_scorecard
+from app.engines.assets.scorecard import (
+    build_scorecard
+)
 
 
-def build_bitcoin_score(macro):
+from app.engines.assets.factors import (
+    build_asset_factors
+)
+
+
+
+
+def build_bitcoin_score(
+    macro
+):
+
+
+    factors = build_asset_factors(
+        "bitcoin",
+        macro
+    )
+
 
     score = (
 
-        macro["liquidity"] * 0.55
-
-        +
-
-        macro["rates"] * 0.25
-
-        +
-
-        macro["growth"] * 0.20
+        weighted_score(factors)
 
     )
 
@@ -25,11 +35,7 @@ def build_bitcoin_score(macro):
 
         score,
 
-        {
-            "liquidity": macro["liquidity"],
-            "rates": macro["rates"],
-            "growth": macro["growth"]
-        }
+        factors
 
     )
 
@@ -37,9 +43,8 @@ def build_bitcoin_score(macro):
 
 
 
-
-
 def build_bitcoin_engine():
+
 
     from app.services.regime_service import (
         build_regime_engine
@@ -57,3 +62,4 @@ def build_bitcoin_engine():
     return build_bitcoin_score(
         macro
     )
+

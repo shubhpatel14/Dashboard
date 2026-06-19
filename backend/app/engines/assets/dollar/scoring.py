@@ -1,52 +1,50 @@
 
-from app.engines.assets.scorecard import build_scorecard
+from app.engines.assets.scorecard import (
+    build_scorecard
+)
 
 
-def build_dollar_score(macro):
+from app.engines.assets.factors import (
+    build_asset_factors
+)
 
-    score=(
 
-        macro["rates"] * 0.35
 
-        +
 
-        (100-macro["growth"]) * 0.20
+def build_dollar_score(
+    macro
+):
 
-        +
 
-        (100-macro["credit"]) * 0.25
+    factors = build_asset_factors(
+        "dollar",
+        macro
+    )
 
-        +
 
-        (100-macro["liquidity"]) * 0.20
+    score = (
+
+        weighted_score(factors)
 
     )
 
 
     return build_scorecard(
 
-        "US Dollar",
+        "Dollar",
 
         score,
 
-        {
-            "rates":macro["rates"],
-            "risk":100-macro["credit"],
-            "growth_weakness":100-macro["growth"],
-            "liquidity_tightness":100-macro["liquidity"]
-        }
+        factors
 
     )
 
-
-# =================================
-# ENGINE REGISTRY COMPATIBILITY
-# =================================
 
 
 
 
 def build_dollar_engine():
+
 
     from app.services.regime_service import (
         build_regime_engine
@@ -64,3 +62,4 @@ def build_dollar_engine():
     return build_dollar_score(
         macro
     )
+

@@ -957,69 +957,80 @@ def indicators_from_engine(
 
                     ),
 
+            # =========================
+            # HISTORICAL INTELLIGENCE V4
+            # =========================
 
-                # =========================
-                # HISTORICAL INTELLIGENCE V4
-                # =========================
 
+            "percentile":
 
-                "percentile":
-
-                    _safe_float(
-                        item.get(
-                            "percentile"
-                        ),
-                        50
+                _safe_float(
+                    item.get(
+                        "percentile"
                     ),
+                    50
+                ),
 
 
 
-                "z_score":
+            "z_score":
 
-                    _safe_float(
-                        item.get(
-                            "z_score"
-                        ),
-                        0
+                _safe_float(
+                    item.get(
+                        "z_score"
                     ),
+                    0
+                ),
 
 
 
-                "historical_average":
+            "historical_average":
 
-                    _safe_float(
+                _safe_float(
+                    item.get(
+                        "average",
                         item.get(
                             "historical_average"
-                        ),
-                        0
+                        )
                     ),
+                    0
+                ),
 
 
 
-                "distance_avg":
+            "average":
 
-                    _safe_float(
+                _safe_float(
+                    item.get(
+                        "average"
+                    ),
+                    0
+                ),
+
+
+
+            "distance_avg":
+
+                _safe_float(
+                    item.get(
+                        "distance_avg"
+                    ),
+                    0
+                ),
+
+
+
+            "distance_from_average":
+
+                _safe_float(
+                    item.get(
+                        "distance_avg",
                         item.get(
-                            "distance_avg"
-                        ),
-                        0
+                            "distance_from_average"
+                        )
                     ),
-
-
-
-                # keep old frontend compatibility
-
-                "distance_from_average":
-
-                    _safe_float(
-                        item.get(
-                            "distance_avg",
-                            item.get(
-                                "distance_from_average"
-                            )
-                        ),
-                        0
-                    ),
+                    0
+                ),
             }
 
         )

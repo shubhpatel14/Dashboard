@@ -1,5 +1,13 @@
+
+from app.engines.assets.factors import weighted_score
+
 from app.engines.assets.scorecard import (
     build_scorecard
+)
+
+
+from app.engines.assets.factors import (
+    build_asset_factors
 )
 
 
@@ -10,96 +18,35 @@ def build_sp500_score(
 ):
 
 
-    score = (
-
-
-        # liquidity drives multiples
-
-        macro["liquidity"]
-        *
-        0.35
-
-
-        +
-
-
-        # earnings cycle
-
-        macro["growth"]
-        *
-        0.30
-
-
-        +
-
-
-        # credit conditions
-
-        macro["credit"]
-        *
-        0.20
-
-
-        +
-
-
-        # rates pressure
-
-        macro["rates"]
-        *
-        0.15
-
-
+    factors = build_asset_factors(
+        "sp500",
+        macro
     )
 
 
+    score = (
+
+        weighted_score(factors)
+
+    )
 
 
     return build_scorecard(
 
+        "SP500",
 
-        asset=
-            "S&P 500",
+        score,
 
-
-        score=
-            score,
-
-
-        drivers={
-
-
-            "liquidity":
-
-                macro["liquidity"],
-
-
-            "growth":
-
-                macro["growth"],
-
-
-            "credit":
-
-                macro["credit"],
-
-
-            "rates":
-
-                macro["rates"]
-
-
-        }
-
+        factors
 
     )
-
 
 
 
 
 
 def build_sp500_engine():
+
 
     from app.services.regime_service import (
         build_regime_engine
@@ -117,3 +64,4 @@ def build_sp500_engine():
     return build_sp500_score(
         macro
     )
+

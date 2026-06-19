@@ -9,6 +9,9 @@ from app.engines.macro.category_final_score import (
     build_category_final_score,
 )
 from app.core.cache import cached, clear_cache
+from app.services.macro_score_normalizer import (
+    normalize_macro_scores
+)
 
 from app.services.engine_registry import (
     MACRO_BUILDERS,
@@ -208,178 +211,6 @@ def update_economic_data():
 # ================================
 # DASHBOARD
 # ================================
-
-@router.get(
-    "/dashboard",
-    response_model=MacroDashboardResponse
-)
-def macro_dashboard():
-
-    try:
-
-        macro = get_macro_engine() or {}
-
-        trend = get_trend_engine() or {}
-
-
-        surprise = build_macro_surprise()
-
-
-        final_macro = build_final_macro_score(
-            macro,
-            surprise
-        )
-
-
-        score = final_macro[
-            "score"
-        ]
-
-
-        asset_scores = macro_asset_impact(
-            surprise,
-            macro
-        )
-
-        regime_detail = build_macro_regime(
-             macro
-        )
-
-
-        regime_history = update_regime_history(
-            regime_detail
-        )
-
-        portfolio = build_allocation(
-            asset_scores,
-            regime_detail
-        )
-
-
-        print(portfolio)
-
-
-    except Exception as exc:
-
-
-        logger.exception(exc)
-
-
-        return {
-
-            "success": False,
-
-            "data_status": "fallback",
-
-            "macro_score":50,
-
-            "regime":"Neutral",
-
-            "trend":"Neutral",
-
-            "asset_outlooks": {},
-
-            "category_scores": {},
-
-            "history": [],
-        }
-
-
-
-    return {
-
-        "success": True,
-        
-        "data_status": "connected",
-
-
-        "macro_score": score,
-
-
-        "regime":
-         regime_detail["regime"],
-
-
-        "trend":
-            clean_label(
-                trend.get(
-                    "trend",
-                    "Neutral"
-                )
-            ),
-
-
-        "recession_risk":
-            clean_label(
-                macro
-                .get("outlooks",{})
-                .get(
-                    "Recession Risk Level",
-                    "N/A"
-                )
-            ),
-
-
-        "risk_status":
-            clean_label(
-                macro.get(
-                    "risk_status",
-                    "Neutral"
-                )
-            ),
-
-        "regime_detail":
-            regime_detail,
-
-        
-        "regime_history":
-            regime_history,
-
-
-        "summary":
-            macro_summary(
-                macro
-            ),
-
-
-        # 🔥 NEW SMART ASSET ENGINE
-        "asset_outlooks":
-            asset_scores,
-
-        "portfolio_allocation":
-            portfolio,
-
-
-        # ?? ECONOMIC RELEASE SURPRISE MONITOR
-        "macro_surprises":
-            surprise.get(
-                "events",
-                []
-            ),
-
-        "category_scores": {
-
-            **macro.get(
-                "scores",
-                {}
-            ),
-
-            "macro_surprise":
-                surprise.get(
-                    "score"
-                ),
-        },
-
-
-        "history":
-            macro_category_history(
-                "trend",
-                score
-            ),
-    }
-
-
-
 # ================================
 # CATEGORY ROUTE
 # KEEP LAST
@@ -407,16 +238,53 @@ def macro_category(category:str):
         )
 
 
+
     try:
 
 
+        # ================================
+        # RAW MACRO ENGINE
+        # ================================
+
         engine = (
-            get_macro_category(slug)
+            get_macro_category(
+                slug
+            )
             or {}
         )
 
+
+
+        # ================================
+        # RESTORE HISTORICAL INTELLIGENCE
+        #
+        # percentile
+        # z_score
+        # average
+        # distance_avg
+        # samples
+        # ================================
+
+        engine = normalize_macro_scores(
+            engine
+        )
+
+
+
+
+        # ================================
+        # SURPRISE ENGINE
+        # ================================
+
         surprise = build_macro_surprise()
 
+
+
+
+        # ================================
+        # FINAL CATEGORY SCORE
+        # keep AFTER normalization
+        # ================================
 
         engine = build_category_final_score(
             slug,
@@ -424,15 +292,26 @@ def macro_category(category:str):
             surprise
         )
 
+
+
+
         score = _safe_score(
-            engine.get("score")
+            engine.get(
+                "score"
+            )
         )
+
+
 
 
         name = MACRO_LABELS.get(
             slug,
-            clean_label(slug).title()
+            clean_label(
+                slug
+            ).title()
         )
+
+
 
 
         bias = clean_label(
@@ -443,17 +322,33 @@ def macro_category(category:str):
         )
 
 
+
+
+        # ================================
+        # TRANSFORMER
+        # now receives historical stats
+        # ================================
+
         indicators = indicators_from_engine(
             engine
         )
 
 
+
+
         intelligence = macro_category_intelligence(
+
             name,
+
             score,
+
             bias,
+
             indicators,
+
         )
+
+
 
 
     except Exception as exc:
@@ -466,67 +361,118 @@ def macro_category(category:str):
 
 
 
+
+
     return {
 
-        "success": True,
 
-        "data_status":"connected",
+        "success":
+            True,
 
-        "name": name,
 
-        "score": score,
-                
+
+        "data_status":
+            "connected",
+
+
+
+        "name":
+            name,
+
+
+
+        "score":
+            score,
+
+
+
         "core_score":
+
             engine.get(
                 "core_score"
             ),
 
 
+
         "surprise_score":
+
             engine.get(
                 "surprise_score"
             ),
 
 
+
         "surprise_events":
+
             engine.get(
                 "surprise_events",
                 []
             ),
 
-        "bias": bias,
+
+
+
+        "bias":
+            bias,
+
+
 
 
         "trend":
-            intelligence["trend"],
+
+            intelligence[
+                "trend"
+            ],
+
+
 
 
         "summary":
-            intelligence["summary"],
+
+            intelligence[
+                "summary"
+            ],
+
+
 
 
         "drivers":
-            intelligence["drivers"],
+
+            intelligence[
+                "drivers"
+            ],
+
+
 
 
         "indicators":
+
             indicators,
 
 
+
+
         "explanation":
-            intelligence["summary"],
+
+            intelligence[
+                "summary"
+            ],
+
+
 
 
         "history":
+
             macro_category_history(
                 slug,
                 score
             ),
 
 
+
+
         "data":
+
             indicators,
+
     }
-
-
-

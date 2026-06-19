@@ -1,42 +1,50 @@
 
-from app.engines.assets.scorecard import build_scorecard
+from app.engines.assets.scorecard import (
+    build_scorecard
+)
 
 
-def build_nasdaq_score(macro):
+from app.engines.assets.factors import (
+    build_asset_factors
+)
+
+
+
+
+def build_nasdaq_score(
+    macro
+):
+
+
+    factors = build_asset_factors(
+        "nasdaq",
+        macro
+    )
+
 
     score = (
-        macro["liquidity"] * 0.45
-        +
-        macro["growth"] * 0.20
-        +
-        macro["rates"] * 0.25
-        +
-        macro["credit"] * 0.10
+
+        weighted_score(factors)
+
     )
 
 
     return build_scorecard(
 
-        "NASDAQ",
+        "Nasdaq",
 
         score,
 
-        {
-            "liquidity": macro["liquidity"],
-            "growth": macro["growth"],
-            "rates": macro["rates"],
-            "credit": macro["credit"]
-        }
+        factors
 
     )
-
-
 
 
 
 
 
 def build_nasdaq_engine():
+
 
     from app.services.regime_service import (
         build_regime_engine
@@ -54,3 +62,4 @@ def build_nasdaq_engine():
     return build_nasdaq_score(
         macro
     )
+
