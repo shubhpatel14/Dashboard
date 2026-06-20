@@ -330,3 +330,149 @@ def macro_statistics(
     finally:
 
         db.close()
+
+
+
+
+
+
+
+
+
+
+# ==========================================
+# DATABASE INDICATOR STATISTICS
+# AUTO NAME MATCH
+# ==========================================
+
+from app.database.connection import SessionLocal
+from sqlalchemy import text
+import numpy as np
+
+
+
+def get_indicator_statistics(
+    indicator,
+    current_value
+):
+
+    db=SessionLocal()
+
+
+    try:
+
+
+        key = (
+            indicator
+            .upper()
+            .replace(" ","_")
+        )
+
+
+        rows=db.execute(
+            text(
+            """
+
+            SELECT value
+
+            FROM macro_series
+
+            WHERE 
+            UPPER(indicator)=:name
+
+            """
+            ),
+
+            {
+            "name":key
+            }
+
+        ).all()
+
+
+
+        values=[
+            float(x[0])
+            for x in rows
+            if x[0] is not None
+        ]
+
+
+
+        if len(values)<5:
+
+
+            return {
+
+            "percentile":50,
+            "z_score":0,
+            "average":0,
+            "distance_average":0
+
+            }
+
+
+
+        current=float(current_value)
+
+
+        avg=float(
+            np.mean(values)
+        )
+
+
+        std=float(
+            np.std(values)
+        )
+
+
+
+        percentile=(
+            sum(
+            x<=current
+            for x in values
+            )
+            /
+            len(values)
+            *
+            100
+        )
+
+
+        return {
+
+
+        "percentile":
+
+            round(percentile,2),
+
+
+        "z_score":
+
+            round(
+            (current-avg)/std
+            if std else 0,
+            2
+            ),
+
+
+        "average":
+
+            round(avg,2),
+
+
+        "distance_average":
+
+            round(
+            current-avg,
+            2
+            )
+
+        }
+
+
+    finally:
+
+        db.close()
+
+

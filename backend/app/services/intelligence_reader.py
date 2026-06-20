@@ -367,3 +367,57 @@ def get_all_assets():
 
         db.close()
 
+
+def get_macro_history(category):
+
+
+    db = SessionLocal()
+
+
+    try:
+
+
+        rows = db.execute(
+
+            text("""
+
+            SELECT
+                created_at,
+                score
+
+            FROM macro_scores
+
+            WHERE LOWER(category)=LOWER(:category)
+
+            ORDER BY created_at
+
+            """),
+
+            {
+                "category":category
+            }
+
+        ).all()
+
+
+
+        return [
+
+            {
+
+                "date":str(row[0]),
+
+                "score":row[1]
+
+            }
+
+            for row in rows
+
+        ]
+
+
+
+    finally:
+
+        db.close()
+

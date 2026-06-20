@@ -98,6 +98,9 @@ from app.services.intelligence_reader import (
 
     get_all_assets,
 
+    get_macro_history,
+
+
 )
 
 
@@ -165,42 +168,48 @@ class MacroDashboardResponse(BaseModel):
 
 class MacroCategoryResponse(BaseModel):
 
-    model_config=ConfigDict(
+    model_config = ConfigDict(
         extra="allow"
     )
 
 
-    success:bool=True
+    success: bool = True
 
-    data_status:str="connected"
+    data_status: str = "connected"
 
-    name:str="Macro"
+    name: str = "Macro"
 
-    score:float=50
+    score: float = 50
 
-    bias:str="Neutral"
+    bias: str = "Neutral"
 
-    core_score:Optional[float]=None
+    core_score: Optional[float] = None
 
-    surprise_score:Optional[float]=None
-
-    surprise_events:list[Any]=[]
-
-    trend:str="Stable"
-
-    summary:str=""
-
-    drivers:list[dict[str,Any]]=[]
-
-    indicators:list[dict[str,Any]]=[]
-
-    explanation:str=""
-
-    history:list[dict[str,Any]]=[]
-
-    data:list[dict[str,Any]]=[]
+    surprise_score: Optional[float] = None
 
 
+    surprise_events: Any = []
+
+
+    trend: str = "Stable"
+
+
+    summary: Any = ""
+
+
+    drivers: Any = []
+
+
+    indicators: Any = []
+
+
+    explanation: str = ""
+
+
+    history: Any = []
+
+
+    data: Any = []
 
 
 
@@ -671,12 +680,9 @@ def macro_category(
 
     )
 
+     # DATABASE FIRST
 
-
-
-    # DATABASE FIRST
-
-    stored=get_latest_category(
+    stored = get_latest_category(
         slug
     )
 
@@ -684,22 +690,199 @@ def macro_category(
     if stored:
 
 
+        raw_data = (
+
+            stored.get(
+                "indicators"
+            )
+
+            or
+
+            stored.get(
+                "data"
+            )
+
+            or
+
+            stored.get(
+                "components"
+            )
+
+            or {}
+
+        )
+
+
+        indicators = []
+
+
+        if isinstance(
+            raw_data,
+            dict
+        ):
+
+
+            for key, value in raw_data.items():
+
+
+                item = dict(
+                    value
+                )
+
+
+                item[
+                    "name"
+                ] = key
+
+
+                item[
+                    "indicator"
+                ] = key 
+
+
+                item["percentile"] = item.get(
+                    "percentile",
+                    50
+                )
+
+
+                item["z_score"] = item.get(
+                    "z_score",
+                    0
+                )
+
+
+                item["distance_average"] = item.get(
+                    "distance_average",
+                    item.get(
+                        "distance_avg",
+                        0
+                    )
+                )
+
+                indicators.append(
+                    item
+                )
+
+
+        elif isinstance(
+            raw_data,
+            list
+        ):
+
+
+            indicators = raw_data
+
+
+
         return {
 
 
-        "success":True,
+            "success": True,
 
 
-        "data_status":"database",
+            "data_status": "database",
 
 
-        **stored
+            "name":
+
+                stored.get(
+                    "name",
+                    clean_label(slug)
+                ),
+
+
+            "score":
+
+                stored.get(
+                    "score",
+                    50
+                ),
+
+
+            "bias":
+
+                stored.get(
+                    "bias",
+                    "Neutral"
+                ),
+
+
+            "trend":
+
+                stored.get(
+                    "trend",
+                    "Stable"
+                ),
+
+
+            "drivers":
+
+                stored.get(
+                    "drivers",
+                    []
+                ),
+
+
+            "indicators":
+
+                indicators,
+
+
+            "data":
+
+                indicators,
+
+
+          "history":
+
+            get_macro_history(
+                slug
+            ),
+
+            "summary":
+
+                stored.get(
+                    "summary",
+                    ""
+                ),
+
+
+            "explanation":
+
+                stored.get(
+                    "explanation",
+                    ""
+                ),
+
+                        "core_score":
+
+                stored.get(
+                    "core_score",
+                    stored.get(
+                        "score",
+                        50
+                    )
+                ),
+
+
+
+            "surprise_score":
+
+                stored.get(
+                    "surprise_score",
+                    50
+                ),
+
+
+            "raw":
+
+                stored
 
         }
 
 
-
-
+    # ENGINE FALLBACK
 
     # ENGINE FALLBACK
 

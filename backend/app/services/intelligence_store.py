@@ -1,7 +1,11 @@
 
 import json
 
+
 from sqlalchemy import text
+
+
+
 
 from app.database.connection import SessionLocal
 
@@ -12,10 +16,126 @@ from app.database.connection import SessionLocal
 # ============================================
 
 
+
+
+
+
+# ==========================================
+# AUTO ENRICH MACRO INDICATORS WITH STATS
+# ==========================================
+
+def enrich_indicator_statistics(category_data):
+
+
+    data = (
+        category_data.get("data")
+        or
+        category_data.get("indicators")
+        or
+        {}
+    )
+
+
+    if isinstance(data, dict):
+
+
+        for key,value in data.items():
+
+
+            try:
+
+
+                stats = get_indicator_statistics(
+                    key,
+                    value.get("current")
+                )
+
+
+                value["percentile"] = stats.get(
+                    "percentile",
+                    50
+                )
+
+
+                value["z_score"] = stats.get(
+                    "z_score",
+                    0
+                )
+
+
+                value["average"] = stats.get(
+                    "average",
+                    0
+                )
+
+
+                value["distance_average"] = stats.get(
+                    "distance_average",
+                    0
+                )
+
+
+
+            except Exception:
+
+
+                value["percentile"] = 50
+
+                value["z_score"] = 0
+
+                value["distance_average"] = 0
+
+
+
+    return category_data
+
+
 def save_macro_category(
     category,
     result
 ):
+
+
+    # ==================================
+    # ADD HISTORICAL STATISTICS
+    # ==================================
+
+    payload = data
+
+
+    indicators = (
+        payload.get("data")
+        or
+        payload.get("indicators")
+        or
+        {}
+    )
+
+
+    if isinstance(indicators, dict):
+
+
+        for name,item in indicators.items():
+
+
+            try:
+
+
+                stats=get_indicator_statistics(
+                    name,
+                    item.get("current")
+                )
+
+
+                item.update(stats)
+
+
+            except Exception:
+
+
+                pass
+
+
 
     db = SessionLocal()
 
@@ -215,7 +335,7 @@ def save_macro_dashboard(data):
 
 
         "data":
-        json.dumps(data)
+        json.dumps(enrich_indicator_statistics(data))
 
         })
 
