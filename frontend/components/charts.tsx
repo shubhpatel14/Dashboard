@@ -19,7 +19,7 @@ import {
   YAxis
 } from "recharts";
 import type { Driver, HistoryPoint, Indicator, InstitutionalResponse } from "@/types/api";
-import { clampScore, formatNumber, toNumber } from "@/lib/format";
+import { clampScore, formatLabel, formatNumber, toNumber } from "@/lib/format";
 
 const grid = "rgb(var(--line))";
 const ink = "rgb(var(--ink))";
@@ -93,7 +93,7 @@ export function ScoreLine({ data, name = "Score" }: { data: HistoryPoint[]; name
 export function DriverBars({ drivers }: { drivers: Driver[] }) {
   const rows = Array.isArray(drivers)
     ? drivers.map((driver) => ({
-        name: driver.name || "Driver",
+        name: formatLabel(driver.name || "Driver"),
         score: clampScore(driver.score),
         contribution: toNumber(driver.contribution, clampScore(driver.score))
       }))
@@ -134,7 +134,7 @@ export function ContributionBars({ indicators }: { indicators: Indicator[] }) {
           ? Number(indicator.contribution)
           : Math.round((score - 50) * (weight / 100) * 100) / 100;
         return {
-          name: indicator.name || "Indicator",
+          name: formatLabel(indicator.name || "Indicator"),
           impact: rawImpact,
           score
         };
@@ -170,7 +170,7 @@ export function ContributionBars({ indicators }: { indicators: Indicator[] }) {
 export function AssetRadar({ drivers }: { drivers: Driver[] }) {
   const rows = Array.isArray(drivers)
     ? drivers.slice(0, 8).map((driver) => ({
-        driver: driver.name || "Driver",
+        driver: formatLabel(driver.name || "Driver"),
         score: clampScore(driver.score)
       }))
     : [];
@@ -197,7 +197,7 @@ export function AssetRadar({ drivers }: { drivers: Driver[] }) {
 export function IndicatorTrendChart({ indicators }: { indicators: Indicator[] }) {
   const rows = Array.isArray(indicators)
     ? indicators.slice(0, 8).map((indicator) => ({
-        name: indicator.name || "Indicator",
+        name: formatLabel(indicator.name || "Indicator"),
         previous: toNumber(indicator.previous, 0),
         current: toNumber(indicator.current, 0)
       }))

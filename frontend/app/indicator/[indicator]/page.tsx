@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Gauge, LineChart, Table2 } from "lucide-react";
 import { fetchApi, macroCategories } from "@/lib/api";
-import { biasFromScore, clampScore, formatNumber, titleCase } from "@/lib/format";
+import { biasFromScore, clampScore, formatLabel, formatNumber, titleCase } from "@/lib/format";
 import { ScoreLine } from "@/components/lazy-charts";
 import { BiasPill, Panel, ScoreBar, SectionTitle, StatCard } from "@/components/ui";
 import type { Indicator, MacroCategory } from "@/types/api";
@@ -10,7 +10,7 @@ import type { Indicator, MacroCategory } from "@/types/api";
 export const dynamic = "force-dynamic";
 
 type FoundIndicator = {
-  category: string;
+  category: string; 
   categorySlug: string;
   indicator: Indicator;
 };
@@ -75,6 +75,7 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
   }
 
   const { indicator, category, categorySlug } = found;
+  const indicatorName = formatLabel(indicator.name);
   const score = clampScore(indicator.score);
   const current = indicator.current_display ?? formatNumber(indicator.current);
   const previous = indicator.previous_display ?? formatNumber(indicator.previous);
@@ -89,10 +90,10 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
         <div>
           <Link href={`/macro?category=${categorySlug}`} className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-ink">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            {category}
+            {formatLabel(category)}
           </Link>
-          <div className="text-xs font-semibold uppercase text-muted">Indicator Analysis</div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{indicator.name}</h1>
+          <div className="text-xs font-semibold text-muted">Indicator Analysis</div>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{indicatorName}</h1>
         </div>
         <BiasPill value={indicator.bias || biasFromScore(score)} />
       </header>
@@ -107,7 +108,7 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
       <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
         <Panel>
           <SectionTitle title="Historical Chart" action={<LineChart className="h-4 w-4 text-muted" />} />
-          <ScoreLine data={historicalRows} name={`${indicator.name} Signal`} />
+          <ScoreLine data={historicalRows} name={`${indicatorName} Signal`} />
         </Panel>
 
         <Panel>
@@ -121,8 +122,8 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
               ["Distance from average", formatNumber(indicator.distance_from_average ?? 0)]
             ].map(([label, value]) => (
               <div key={label} className="flex items-center justify-between border-b border-line pb-3 last:border-0">
-                <span className="text-xs font-semibold uppercase text-muted">{label}</span>
-                <span className="text-sm font-semibold text-ink">{value}</span>
+                <span className="text-xs font-semibold text-muted">{formatLabel(label)}</span>
+                <span className="text-sm font-semibold tabular-nums text-ink">{value}</span>
               </div>
             ))}
             <ScoreBar score={score} height="h-3" />
@@ -133,7 +134,7 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
       <Panel>
         <SectionTitle title="Macro Explanation" />
         <p className="max-w-5xl text-sm leading-6 text-ink">
-          {indicator.explanation || indicator.info || `${indicator.name} currently screens ${biasFromScore(score).toLowerCase()} for macro conditions.`}
+          {indicator.explanation || indicator.info || `${indicatorName} currently screens ${biasFromScore(score).toLowerCase()} for macro conditions.`}
         </p>
       </Panel>
 
@@ -143,7 +144,7 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
           <div className="space-y-2">
             {marketImpactMatrix(score).map(([asset, impact]) => (
               <div key={asset} className="flex items-center justify-between rounded-lg border border-line bg-canvas px-3 py-2">
-                <span className="text-sm font-semibold text-ink">{asset}</span>
+                <span className="text-sm font-semibold text-ink">{formatLabel(asset)}</span>
                 <BiasPill value={impact} />
               </div>
             ))}
@@ -165,15 +166,15 @@ export default async function IndicatorPage({ params }: { params: { indicator: s
               <tbody>
                 <tr className="border-b border-line">
                   <td className="py-3 pr-4">Previous</td>
-                  <td className="py-3 pr-4">{previous}</td>
+                  <td className="py-3 pr-4 tabular-nums">{previous}</td>
                   <td className="py-3 pr-4">N/A</td>
-                  <td className="py-3 pr-4">{formatNumber(clampScore(indicator.previous, score))}</td>
+                  <td className="py-3 pr-4 tabular-nums">{formatNumber(clampScore(indicator.previous, score))}</td>
                 </tr>
                 <tr>
                   <td className="py-3 pr-4">Current</td>
-                  <td className="py-3 pr-4">{current}</td>
-                  <td className="py-3 pr-4">{indicator.change_display ?? formatNumber(indicator.change)}</td>
-                  <td className="py-3 pr-4">{formatNumber(score)}</td>
+                  <td className="py-3 pr-4 tabular-nums">{current}</td>
+                  <td className="py-3 pr-4 tabular-nums">{indicator.change_display ?? formatNumber(indicator.change)}</td>
+                  <td className="py-3 pr-4 tabular-nums">{formatNumber(score)}</td>
                 </tr>
               </tbody>
             </table>

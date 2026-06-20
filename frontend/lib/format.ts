@@ -45,10 +45,45 @@ export function asArray<T>(value: T[] | T | null | undefined): T[] {
   return [value];
 }
 
-export function titleCase(value: string) {
+const LABEL_SPECIAL_CASES: Record<string, string> = {
+  "n/a": "N/A",
+  "s&p": "S&P",
+  sp500: "SP500",
+  nasdaq: "NASDAQ",
+  usd: "USD",
+  cpi: "CPI",
+  pce: "PCE",
+  gdp: "GDP",
+  fed: "FED"
+};
+
+export function formatLabel(value?: string) {
+  if (!value) {
+    return "N/A";
+  }
+
   return value
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    .replaceAll("_", " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => {
+      const normalized = word.toLowerCase();
+
+      if (LABEL_SPECIAL_CASES[normalized]) {
+        return LABEL_SPECIAL_CASES[normalized];
+      }
+
+      if (/^[A-Z0-9]+$/.test(word)) {
+        return word;
+      }
+
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
+export function titleCase(value: string) {
+  return formatLabel(value);
 }
 
 export function regimeFromScore(score: unknown) {

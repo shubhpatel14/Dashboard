@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { AlertTriangle, Info } from "lucide-react";
-import { clampScore, formatNumber, regimeFromScore, toneClass } from "@/lib/format";
+import { clampScore, formatLabel, formatNumber, regimeFromScore, toneClass } from "@/lib/format";
 
 export function Panel({
   children,
@@ -25,7 +25,7 @@ export function SectionTitle({
 }) {
   return (
     <div className="mb-3 flex min-h-8 items-center justify-between gap-4">
-      <h2 className="text-sm font-semibold uppercase tracking-normal text-ink">{title}</h2>
+      <h2 className="text-sm font-semibold tracking-normal text-ink">{formatLabel(title)}</h2>
       {action}
     </div>
   );
@@ -42,8 +42,8 @@ export function StatCard({
 }) {
   return (
     <Panel>
-      <div className="text-xs font-medium uppercase tracking-normal text-muted">{label}</div>
-      <div className={clsx("mt-2 text-2xl font-semibold", toneClass(value))}>{formatNumber(value)}</div>
+      <div className="text-xs font-medium tracking-normal text-muted">{formatLabel(label)}</div>
+      <div className={clsx("mt-2 text-2xl font-semibold tabular-nums", toneClass(value))}>{typeof value === "string" ? formatLabel(value) : formatNumber(value)}</div>
       {sub ? <div className="mt-1 text-xs text-muted">{sub}</div> : null}
     </Panel>
   );
@@ -52,7 +52,7 @@ export function StatCard({
 export function BiasPill({ value }: { value: string | number }) {
   return (
     <span className={clsx("inline-flex items-center rounded-md border bg-surface px-2 py-1 text-xs font-semibold", toneClass(value))}>
-      {String(value || "N/A")}
+      {typeof value === "string" ? formatLabel(value) : formatNumber(value)}
     </span>
   );
 }
@@ -105,13 +105,13 @@ export function MacroGauge({ score }: { score: unknown }) {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className={clsx("text-3xl font-semibold tabular-nums", toneClass(value))}>{formatNumber(value)}</div>
-          <div className="text-[10px] font-semibold uppercase text-muted">Score</div>
+          <div className="text-[10px] font-semibold text-muted">Score</div>
         </div>
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-xs font-semibold uppercase text-muted">Risk Regime</div>
-        <div className={clsx("mt-1 text-2xl font-semibold uppercase", toneClass(value))}>{regime}</div>
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-semibold uppercase text-muted">
+        <div className="text-xs font-semibold text-muted">Risk Regime</div>
+        <div className={clsx("mt-1 text-2xl font-semibold", toneClass(value))}>{regime}</div>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-semibold text-muted">
           <span className="rounded-md border border-negative/40 py-1 text-negative">Stress</span>
           <span className="rounded-md border border-neutral/40 py-1 text-neutral">Neutral</span>
           <span className="rounded-md border border-positive/40 py-1 text-positive">Expansion</span>

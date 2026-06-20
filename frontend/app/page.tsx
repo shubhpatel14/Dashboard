@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CircleDollarSign, Database, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { assetLabels, assetSlugs, fetchApi } from "@/lib/api";
-import { asArray, biasFromScore, clampScore, formatNumber, regimeFromScore, titleCase, toneClass, toNumber } from "@/lib/format";
+import { asArray, biasFromScore, clampScore, formatLabel, formatNumber, titleCase, toneClass } from "@/lib/format";
 import { BiasPill, EmptyState, MacroGauge, Panel, ScoreBar, SectionTitle } from "@/components/ui";
 import { TerminalActions } from "@/components/terminal-actions";
 import type { AssetResponse, HistoryPoint, MacroDashboard } from "@/types/api";
@@ -50,19 +50,19 @@ async function getAsset(slug: string): Promise<AssetRow> {
   const positives = drivers
     .filter((driver) => clampScore(driver.score) >= 55 || String(driver.bias).toLowerCase().includes("bull"))
     .slice(0, 2)
-    .map((driver) => `${driver.name} +${formatNumber(driver.score)}`);
+    .map((driver) => `${formatLabel(driver.name)} +${formatNumber(driver.score)}`);
   const negatives = drivers
     .filter((driver) => clampScore(driver.score) <= 45 || String(driver.bias).toLowerCase().includes("bear"))
     .slice(0, 2)
-    .map((driver) => `${driver.name} ${formatNumber(driver.score)}`);
+    .map((driver) => `${formatLabel(driver.name)} ${formatNumber(driver.score)}`);
   const score = clampScore(data.asset_score);
 
   return {
     slug,
-    asset: data.asset || assetLabels[slug] || titleCase(slug),
+    asset: formatLabel(data.asset || assetLabels[slug] || titleCase(slug)),
     score,
     bias: data.outlook || biasFromScore(score),
-    trend: drivers[0]?.bias || biasFromScore(score),
+    trend: formatLabel(drivers[0]?.bias || biasFromScore(score)),
     positives,
     negatives
   };
@@ -111,7 +111,7 @@ function DataStatus({ status, updated }: { status?: string; updated: string }) {
   const fallback = status && status !== "connected";
   return (
     <div className="rounded-xl border border-line bg-surface px-3 py-2 text-xs shadow-terminal">
-      <div className="flex items-center justify-end gap-2 font-semibold uppercase text-ink">
+      <div className="flex items-center justify-end gap-2 font-semibold text-ink">
         <span className={`h-2 w-2 rounded-full ${fallback ? "bg-neutral" : "bg-positive"}`} />
         {fallback ? "Using cached data" : "API Connected"}
       </div>
@@ -141,7 +141,7 @@ function AiMacroBrief({ summary, categories }: { summary: string[]; categories: 
           const value = score ?? 50;
           return (
             <div key={label} className="flex items-center justify-between rounded-lg border border-line bg-canvas px-3 py-2">
-              <span className="text-xs font-semibold uppercase text-muted">{label}</span>
+              <span className="text-xs font-semibold text-muted">{formatLabel(label)}</span>
               <span className={toneClass(value) + " text-sm font-semibold"}>{score === undefined ? biasFromScore(value) : biasFromScore(value)}</span>
             </div>
           );
@@ -200,12 +200,12 @@ function MarketPlaybook({
 
 
         <div>
-          <div className="text-xs uppercase text-muted">
+          <div className="text-xs text-muted">
             Regime
           </div>
 
           <div className="mt-2 text-lg font-semibold">
-            {regime}
+            {formatLabel(regime)}
           </div>
         </div>
 
@@ -213,7 +213,7 @@ function MarketPlaybook({
 
         <div>
 
-          <div className="text-xs uppercase text-muted">
+          <div className="text-xs text-muted">
             Favored Assets
           </div>
 
@@ -224,7 +224,7 @@ function MarketPlaybook({
                 key={a.asset}
                 className="text-positive font-semibold"
               >
-                ↑ {a.asset}
+                ↑ {formatLabel(a.asset)}
               </div>
             )
 
@@ -242,7 +242,7 @@ function MarketPlaybook({
 
         <div>
 
-          <div className="text-xs uppercase text-muted">
+          <div className="text-xs text-muted">
             Under Pressure
           </div>
 
@@ -253,7 +253,7 @@ function MarketPlaybook({
                 key={a.asset}
                 className="text-negative font-semibold"
               >
-                ↓ {a.asset}
+                ↓ {formatLabel(a.asset)}
               </div>
             )
 
@@ -295,11 +295,11 @@ function RegimeTimeline({ score }: { score: number }) {
             (label === "Recovery" && score > 35 && score <= 50);
           return (
             <div key={label} className="grid grid-cols-[92px_1fr_72px] items-center gap-3">
-              <div className="text-xs font-semibold uppercase text-muted">{label}</div>
+              <div className="text-xs font-semibold text-muted">{formatLabel(label)}</div>
               <div className="h-3 overflow-hidden rounded-full border border-line bg-canvas">
                 <div className={current ? "h-full rounded-full bg-ink dark:bg-terminal" : "h-full rounded-full bg-line"} style={{ width: `${width}%` }} />
               </div>
-              <div className={current ? "text-xs font-semibold uppercase text-ink" : "text-xs text-muted"}>{current ? "Current" : ""}</div>
+              <div className={current ? "text-xs font-semibold text-ink" : "text-xs text-muted"}>{current ? "Current" : ""}</div>
             </div>
           );
         })}
@@ -321,7 +321,7 @@ export default async function DashboardPage() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Trishula Capital Terminal</div>
+          <div className="text-xs font-semibold text-muted">Trishula Capital Terminal</div>
           <h1 className="mt-1 text-2xl font-semibold tracking-normal">Macro Command Center</h1>
         </div>
         <div className="flex flex-wrap items-start justify-end gap-3">
@@ -336,21 +336,21 @@ export default async function DashboardPage() {
           <MacroGauge score={macroScore} />
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
             <div className="rounded-lg border border-line bg-canvas p-3">
-              <div className="text-xs font-semibold uppercase text-muted">Yesterday</div>
+              <div className="text-xs font-semibold text-muted">Yesterday</div>
               <div className="mt-1 font-semibold text-ink">{formatNumber(macroMetric.previous)}</div>
             </div>
             <div className="rounded-lg border border-line bg-canvas p-3">
-              <div className="text-xs font-semibold uppercase text-muted">Change</div>
+              <div className="text-xs font-semibold text-muted">Change</div>
               <div className={toneClass(macroMetric.change) + " mt-1 flex items-center gap-1 font-semibold"}>
                 {scoreChange} {macroMetric.change >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
               </div>
             </div>
             <div className="rounded-lg border border-line bg-canvas p-3">
-              <div className="text-xs font-semibold uppercase text-muted">7D Trend</div>
+              <div className="text-xs font-semibold text-muted">7D Trend</div>
               <div className="mt-1 font-semibold text-ink">{trendWindow(macro.history, 7, macroScore)}</div>
             </div>
             <div className="rounded-lg border border-line bg-canvas p-3">
-              <div className="text-xs font-semibold uppercase text-muted">30D Trend</div>
+              <div className="text-xs font-semibold text-muted">30D Trend</div>
               <div className="mt-1 font-semibold text-ink">{trendWindow(macro.history, 30, macroScore)}</div>
             </div>
           </div>
@@ -367,8 +367,8 @@ export default async function DashboardPage() {
               return (
                 <div key={name}>
                   <div className="mb-1 flex items-center justify-between gap-3 text-sm">
-                    <span className="font-semibold text-ink">{titleCase(name)}</span>
-                    <span className={toneClass(contribution)}>{contribution >= 0 ? "+" : ""}{formatNumber(contribution)} pts</span>
+                    <span className="font-semibold text-ink">{formatLabel(name)}</span>
+                    <span className={`${toneClass(contribution)} tabular-nums`}>{contribution >= 0 ? "+" : ""}{formatNumber(contribution)} pts</span>
                   </div>
                   <ScoreBar score={value} />
                 </div>
@@ -413,10 +413,10 @@ export default async function DashboardPage() {
                 const value = clampScore(score);
                 return (
                   <tr key={name} className="border-b border-line last:border-0 hover:bg-canvas">
-                    <td className="py-3 pr-4 font-semibold text-ink">{titleCase(name)}</td>
+                    <td className="py-3 pr-4 font-semibold text-ink">{formatLabel(name)}</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-3">
-                        <span className={toneClass(value)}>{formatNumber(value)}</span>
+                        <span className={`${toneClass(value)} tabular-nums`}>{formatNumber(value)}</span>
                         <div className="w-28"><ScoreBar score={value} /></div>
                       </div>
                     </td>
@@ -453,21 +453,21 @@ export default async function DashboardPage() {
                   <td className="py-3 pr-4 font-semibold text-ink">
                     <span className="inline-flex items-center gap-2">
                       <CircleDollarSign className="h-4 w-4 text-muted" />
-                      {asset.asset}
+                      {formatLabel(asset.asset)}
                     </span>
                   </td>
                   <td className="py-3 pr-4">
                     <div className="flex min-w-32 items-center gap-3">
-                      <span className={toneClass(asset.score)}>{formatNumber(asset.score)}</span>
+                      <span className={`${toneClass(asset.score)} tabular-nums`}>{formatNumber(asset.score)}</span>
                       <div className="w-20"><ScoreBar score={asset.score} /></div>
                     </div>
                   </td>
                   <td className="py-3 pr-4"><BiasPill value={asset.bias} /></td>
-                  <td className="py-3 pr-4 text-muted">{asset.trend}</td>
+                  <td className="py-3 pr-4 text-muted">{formatLabel(asset.trend)}</td>
                   <td className="py-3 pr-4 text-positive">{asset.positives.join(", ") || "N/A"}</td>
                   <td className="py-3 pr-4 text-negative">{asset.negatives.join(", ") || "N/A"}</td>
                   <td className="py-3 text-right">
-                    <Link href={`/asset/${asset.slug}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line hover:border-ink" title={`Open ${asset.asset}`}>
+                    <Link href={`/asset/${asset.slug}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line hover:border-ink" title={`Open ${formatLabel(asset.asset)}`}>
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                   </td>

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { assetLabels, assetSlugs, fetchApi } from "@/lib/api";
-import { biasFromScore, clampScore, formatNumber, titleCase, toneClass } from "@/lib/format";
+import { biasFromScore, clampScore, formatLabel, formatNumber, titleCase, toneClass } from "@/lib/format";
 import { AssetRadar, DriverBars, ScoreLine } from "@/components/lazy-charts";
 import { BiasPill, EmptyState, Panel, ScoreBar, SectionTitle, StatCard } from "@/components/ui";
 import type { AssetResponse, Driver } from "@/types/api";
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 function normalizeDrivers(drivers: Driver[] | undefined): Driver[] {
   return Array.isArray(drivers)
     ? drivers.map((driver, index) => ({
-        name: driver.name || `Driver ${index + 1}`,
+        name: formatLabel(driver.name || `Driver ${index + 1}`),
         score: clampScore(driver.score),
         contribution: Number.isFinite(Number(driver.contribution)) ? Number(driver.contribution) : clampScore(driver.score),
         bias: driver.bias || biasFromScore(driver.score)
@@ -67,7 +67,7 @@ export default async function AssetPage({ params }: { params: { asset: string } 
   const data = await fetchApi<AssetResponse>(`/assets/${params.asset}`);
   const drivers = normalizeDrivers(data.drivers);
   const score = clampScore(data.asset_score);
-  const assetName = data.asset || assetLabels[params.asset] || titleCase(params.asset);
+  const assetName = formatLabel(data.asset || assetLabels[params.asset] || titleCase(params.asset));
   const bullish = drivers.filter((driver) => driver.score >= 55 || String(driver.bias).toLowerCase().includes("bull"));
   const bearish = drivers.filter((driver) => driver.score <= 45 || String(driver.bias).toLowerCase().includes("bear"));
   const history = Array.isArray(data.history) ? data.history : [];
@@ -77,8 +77,8 @@ export default async function AssetPage({ params }: { params: { asset: string } 
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Asset Macro Model</div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{assetName.toUpperCase()} MACRO MODEL</h1>
+          <div className="text-xs font-semibold text-muted">Asset Macro Model</div>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{assetName} Macro Model</h1>
         </div>
         <BiasPill value={data.outlook || biasFromScore(score)} />
       </header>
@@ -118,13 +118,13 @@ export default async function AssetPage({ params }: { params: { asset: string } 
               <tbody>
                 {drivers.length > 0 ? drivers.map((driver) => (
                   <tr key={driver.name} className="border-b border-line last:border-b-0 hover:bg-canvas">
-                    <td className="py-3 pr-4 font-semibold text-ink">{driver.name}</td>
-                    <td className="py-3 pr-4 text-muted">{formatNumber(driver.contribution)}%</td>
+                    <td className="py-3 pr-4 font-semibold text-ink">{formatLabel(driver.name)}</td>
+                    <td className="py-3 pr-4 tabular-nums text-muted">{formatNumber(driver.contribution)}%</td>
                     <td className="py-3 pr-4 text-muted">Model input</td>
                     <td className="py-3 pr-4 text-muted">N/A</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-3">
-                        <span className={toneClass(driver.score)}>{formatNumber(driver.score)}</span>
+                        <span className={`${toneClass(driver.score)} tabular-nums`}>{formatNumber(driver.score)}</span>
                         <div className="w-20"><ScoreBar score={driver.score} /></div>
                       </div>
                     </td>

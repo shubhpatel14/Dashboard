@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import { formatLabel, formatNumber } from "@/lib/format";
+
 export default function AssetOutlookGrid({
   data,
 }: {
@@ -77,12 +79,12 @@ export default function AssetOutlookGrid({
             <span className="
             font-medium
             ">
-              {name}
+              {formatLabel(name)}
             </span>
 
 
-            <span>
-              {item.score}
+            <span className="tabular-nums">
+              {formatNumber(item.score)}
             </span>
 
 
@@ -125,7 +127,7 @@ export default function AssetOutlookGrid({
           text-muted
           ">
 
-            {item.bias}
+            {formatLabel(item.bias)}
 
           </div>
 
@@ -147,7 +149,7 @@ export default function AssetOutlookGrid({
 
                 <div key={driver}>
 
-                  • {driver}
+                  • {formatLabel(driver)}
 
                 </div>
 

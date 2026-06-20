@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Activity, BarChart3, Database, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { fetchApi, macroCategories } from "@/lib/api";
-import { biasFromScore, clampScore, formatNumber } from "@/lib/format";
+import { biasFromScore, clampScore, formatLabel, formatNumber } from "@/lib/format";
 import { ContributionBars as ContributionChart, IndicatorTrendChart, ScoreLine } from "@/components/lazy-charts";
 import { BiasPill, EmptyState, Panel, ScoreBar, SectionTitle, StatCard } from "@/components/ui";
 import { EconomicUpdateButton } from "@/components/economic-update-button";
@@ -48,13 +48,13 @@ function DriverRow({ driver }: { driver: MacroDriver }) {
           <span className={trendTone(driver.trend_state)}>
             <TrendIcon state={driver.trend_state} />
           </span>
-          <div className="truncate text-sm font-semibold text-ink">{driver.name}</div>
+          <div className="truncate text-sm font-semibold text-ink">{formatLabel(driver.name)}</div>
         </div>
         <div className="mt-1 text-xs text-muted">{driver.trend}</div>
       </div>
       <div className="text-right">
-        <div className="text-sm font-semibold text-ink">{driver.value}</div>
-        <div className="text-xs text-muted">{formatNumber(driver.score)}/100</div>
+        <div className="text-sm font-semibold tabular-nums text-ink">{driver.value}</div>
+        <div className="text-xs tabular-nums text-muted">{formatNumber(driver.score)}/100</div>
       </div>
     </div>
   );
@@ -87,6 +87,7 @@ function normalizedWeight(value: unknown) {
 
 function normalizeIndicators(indicators: Indicator[]): Indicator[] {
   return indicators.map((indicator, index) => {
+    const name = formatLabel(indicator.name ?? `Indicator ${index + 1}`);
     const score = Number.isFinite(Number(indicator.score)) ? Number(indicator.score) : 50;
     const trend_state = indicator.trend_state ?? trendStateFromScore(score);
     const trend = indicator.trend ?? trendLabel(trend_state);
@@ -101,7 +102,7 @@ function normalizeIndicators(indicators: Indicator[]): Indicator[] {
     return {
       ...indicator,
       key: indicator.key ?? `${indicator.name ?? "indicator"}-${index}`,
-      name: indicator.name ?? `Indicator ${index + 1}`,
+      name,
       code: indicator.code ?? "N/A",
       source: indicator.source ?? "N/A",
       measures: indicator.measures ?? "Macro input.",
@@ -121,7 +122,7 @@ function normalizeIndicators(indicators: Indicator[]): Indicator[] {
       impact: indicator.impact ?? trend,
       market_impact: indicator.market_impact ?? "Used as part of the macro score.",
       last_update: indicator.last_update ?? "N/A",
-      explanation: indicator.explanation || `${indicator.name ?? "This indicator"} is currently ${trend.toLowerCase()}.`,
+      explanation: indicator.explanation || `${name} is currently ${trend.toLowerCase()}.`,
       info: indicator.info ?? `Source: ${indicator.source ?? "N/A"}`,
       weight,
       contribution: indicator.contribution ?? roundContribution(score, weight)
@@ -140,14 +141,14 @@ function WeightBars({ drivers }: { drivers: MacroDriver[] }) {
     <div className="space-y-3">
       {drivers.map((driver) => (
         <div key={driver.name} className="grid gap-2 sm:grid-cols-[170px_1fr_64px] sm:items-center">
-          <div className="truncate text-sm text-ink">{driver.name}</div>
+          <div className="truncate text-sm text-ink">{formatLabel(driver.name)}</div>
           <div className="h-2 overflow-hidden bg-canvas">
             <div
               className={`h-full ${trendBg(driver.trend_state)}`}
               style={{ width: `${Math.max(6, (normalizedWeight(driver.weight) / maxWeight) * 100)}%` }}
             />
           </div>
-          <div className="text-xs font-semibold text-muted sm:text-right">{formatNumber(driver.weight)}%</div>
+          <div className="text-xs font-semibold tabular-nums text-muted sm:text-right">{formatNumber(driver.weight)}%</div>
         </div>
       ))}
     </div>
@@ -178,7 +179,7 @@ function normalizeDrivers(drivers: MacroDriver[] | undefined, indicators: Indica
     const weight = normalizedWeight(driver.weight ?? indicator?.weight);
 
     return {
-      name: driver.name ?? indicator?.name ?? `Driver ${index + 1}`,
+      name: formatLabel(driver.name ?? indicator?.name ?? `Driver ${index + 1}`),
       trend: driver.trend ?? indicator?.trend ?? trendLabel(trend_state),
       trend_state,
       value: driver.value ?? indicator?.current_display ?? "N/A",
@@ -199,7 +200,7 @@ function IndicatorCard({ indicator }: { indicator: Indicator }) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <Link href={`/indicator/${slug}`} className="truncate text-sm font-semibold text-ink hover:underline">
-            {indicator.name}
+            {formatLabel(indicator.name)}
           </Link>
           <IndicatorInfoButton indicator={indicator} />
         </div>
@@ -213,37 +214,37 @@ function IndicatorCard({ indicator }: { indicator: Indicator }) {
 
       <div className="mt-3 grid gap-2 sm:grid-cols-6">
         <div className="rounded-lg border border-line bg-canvas p-2">
-          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Actual" : "Current"}</div>
+          <div className="text-xs font-semibold text-muted">{isRelease ? "Actual" : "Current"}</div>
           <div className="mt-1 text-sm font-semibold text-ink">
             {isRelease ? indicator.actual_display : indicator.current_display}
           </div>
         </div>
         <div className="rounded-lg border border-line bg-canvas p-2">
-          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Forecast" : "Previous"}</div>
+          <div className="text-xs font-semibold text-muted">{isRelease ? "Forecast" : "Previous"}</div>
           <div className="mt-1 text-sm font-semibold text-ink">
             {isRelease ? indicator.forecast_display : indicator.previous_display}
           </div>
         </div>
         <div className="rounded-lg border border-line bg-canvas p-2">
-          <div className="text-xs font-semibold uppercase text-muted">{isRelease ? "Previous" : "Change"}</div>
+          <div className="text-xs font-semibold text-muted">{isRelease ? "Previous" : "Change"}</div>
           <div className={`mt-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
             {isRelease ? indicator.previous_display : indicator.change_display}
           </div>
         </div>
         <div className="rounded-lg border border-line bg-canvas p-2">
-          <div className="text-xs font-semibold uppercase text-muted">Trend</div>
+          <div className="text-xs font-semibold text-muted">Trend</div>
           <div className={`mt-1 flex items-center gap-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>
             <TrendIcon state={indicator.trend_state} />
             {indicator.trend}
           </div>
         </div>
         <div className="rounded-lg border border-line bg-canvas p-2">
-          <div className="text-xs font-semibold uppercase text-muted">Macro Impact</div>
+          <div className="text-xs font-semibold text-muted">Macro Impact</div>
           <div className={`mt-1 text-sm font-semibold ${trendTone(indicator.trend_state)}`}>{impact}</div>
         </div>
         <div className="rounded-lg border border-line bg-canvas p-2">
-          <div className="text-xs font-semibold uppercase text-muted">Score</div>
-          <div className="mt-1 text-sm font-semibold text-ink">{formatNumber(indicator.score)}/100</div>
+          <div className="text-xs font-semibold text-muted">Score</div>
+          <div className="mt-1 text-sm font-semibold tabular-nums text-ink">{formatNumber(indicator.score)}/100</div>
         </div>
       </div>
 
@@ -253,16 +254,16 @@ function IndicatorCard({ indicator }: { indicator: Indicator }) {
           <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted">{indicator.explanation}</p>
         </div>
         <div className="text-xs">
-          <div className="font-semibold uppercase text-muted">Percentile</div>
-          <div className="mt-1 text-ink">{formatNumber(indicator.percentile ?? 50)}%</div>
+          <div className="font-semibold text-muted">Percentile</div>
+          <div className="mt-1 tabular-nums text-ink">{formatNumber(indicator.percentile ?? 50)}%</div>
         </div>
         <div className="text-xs">
-          <div className="font-semibold uppercase text-muted">Z-Score</div>
-          <div className="mt-1 text-ink">{formatNumber(indicator.z_score ?? 0)}</div>
+          <div className="font-semibold text-muted">Z-Score</div>
+          <div className="mt-1 tabular-nums text-ink">{formatNumber(indicator.z_score ?? 0)}</div>
         </div>
         <div className="text-xs">
-          <div className="font-semibold uppercase text-muted">Distance Avg</div>
-          <div className="mt-1 text-ink">{formatNumber(indicator.distance_from_average ?? 0)}</div>
+          <div className="font-semibold text-muted">Distance Avg</div>
+          <div className="mt-1 tabular-nums text-ink">{formatNumber(indicator.distance_from_average ?? 0)}</div>
         </div>
       </div>
 
@@ -284,14 +285,14 @@ function marketInterpretation(data: MacroCategory, indicators: Indicator[]) {
   }
 
   const strongest = [...indicators].sort((a, b) => Math.abs((b.score ?? 50) - 50) - Math.abs((a.score ?? 50) - 50)).slice(0, 2);
-  const names = strongest.map((indicator) => indicator.name.toLowerCase()).join(" while ");
+  const names = strongest.map((indicator) => formatLabel(indicator.name).toLowerCase()).join(" while ");
   const bias = String(data.bias || biasFromScore(data.score)).toLowerCase();
 
   if (!names) {
-    return `${data.name || "This macro category"} remains ${bias} with a score of ${formatNumber(data.score)}.`;
+    return `${formatLabel(data.name || "This macro category")} remains ${bias} with a score of ${formatNumber(data.score)}.`;
   }
 
-  return `${data.name || "Macro pressure"} remains ${bias} as ${names} shape the current signal.`;
+  return `${formatLabel(data.name || "Macro pressure")} remains ${bias} as ${names} shape the current signal.`;
 }
 
 export default async function MacroPage({
@@ -348,8 +349,8 @@ export default async function MacroPage({
 
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
         <div>
-          <div className="text-xs font-semibold uppercase text-muted">Macro Intelligence</div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{String(data.name || selected).toUpperCase()} INTELLIGENCE</h1>
+          <div className="text-xs font-semibold text-muted">Macro Intelligence</div>
+          <h1 className="mt-1 text-2xl font-semibold tracking-normal">{formatLabel(String(data.name || selected))} Intelligence</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <EconomicUpdateButton />
@@ -371,7 +372,7 @@ export default async function MacroPage({
 
       <section className="grid gap-3 md:grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr_0.6fr]">
         <Panel className="flex flex-col justify-center">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase text-muted">
+          <div className="flex items-center gap-2 text-xs font-semibold text-muted">
             <Activity className="h-4 w-4" aria-hidden="true" />
             Market interpretation
           </div>
@@ -399,7 +400,7 @@ export default async function MacroPage({
 
       <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <Panel>
-          <SectionTitle title={`${data.name} Drivers`} />
+          <SectionTitle title={`${formatLabel(data.name || selected)} Drivers`} />
           <div>
             {drivers.map((driver) => (
               <DriverRow key={driver.name} driver={driver} />
@@ -419,7 +420,7 @@ export default async function MacroPage({
       <section className="grid gap-4 xl:grid-cols-2">
         <Panel>
           <SectionTitle title="Score History" />
-          <ScoreLine data={history} name={`${data.name} Score`} />
+          <ScoreLine data={history} name={`${formatLabel(data.name || selected)} Score`} />
         </Panel>
 
         <Panel>
@@ -429,7 +430,7 @@ export default async function MacroPage({
       </section>
 
       <section className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-semibold uppercase text-ink">
+        <div className="flex items-center gap-2 text-sm font-semibold text-ink">
           <Activity className="h-4 w-4" aria-hidden="true" />
           Indicator Intelligence
         </div>
@@ -441,7 +442,7 @@ export default async function MacroPage({
       </section>
 
       <details className="border border-line bg-surface p-4 shadow-terminal">
-        <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold uppercase text-ink">
+        <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-ink">
           <Database className="h-4 w-4 text-muted" aria-hidden="true" />
           Show Advanced Data
         </summary>
@@ -460,12 +461,12 @@ export default async function MacroPage({
             <tbody>
               {indicators.map((indicator) => (
                 <tr key={indicator.key} className="border-b border-line last:border-b-0">
-                  <td className="py-2 pr-4 text-ink">{indicator.name}</td>
+                  <td className="py-2 pr-4 text-ink">{formatLabel(indicator.name)}</td>
                   <td className="py-2 pr-4 text-muted">{indicator.code}</td>
-                  <td className="py-2 pr-4 text-ink">{formatNumber(indicator.current)}</td>
-                  <td className="py-2 pr-4 text-ink">{formatNumber(indicator.previous)}</td>
-                  <td className="py-2 pr-4 text-ink">{formatNumber(indicator.change)}</td>
-                  <td className="py-2 pr-4 text-ink">{formatNumber(indicator.score)}</td>
+                  <td className="py-2 pr-4 tabular-nums text-ink">{formatNumber(indicator.current)}</td>
+                  <td className="py-2 pr-4 tabular-nums text-ink">{formatNumber(indicator.previous)}</td>
+                  <td className="py-2 pr-4 tabular-nums text-ink">{formatNumber(indicator.change)}</td>
+                  <td className="py-2 pr-4 tabular-nums text-ink">{formatNumber(indicator.score)}</td>
                 </tr>
               ))}
             </tbody>
