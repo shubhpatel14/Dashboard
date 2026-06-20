@@ -5,215 +5,329 @@ from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, ConfigDict
+
+
+from app.core.cache import (
+    cached,
+    clear_cache,
+)
+
+
 from app.engines.macro.category_final_score import (
     build_category_final_score,
 )
-from app.core.cache import cached, clear_cache
+
+
 from app.services.macro_score_normalizer import (
-    normalize_macro_scores
+    normalize_macro_scores,
 )
+
 
 from app.services.engine_registry import (
+
     MACRO_BUILDERS,
+
     get_macro_category,
+
     get_macro_engine,
+
     get_trend_engine,
-    macro_regime,
+
     refresh_engine_cache,
+
 )
 
+
 from app.services.transformers import (
+
     MACRO_LABELS,
+
     clean_label,
+
     indicators_from_engine,
+
     macro_category_intelligence,
+
     macro_category_history,
+
     macro_summary,
+
 )
+
 
 from app.engines.macro.macro_surprise.scoring import (
     build_macro_surprise,
 )
 
+
 from app.engines.assets.macro_impact import (
     macro_asset_impact,
 )
+
 
 from app.engines.assets.allocation import (
     build_allocation,
 )
 
+
 from app.engines.macro.regime.engine import (
     build_macro_regime,
 )
 
+
 from app.engines.macro.final_score import (
     build_final_macro_score,
 )
+
 
 from app.engines.macro.regime.history import (
     update_regime_history,
 )
 
 
-router = APIRouter(prefix="/macro", tags=["macro"])
 
-logger = logging.getLogger(__name__)
+# ==================================
+# DATABASE INTELLIGENCE
+# ==================================
+
+from app.services.intelligence_reader import (
+
+    get_latest_macro,
+
+    get_latest_category,
+
+    get_all_assets,
+
+)
 
 
-# ================================
-# MODELS
-# ================================
+from app.services.intelligence_builder import (
+
+    rebuild_intelligence,
+
+)
+
+
+
+
+router = APIRouter(
+    prefix="/macro",
+    tags=["macro"]
+)
+
+
+logger = logging.getLogger(
+    __name__
+)
+
+
+
+
+# ==================================
+# RESPONSE MODELS
+# ==================================
 
 class MacroDashboardResponse(BaseModel):
-    model_config = ConfigDict(extra="allow")
 
-    success: bool = True
-    data_status: str = "connected"
+    model_config = ConfigDict(
+        extra="allow"
+    )
 
-    macro_score: float = 50
-    regime: str = "Neutral"
-    regime_detail: dict[str, Any] = {}
-    regime_history: dict[str, Any] = {}
-    trend: str = "Neutral"
 
-    recession_risk: str = "N/A"
-    risk_status: str = "Neutral"
+    success: bool=True
 
-    summary: list[str] = []
+    data_status:str="connected"
 
-    asset_outlooks: dict[str, Any] = {}
+    macro_score:float=50
 
-    portfolio_allocation: dict[str, Any] = {}
+    regime:str="Neutral"
 
-    macro_surprises: list[dict[str, Any]] = []
+    regime_detail:dict[str,Any]={}
 
-    category_scores: dict[str, Any] = {}
+    regime_history:dict[str,Any]={}
 
-    history: list[dict[str, Any]] = []
+    trend:str="Neutral"
+
+    summary:list[str]=[]
+
+    asset_outlooks:dict[str,Any]={}
+
+    portfolio_allocation:dict[str,Any]={}
+
+    macro_surprises:list[dict[str,Any]]=[]
+
+    category_scores:dict[str,Any]={}
+
+    history:list[dict[str,Any]]=[]
+
+
 
 
 class MacroCategoryResponse(BaseModel):
-    model_config = ConfigDict(extra="allow")
 
-    success: bool = True
-    data_status: str = "connected"
-
-    name: str = "Macro"
-
-    score: float = 50
-    bias: str = "Neutral"
-
-    core_score: Optional[float] = None
-
-    surprise_score: Optional[float] = None
-
-    surprise_events: list[Any] = []
-
-    trend: str = "Stable"
-
-    summary: str = ""
-
-    drivers: list[dict[str, Any]] = []
-
-    indicators: list[dict[str, Any]] = []
-
-    explanation: str = ""
-
-    history: list[dict[str, Any]] = []
-
-    data: list[dict[str, Any]] = []
+    model_config=ConfigDict(
+        extra="allow"
+    )
 
 
+    success:bool=True
 
-# ================================
+    data_status:str="connected"
+
+    name:str="Macro"
+
+    score:float=50
+
+    bias:str="Neutral"
+
+    core_score:Optional[float]=None
+
+    surprise_score:Optional[float]=None
+
+    surprise_events:list[Any]=[]
+
+    trend:str="Stable"
+
+    summary:str=""
+
+    drivers:list[dict[str,Any]]=[]
+
+    indicators:list[dict[str,Any]]=[]
+
+    explanation:str=""
+
+    history:list[dict[str,Any]]=[]
+
+    data:list[dict[str,Any]]=[]
+
+
+
+
+
+# ==================================
 # HELPERS
-# ================================
+# ==================================
 
-def _safe_score(value, default=50):
+def _safe_score(
+    value,
+    default=50
+):
 
     try:
-        return float(value)
+
+        return float(
+            value
+        )
 
     except Exception:
+
         return default
 
 
 
-def _empty_category(slug, message=""):
 
-    name = MACRO_LABELS.get(
-        slug,
-        clean_label(slug).title()
-    )
 
+def _empty_category(
+    slug,
+    message=""
+):
 
     return {
 
-        "success": True,
 
-        "data_status": "fallback",
+        "success":True,
 
-        "name": name,
+        "data_status":"fallback",
 
-        "score": 50,
+        "name":MACRO_LABELS.get(
+            slug,
+            clean_label(slug)
+        ),
 
-        "bias": "Neutral",
 
-        "trend": "Stable",
+        "score":50,
 
-        "summary": message,
 
-        "drivers": [],
+        "bias":"Neutral",
 
-        "indicators": [],
 
-        "explanation": message,
+        "summary":message,
+
+
+        "drivers":[],
+
+
+        "indicators":[],
+
 
         "history":[
             {
-                "date":"Current",
-                "score":50
+            "date":"Current",
+            "score":50
             }
         ],
 
-        "data": [],
+        "data":[]
+
     }
 
 
 
-# ================================
-# UPDATE
-# ================================
 
-@router.post("/update-economic-data")
+
+
+# ==================================
+# UPDATE DATA
+# ==================================
+
+@router.post(
+    "/update-economic-data"
+)
 def update_economic_data():
 
-    clear_cache()
-
-    result = refresh_engine_cache()
 
     clear_cache()
+
+
+    refresh_engine_cache()
+
+
+
+    result = rebuild_intelligence()
+
+
+
+    clear_cache()
+
 
 
     return {
 
+
         "status":"updated",
 
-        "message":
-        "Economic data recalculated",
 
-        **result,
+        "message":
+
+        "Economic data refreshed and intelligence database rebuilt",
+
+
+
+        "saved":
+
+        result
+
     }
 
 
 
-# ================================
+
+
+
+
+# ==================================
 # DASHBOARD
-# ================================
-# ================================
-# DASHBOARD
-# ================================
+# ==================================
 
 @router.get(
     "/dashboard",
@@ -221,13 +335,177 @@ def update_economic_data():
 )
 def macro_dashboard():
 
+
+    # =========================
+    # DATABASE FAST PATH
+    # =========================
+
+    stored = get_latest_macro()
+
+
+    if stored:
+
+
+        score = stored.get(
+            "score",
+            stored.get(
+                "macro_score",
+                50
+            )
+        )
+
+
+        return {
+
+
+            "success": True,
+
+
+            "data_status": "database",
+
+
+
+            "macro_score": score,
+
+
+
+            "regime":
+
+                stored.get(
+                    "risk_status",
+                    "Neutral"
+                ),
+
+
+
+            "regime_detail": {
+
+
+                "regime":
+
+                    stored.get(
+                        "risk_status",
+                        "Neutral"
+                    ),
+
+
+                "confidence":
+
+                    score
+
+            },
+
+
+
+            "regime_history": {},
+
+
+
+            "trend":
+
+                stored.get(
+                    "bias",
+                    "Neutral"
+                ),
+
+
+
+            "risk_status":
+
+                stored.get(
+                    "risk_status",
+                    "Neutral"
+                ),
+
+
+
+            "category_scores":
+
+                stored.get(
+                    "scores",
+                    {}
+                ),
+
+
+
+            "categories":
+
+                stored.get(
+                    "categories",
+                    {}
+                ),
+
+
+
+           "asset_outlooks":
+
+            get_all_assets(),
+
+
+            "portfolio_allocation":
+
+                stored.get(
+                    "portfolio_allocation",
+                    {}
+                ),
+
+
+
+            "macro_surprises":
+
+                stored.get(
+                    "macro_surprises",
+                    []
+                ),
+
+
+
+            "summary":[
+
+                "Macro intelligence loaded from PostgreSQL"
+
+            ],
+
+
+
+            "history":[
+
+                {
+
+                    "date":"Current",
+
+                    "score":score
+
+                }
+
+            ],
+
+
+
+            "raw":stored
+
+        }
+
+
+
+
+
+
+    # =========================
+    # ENGINE FALLBACK
+    # =========================
+
     try:
+
 
         macro = get_macro_engine() or {}
 
+
         trend = get_trend_engine() or {}
 
+
         surprise = build_macro_surprise()
+
 
 
         final_macro = build_final_macro_score(
@@ -241,10 +519,12 @@ def macro_dashboard():
         ]
 
 
+
         asset_scores = macro_asset_impact(
             surprise,
             macro
         )
+
 
 
         regime_detail = build_macro_regime(
@@ -252,9 +532,11 @@ def macro_dashboard():
         )
 
 
+
         regime_history = update_regime_history(
             regime_detail
         )
+
 
 
         portfolio = build_allocation(
@@ -263,194 +545,198 @@ def macro_dashboard():
         )
 
 
-    except Exception as exc:
-
-
-        logger.exception(exc)
-
 
         return {
 
-            "success": False,
 
-            "data_status": "fallback",
-
-            "macro_score": 50,
-
-            "regime": "Neutral",
-
-            "trend": "Neutral",
-
-            "asset_outlooks": {},
-
-            "category_scores": {},
-
-            "history": [],
-
-        }
+            "success":True,
 
 
-    return {
-
-        "success": True,
-
-        "data_status": "connected",
+            "data_status":"engine",
 
 
-        "macro_score":
-            score,
+            "macro_score":score,
 
 
-        "regime":
-            regime_detail.get(
-                "regime",
-                "Neutral"
-            ),
+            "regime":
 
-
-        "regime_detail":
-            regime_detail,
-
-
-        "regime_history":
-            regime_history,
-
-
-        "trend":
-            clean_label(
-                trend.get(
-                    "trend",
+                regime_detail.get(
+                    "regime",
                     "Neutral"
-                )
-            ),
+                ),
 
 
-        "summary":
-            macro_summary(
-                macro
-            ),
+            "regime_detail":
+
+                regime_detail,
 
 
-        "asset_outlooks":
-            asset_scores,
+            "regime_history":
+
+                regime_history,
 
 
-        "portfolio_allocation":
-            portfolio,
+            "trend":
+
+                clean_label(
+                    trend.get(
+                        "trend",
+                        "Neutral"
+                    )
+                ),
 
 
-        "macro_surprises":
-            surprise.get(
-                "events",
-                []
-            ),
+
+            "summary":
+
+                macro_summary(
+                    macro
+                ),
 
 
-        "category_scores":
 
-            {
-                **macro.get(
+            "asset_outlooks":
+
+                asset_scores,
+
+
+
+            "portfolio_allocation":
+
+                portfolio,
+
+
+
+            "macro_surprises":
+
+                surprise.get(
+                    "events",
+                    []
+                ),
+
+
+
+            "category_scores":
+
+                macro.get(
                     "scores",
                     {}
                 ),
 
-                "macro_surprise":
-                    surprise.get(
-                        "score"
-                    ),
-            },
 
 
-        "history":
-            macro_category_history(
-                "trend",
-                score
-            ),
-    }
+            "history":
+
+                macro_category_history(
+                    "trend",
+                    score
+                )
+
+        }
 
 
 
-# ================================
-# CATEGORY ROUTE
-# KEEP LAST
-# ================================
+    except Exception as e:
 
-# ================================
-# CATEGORY ROUTE
-# KEEP LAST
-# ================================
+
+        logger.exception(e)
+
+
+        return {
+
+            "success":False,
+
+            "data_status":"error",
+
+            "macro_score":50
+
+        }
+# ==================================
+# CATEGORY
+# ==================================
 
 @router.get(
     "/{category}",
     response_model=MacroCategoryResponse
 )
-def macro_category(category:str):
+def macro_category(
+    category:str
+):
 
 
-    slug = (
-        category
-        .lower()
+    slug=(
+
+        category.lower()
         .replace("-","_")
+
     )
 
 
+
+
+    # DATABASE FIRST
+
+    stored=get_latest_category(
+        slug
+    )
+
+
+    if stored:
+
+
+        return {
+
+
+        "success":True,
+
+
+        "data_status":"database",
+
+
+        **stored
+
+        }
+
+
+
+
+
+    # ENGINE FALLBACK
+
     if slug not in MACRO_BUILDERS:
 
+
         raise HTTPException(
+
             status_code=404,
+
             detail="Macro category not found"
+
         )
+
 
 
 
     try:
 
 
-        # ================================
-        # RAW MACRO ENGINE
-        # ================================
-
-        engine = (
-            get_macro_category(
-                slug
-            )
-            or {}
-        )
+        engine=get_macro_category(
+            slug
+        ) or {}
 
 
 
-        # ================================
-        # RESTORE HISTORICAL INTELLIGENCE
-        #
-        # percentile
-        # z_score
-        # average
-        # distance_avg
-        # samples
-        # ================================
-
-        engine = normalize_macro_scores(
+        engine=normalize_macro_scores(
             engine
         )
 
 
 
-
-        # ================================
-        # SURPRISE ENGINE
-        # ================================
-
-        surprise = build_macro_surprise()
+        surprise=build_macro_surprise()
 
 
 
-
-        # ================================
-        # FINAL CATEGORY SCORE
-        # keep AFTER normalization
-        # ================================
-
-        engine = build_category_final_score(
+        engine=build_category_final_score(
             slug,
             engine,
             surprise
@@ -459,154 +745,75 @@ def macro_category(category:str):
 
 
 
-        score = _safe_score(
+        score=_safe_score(
             engine.get(
-                "score"
+            "score"
             )
         )
 
 
 
-
-        name = MACRO_LABELS.get(
-            slug,
-            clean_label(
-                slug
-            ).title()
-        )
-
-
-
-
-        bias = clean_label(
-            engine.get(
-                "bias",
-                "Neutral"
-            )
-        )
-
-
-
-
-        # ================================
-        # TRANSFORMER
-        # now receives historical stats
-        # ================================
-
-        indicators = indicators_from_engine(
+        indicators=indicators_from_engine(
             engine
         )
 
 
 
-
-        intelligence = macro_category_intelligence(
-
-            name,
-
-            score,
-
-            bias,
-
-            indicators,
-
-        )
-
-
-
-
-    except Exception as exc:
-
-
-        return _empty_category(
+        name=MACRO_LABELS.get(
             slug,
-            str(exc)
+            clean_label(slug)
         )
 
 
 
-
-
-    return {
-
-
-        "success":
-            True,
-
-
-
-        "data_status":
-            "connected",
-
-
-
-        "name":
+        intelligence=macro_category_intelligence(
             name,
-
-
-
-        "score":
             score,
-
-
-
-        "core_score":
-
             engine.get(
-                "core_score"
+                "bias",
+                "Neutral"
             ),
+            indicators
+        )
 
 
 
-        "surprise_score":
-
-            engine.get(
-                "surprise_score"
-            ),
+        return {
 
 
-
-        "surprise_events":
-
-            engine.get(
-                "surprise_events",
-                []
-            ),
+        "success":True,
 
 
+        "data_status":"engine",
+
+
+        "name":name,
+
+
+        "score":score,
 
 
         "bias":
-            bias,
 
-
-
-
-        "trend":
-
-            intelligence[
-                "trend"
-            ],
-
-
-
-
-        "summary":
-
-            intelligence[
-                "summary"
-            ],
-
+            engine.get(
+            "bias",
+            "Neutral"
+            ),
 
 
 
         "drivers":
 
             intelligence[
-                "drivers"
+            "drivers"
             ],
 
 
+        "summary":
+
+            intelligence[
+            "summary"
+            ],
 
 
         "indicators":
@@ -614,29 +821,27 @@ def macro_category(category:str):
             indicators,
 
 
-
-
-        "explanation":
-
-            intelligence[
-                "summary"
-            ],
-
-
-
-
         "history":
 
             macro_category_history(
-                slug,
-                score
+            slug,
+            score
             ),
-
-
 
 
         "data":
 
-            indicators,
+            indicators
 
-    }
+        }
+
+
+
+
+    except Exception as e:
+
+
+        return _empty_category(
+            slug,
+            str(e)
+        )

@@ -1,3 +1,9 @@
+from app.services.intelligence_store import (
+    save_macro_dashboard,
+    save_macro_category,
+    save_asset
+)
+
 from functools import lru_cache
 
 
@@ -5,11 +11,17 @@ from functools import lru_cache
 # ASSETS
 # ================================
 
+
 from app.engines.assets.bitcoin.scoring import build_bitcoin_engine
+
 from app.engines.assets.bonds.scoring import build_bonds_engine
+
 from app.engines.assets.dollar.scoring import build_dollar_engine
+
 from app.engines.assets.gold.scoring import build_gold_engine
+
 from app.engines.assets.nasdaq.scoring import build_nasdaq_engine
+
 from app.engines.assets.sp500.scoring import build_sp500_engine
 
 
@@ -18,18 +30,31 @@ from app.engines.assets.sp500.scoring import build_sp500_engine
 # MACRO
 # ================================
 
+
 from app.engines.macro.credit.scoring import build_credit_engine
+
 from app.engines.macro.global_liquidity.scoring import build_global_liquidity_engine
+
 from app.engines.macro.growth.scoring import build_growth_engine
+
 from app.engines.macro.housing.scoring import build_housing_engine
+
 from app.engines.macro.inflation.scoring import build_inflation_engine
+
 from app.engines.macro.labor.scoring import build_labor_engine
+
 from app.engines.macro.liquidity.scoring import build_liquidity_engine
+
 from app.engines.macro.macro.scoring import build_macro_engine
+
 from app.engines.macro.rates.scoring import build_rates_engine
+
 from app.engines.macro.recession.scoring import build_recession_engine
+
 from app.engines.macro.sentiment.scoring import build_sentiment_engine
+
 from app.engines.macro.trend.scoring import build_trend_engine
+
 from app.engines.macro.macro_surprise.scoring import build_macro_surprise
 
 
@@ -352,3 +377,5 @@ def get_institutional_engine():
         "assets":assets
 
     }
+
+

@@ -112,6 +112,13 @@ export type MacroDriver = {
 };
 
 export type AssetResponse = {
+  components: never[];
+  explanation: string;
+  score: number;
+  bullish_drivers: any;
+  bearish_drivers: any;
+  bias: string;
+  trend: string;
   asset: string;
   asset_score: number;
 

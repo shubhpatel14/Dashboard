@@ -64,15 +64,50 @@ export default async function AssetPage({ params }: { params: { asset: string } 
     notFound();
   }
 
-  const data = await fetchApi<AssetResponse>(`/assets/${params.asset}`);
-  const drivers = normalizeDrivers(data.drivers);
-  const score = clampScore(data.asset_score);
-  const assetName = formatLabel(data.asset || assetLabels[params.asset] || titleCase(params.asset));
-  const bullish = drivers.filter((driver) => driver.score >= 55 || String(driver.bias).toLowerCase().includes("bull"));
-  const bearish = drivers.filter((driver) => driver.score <= 45 || String(driver.bias).toLowerCase().includes("bear"));
-  const history = Array.isArray(data.history) ? data.history : [];
-  const explanation = data.summary || macroExplanation(assetName, score, bullish, bearish);
+    const data =
+    await fetchApi<AssetResponse>(
+    `/assets/${params.asset}`
+    );
 
+
+    const score =
+    clampScore(
+        data.asset_score ??
+        data.score ??
+        50
+    );
+
+
+    const drivers =
+    normalizeDrivers(
+        data.components ??
+        []
+    );
+
+
+    const bullish =
+    normalizeDrivers(
+        data.bullish_drivers ??
+        []
+    );
+
+
+    const bearish =
+    normalizeDrivers(
+        data.bearish_drivers ??
+        []
+    );
+  const assetName = formatLabel(data.asset || assetLabels[params.asset] || titleCase(params.asset));
+  const history = Array.isArray(data.history) ? data.history : [];
+  const explanation =
+    data.explanation ||
+    data.summary ||
+    macroExplanation(
+        assetName,
+        score,
+        bullish,
+        bearish
+    );
   return (
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">

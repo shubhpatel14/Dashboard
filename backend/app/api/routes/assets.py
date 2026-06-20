@@ -29,6 +29,10 @@ from app.services.transformers import (
     drivers_from_asset,
 )
 
+from app.services.intelligence_reader import (
+    get_latest_asset
+)
+
 
 router = APIRouter(
     prefix="/assets",
@@ -40,19 +44,174 @@ router = APIRouter(
 @cached("asset")
 def asset(asset: str):
 
+
     slug = asset.lower()
 
+        # =============================
+    # DATABASE FAST PATH
+    # =============================
+
+    stored = get_latest_asset(
+        slug
+    )
+
+
+    if stored:
+
+
+        return {
+
+
+            "asset":
+
+                stored.get(
+                    "asset",
+                    asset
+                ),
+
+
+            "asset_score":
+
+                stored.get(
+                    "score",
+                    50
+                ),
+
+
+            "score":
+
+                stored.get(
+                    "score",
+                    50
+                ),
+
+
+            "outlook":
+
+                stored.get(
+                    "outlook",
+                    "Neutral"
+                ),
+
+
+            "bias":
+
+                stored.get(
+                    "bias",
+                    "Neutral"
+                ),
+
+
+            "trend":
+
+                stored.get(
+                    "trend",
+                    "Neutral"
+                ),
+
+
+            "drivers":
+
+                stored.get(
+                    "drivers",
+                    {}
+                ),
+
+
+            "bullish_drivers":
+
+                stored.get(
+                    "bullish_drivers",
+                    []
+                ),
+
+
+            "bearish_drivers":
+
+                stored.get(
+                    "bearish_drivers",
+                    []
+                ),
+
+
+            "components":
+
+                stored.get(
+                    "components",
+                    []
+                ),
+
+
+            "radar":
+
+                stored.get(
+                    "radar",
+                    []
+                ),
+
+
+            "history":
+
+                stored.get(
+                    "history",
+                    []
+                ),
+
+
+            "explanation":
+
+                stored.get(
+                    "explanation",
+                    ""
+
+                )
+
+        }
+
+
     if slug not in ASSET_BUILDERS:
+
         raise HTTPException(
             status_code=404,
             detail="Asset not found"
         )
 
-    engine = get_asset_engine(slug)
+
+
+    # ===================================
+    # FAST PATH
+    # DATABASE FIRST
+    # ===================================
+
+    stored = get_latest_asset(
+        slug
+    )
+
+
+    if stored:
+
+
+        return stored
+
+
+
+
+    # ===================================
+    # FALLBACK
+    # ENGINE CALCULATION
+    # ===================================
+
+
+    engine = get_asset_engine(
+        slug
+    )
+
 
     macro = get_macro_engine()
 
+
     surprise = build_macro_surprise()
+
 
 
     macro_assets = macro_asset_impact(
@@ -69,67 +228,124 @@ def asset(asset: str):
 
     if asset_key in macro_assets:
 
+
         engine = blend_macro_score(
             engine,
             macro_assets[asset_key],
             0.30
         )
 
+
+
     score = engine.get(
         "score",
         50
     )
 
+
+
     drivers = drivers_from_asset(
         engine
     )
+
+
 
     name = DISPLAY_NAMES.get(
         slug,
         slug.upper()
     )
 
+
+
     return {
 
-        "asset": name,
+    "asset": name,
 
-        "asset_score": engine.get(
+
+    "asset_score":
+        engine.get(
             "score",
             50
         ),
 
 
-        "raw_score": engine.get(
+    "score":
+        engine.get(
+            "score",
+            50
+        ),
+
+
+    "raw_score":
+        engine.get(
             "raw_score"
         ),
 
 
-        "macro_score": engine.get(
+    "macro_score":
+        engine.get(
             "macro_score"
         ),
 
 
-        "macro_drivers": engine.get(
-            "macro_drivers",
-            []
+    "bias":
+        engine.get(
+            "bias",
+            "Neutral"
         ),
 
-        "outlook": engine.get(
+
+    "trend":
+        engine.get(
+            "trend",
+            "Neutral"
+        ),
+
+
+    "outlook":
+        engine.get(
             "outlook",
             "Neutral"
         ),
 
-        "drivers": drivers,
 
-        "summary": asset_summary(
+    "drivers":
+        drivers,
+
+
+    "bullish_drivers":
+        engine.get(
+            "bullish_drivers",
+            []
+        ),
+
+
+    "bearish_drivers":
+        engine.get(
+            "bearish_drivers",
+            []
+        ),
+
+
+    "components":
+        engine.get(
+            "components",
+            []
+        ),
+
+
+    "summary":
+        asset_summary(
             name,
             score,
             drivers
         ),
 
-        "history": asset_history(
+
+    "history":
+        asset_history(
             slug,
             score
         ),
 
-    }
+}

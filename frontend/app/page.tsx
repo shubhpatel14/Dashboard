@@ -35,37 +35,106 @@ const fallbackMacro: MacroDashboard = {
   history: [{ date: "Current", score: 50 }]
 };
 
-async function getAsset(slug: string): Promise<AssetRow> {
+async function getAsset(slug:string): Promise<AssetRow> {
+
   const fallback: AssetResponse = {
     asset: assetLabels[slug] || titleCase(slug),
+
     asset_score: 50,
+
     outlook: "Unavailable",
+
     drivers: [],
-    summary: "Asset model temporarily unavailable.",
-    history: []
+
+    summary: "Asset unavailable",
+
+    history: [],
+    score: 0,
+    bullish_drivers: undefined,
+    bearish_drivers: undefined,
+    bias: "",
+    trend: ""
   };
 
-  const data = await fetchApi<AssetResponse>(`/assets/${slug}`, { fallback });
-  const drivers = Array.isArray(data.drivers) ? data.drivers : [];
-  const positives = drivers
-    .filter((driver) => clampScore(driver.score) >= 55 || String(driver.bias).toLowerCase().includes("bull"))
-    .slice(0, 2)
-    .map((driver) => `${formatLabel(driver.name)} +${formatNumber(driver.score)}`);
-  const negatives = drivers
-    .filter((driver) => clampScore(driver.score) <= 45 || String(driver.bias).toLowerCase().includes("bear"))
-    .slice(0, 2)
-    .map((driver) => `${formatLabel(driver.name)} ${formatNumber(driver.score)}`);
-  const score = clampScore(data.asset_score);
+
+  const data =
+    await fetchApi<AssetResponse>(
+      `/assets/${slug}`,
+      {fallback}
+    );
+
+
+  const score =
+    clampScore(
+      data.asset_score ??
+      data.score ??
+      50
+    );
+
+
+
+  const positives =
+
+    data.bullish_drivers
+    ?.slice(0,2)
+    .map(
+      (d:any)=>
+      `${formatLabel(d.name)} ${formatNumber(d.score)}`
+    )
+    || [];
+
+
+
+  const negatives =
+
+    data.bearish_drivers
+    ?.slice(0,2)
+    .map(
+      (d:any)=>
+      `${formatLabel(d.name)} ${formatNumber(d.score)}`
+    )
+    || [];
+
+
 
   return {
+
     slug,
-    asset: formatLabel(data.asset || assetLabels[slug] || titleCase(slug)),
+
+
+    asset:
+      formatLabel(
+        data.asset ||
+        assetLabels[slug] ||
+        titleCase(slug)
+      ),
+
+
     score,
-    bias: data.outlook || biasFromScore(score),
-    trend: formatLabel(drivers[0]?.bias || biasFromScore(score)),
+
+
+    bias:
+
+      data.bias ||
+      data.outlook ||
+      biasFromScore(score),
+
+
+
+    trend:
+
+      data.trend ||
+      "Neutral",
+
+
+
     positives,
+
+
     negatives
+
   };
+
 }
 
 function DirectionIcon({ value }: { value: unknown }) {

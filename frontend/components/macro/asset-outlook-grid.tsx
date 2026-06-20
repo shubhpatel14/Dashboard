@@ -2,45 +2,55 @@
 
 import { formatLabel, formatNumber } from "@/lib/format";
 
+
 export default function AssetOutlookGrid({
   data,
 }: {
   data:any;
 }) {
 
-  const assets =
-    data?.asset_outlooks;
+
+  const assets = Object.values(
+    data?.asset_outlooks || {}
+  );
 
 
-  if (!assets)
+  if (!assets.length)
     return null;
+
 
 
   return (
 
-    <div className="
-      rounded-xl
-      border
-      border-line
-      bg-surface
-      p-5
-    ">
+    <div
+    className="
+    rounded-xl
+    border
+    border-line
+    bg-surface
+    p-5
+    "
+    >
 
 
       <div className="mb-5">
 
-        <h2 className="
+        <h2
+        className="
         text-lg
         font-semibold
-        ">
+        "
+        >
           Asset Macro Outlook
         </h2>
 
 
-        <p className="
+        <p
+        className="
         text-sm
         text-muted
-        ">
+        "
+        >
           Macro impact across asset classes
         </p>
 
@@ -48,20 +58,22 @@ export default function AssetOutlookGrid({
 
 
 
-      <div className="
+      <div
+      className="
       grid
       gap-4
       md:grid-cols-2
       xl:grid-cols-3
-      ">
+      "
+      >
 
 
-      {Object.entries(assets)
-      .map(([name,item]:any)=>(
+      {
+      assets.map((item:any)=>(
 
 
         <div
-        key={name}
+        key={item.asset}
         className="
         rounded-lg
         bg-canvas
@@ -70,21 +82,42 @@ export default function AssetOutlookGrid({
         >
 
 
-          <div className="
+          <div
+          className="
           flex
           justify-between
-          ">
+          "
+          >
 
 
-            <span className="
+            <span
+            className="
             font-medium
-            ">
-              {formatLabel(name)}
+            "
+            >
+
+              {formatLabel(
+                item.asset
+              )}
+
             </span>
 
 
-            <span className="tabular-nums">
-              {formatNumber(item.score)}
+
+            <span
+            className="
+            tabular-nums
+            "
+            >
+
+              {
+              formatNumber(
+                item.asset_score ??
+                item.score ??
+                50
+              )
+              }
+
             </span>
 
 
@@ -92,13 +125,15 @@ export default function AssetOutlookGrid({
 
 
 
-          <div className="
+          <div
+          className="
           mt-2
           h-2
           overflow-hidden
           rounded-full
           bg-black/20
-          ">
+          "
+          >
 
 
             <div
@@ -109,9 +144,16 @@ export default function AssetOutlookGrid({
             bg-terminal
             "
 
+
             style={{
+
               width:
-              `${item.score}%`
+              `${
+              item.asset_score ??
+              item.score ??
+              50
+              }%`
+
             }}
 
             />
@@ -121,50 +163,103 @@ export default function AssetOutlookGrid({
 
 
 
-          <div className="
+
+          <div
+          className="
           mt-3
           text-xs
           text-muted
-          ">
+          "
+          >
 
-            {formatLabel(item.bias)}
+            Bias:
+            {" "}
+            {formatLabel(
+              item.bias
+            )}
 
           </div>
 
 
 
-          <div className="
+          <div
+          className="
           mt-3
           space-y-1
           text-xs
           text-muted
-          ">
+          "
+          >
+
+
+            <div>
+
+            🟢 Bullish
+
+            </div>
 
 
             {
-              item.drivers
-              ?.slice(0,2)
-              .map(
-              (driver:string)=>(
+            item.bullish_drivers
+            ?.slice(0,2)
+            .map(
+            (d:any)=>(
 
-                <div key={driver}>
 
-                  • {formatLabel(driver)}
+              <div
+              key={d.name}
+              >
 
-                </div>
+              + {formatLabel(d.name)}
+              ({formatNumber(d.score)})
 
-              ))
+              </div>
 
+            ))
             }
 
 
+
+            <div
+            className="pt-2"
+            >
+
+            🔴 Bearish
+
+            </div>
+
+
+
+            {
+            item.bearish_drivers
+            ?.slice(0,2)
+            .map(
+            (d:any)=>(
+
+
+              <div
+              key={d.name}
+              >
+
+              - {formatLabel(d.name)}
+              ({formatNumber(d.score)})
+
+              </div>
+
+            ))
+            }
+
+
+
           </div>
+
 
 
         </div>
 
 
-      ))}
+      ))
+      }
 
 
       </div>
@@ -173,4 +268,5 @@ export default function AssetOutlookGrid({
     </div>
 
   );
+
 }
