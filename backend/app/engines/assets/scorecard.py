@@ -74,6 +74,17 @@ def build_scorecard(
     for name,value in drivers.items():
 
 
+        if isinstance(
+            value,
+            dict
+        ):
+
+            value = value.get(
+                "score",
+                50
+            )
+
+
         value = round(
             value,
             2

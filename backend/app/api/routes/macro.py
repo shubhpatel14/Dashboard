@@ -212,6 +212,170 @@ def update_economic_data():
 # DASHBOARD
 # ================================
 # ================================
+# DASHBOARD
+# ================================
+
+@router.get(
+    "/dashboard",
+    response_model=MacroDashboardResponse
+)
+def macro_dashboard():
+
+    try:
+
+        macro = get_macro_engine() or {}
+
+        trend = get_trend_engine() or {}
+
+        surprise = build_macro_surprise()
+
+
+        final_macro = build_final_macro_score(
+            macro,
+            surprise
+        )
+
+
+        score = final_macro[
+            "score"
+        ]
+
+
+        asset_scores = macro_asset_impact(
+            surprise,
+            macro
+        )
+
+
+        regime_detail = build_macro_regime(
+            macro
+        )
+
+
+        regime_history = update_regime_history(
+            regime_detail
+        )
+
+
+        portfolio = build_allocation(
+            asset_scores,
+            regime_detail
+        )
+
+
+    except Exception as exc:
+
+
+        logger.exception(exc)
+
+
+        return {
+
+            "success": False,
+
+            "data_status": "fallback",
+
+            "macro_score": 50,
+
+            "regime": "Neutral",
+
+            "trend": "Neutral",
+
+            "asset_outlooks": {},
+
+            "category_scores": {},
+
+            "history": [],
+
+        }
+
+
+    return {
+
+        "success": True,
+
+        "data_status": "connected",
+
+
+        "macro_score":
+            score,
+
+
+        "regime":
+            regime_detail.get(
+                "regime",
+                "Neutral"
+            ),
+
+
+        "regime_detail":
+            regime_detail,
+
+
+        "regime_history":
+            regime_history,
+
+
+        "trend":
+            clean_label(
+                trend.get(
+                    "trend",
+                    "Neutral"
+                )
+            ),
+
+
+        "summary":
+            macro_summary(
+                macro
+            ),
+
+
+        "asset_outlooks":
+            asset_scores,
+
+
+        "portfolio_allocation":
+            portfolio,
+
+
+        "macro_surprises":
+            surprise.get(
+                "events",
+                []
+            ),
+
+
+        "category_scores":
+
+            {
+                **macro.get(
+                    "scores",
+                    {}
+                ),
+
+                "macro_surprise":
+                    surprise.get(
+                        "score"
+                    ),
+            },
+
+
+        "history":
+            macro_category_history(
+                "trend",
+                score
+            ),
+    }
+
+
+
+# ================================
+# CATEGORY ROUTE
+# KEEP LAST
+# ================================
+
+# ================================
 # CATEGORY ROUTE
 # KEEP LAST
 # ================================

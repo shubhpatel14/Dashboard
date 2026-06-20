@@ -5,7 +5,8 @@ from app.engines.assets.scorecard import (
 
 
 from app.engines.assets.factors import (
-    build_asset_factors
+    build_asset_factors,
+    weighted_score
 )
 
 
@@ -16,17 +17,40 @@ def build_bonds_score(
 ):
 
 
-    factors = build_asset_factors(
-        "bonds",
+    weights = {'rates': 0.3, 'inflation': 0.3, 'safe_haven': 0.25, 'growth': 0.15}
+
+
+    all_factors = build_asset_factors(
         macro
     )
 
 
-    score = (
+    score = weighted_score(
 
-        weighted_score(factors)
+        all_factors,
+
+        weights
 
     )
+
+
+    # =============================
+    # FILTER ONLY THIS ASSET FACTORS
+    # =============================
+
+    asset_factors = {
+
+        key:
+        all_factors.get(
+            key,
+            50
+        )
+
+        for key
+        in weights.keys()
+
+    }
+
 
 
     return build_scorecard(
@@ -35,7 +59,7 @@ def build_bonds_score(
 
         score,
 
-        factors
+        asset_factors
 
     )
 
@@ -43,20 +67,9 @@ def build_bonds_score(
 
 
 
-def build_bonds_engine():
-
-
-    from app.services.regime_service import (
-        build_regime_engine
-    )
-
-
-    regime = build_regime_engine()
-
-
-    macro = regime[
-        "macro"
-    ]
+def build_bonds_engine(
+    macro
+):
 
 
     return build_bonds_score(

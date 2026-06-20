@@ -1,383 +1,207 @@
-def clamp(
-    value,
-    low=0,
-    high=100
+from __future__ import annotations
+
+from typing import Any
+
+
+
+def read_score(
+    macro,
+    name,
+    default=50
 ):
 
-    return max(
-        low,
-        min(
-            high,
-            value
+
+    if not isinstance(
+        macro,
+        dict
+    ):
+
+        return default
+
+
+    return float(
+
+        macro
+        .get(
+            "scores",
+            {}
         )
-    )
-
-
-
-
-def weighted_score(
-    factors
-):
-
-    score = 0
-
-
-    for item in factors.values():
-
-        score += (
-            item["score"]
-            *
-            item["weight"]
+        .get(
+            name,
+            default
         )
 
-
-    return round(
-        clamp(score),
-        2
     )
-
 
 
 
 def build_asset_factors(
-    asset,
-    macro
+    macro: dict[str, Any],
+    weights: dict[str, Any] | None = None
+):
+
+    inflation = read_score(
+        macro,
+        "Inflation"
+    )
+
+
+    growth = read_score(
+        macro,
+        "Economic Growth"
+    )
+
+
+    liquidity = read_score(
+        macro,
+        "Liquidity & Financial Conditions"
+    )
+
+
+    credit = read_score(
+        macro,
+        "Credit Conditions"
+    )
+
+
+    rates = read_score(
+        macro,
+        "Monetary Policy"
+    )
+
+
+    sentiment = read_score(
+        macro,
+        "Market Sentiment"
+    )
+
+
+
+    return {
+
+
+        "liquidity":
+
+            liquidity,
+
+
+        "growth":
+
+            growth,
+
+
+        "credit":
+
+            credit,
+
+
+        "rates":
+
+            rates,
+
+
+        "inflation":
+
+            inflation,
+
+
+        "sentiment":
+
+            sentiment,
+
+
+        # GOLD
+        "real_yield_support":
+
+            100-rates,
+
+
+        "dollar_weakness":
+
+            100-rates,
+
+
+        "inflation_hedge":
+
+            inflation,
+
+
+        "safe_haven":
+
+            100-sentiment,
+
+
+        # BTC
+        "risk_appetite":
+
+            sentiment,
+
+
+        "macro_momentum":
+
+            growth,
+
+    }
+
+
+
+def weighted_score(
+    factors,
+    weights=None
 ):
 
 
-    asset = asset.lower()
+    # fallback equal weights
+    if weights is None:
 
+        weights = {
 
+            key: 1
 
-    # =========================
-    # SP500
-    # =========================
-
-    if asset == "sp500":
-
-        return {
-
-            "earnings_growth":{
-
-                "score": macro["growth"],
-
-                "weight":0.30
-
-            },
-
-
-            "liquidity":{
-
-                "score": macro["liquidity"],
-
-                "weight":0.25
-
-            },
-
-
-            "valuation":{
-
-                "score":45,
-
-                "weight":0.20
-
-            },
-
-
-            "credit_conditions":{
-
-                "score":macro["credit"],
-
-                "weight":0.15
-
-            },
-
-
-            "momentum":{
-
-                "score":55,
-
-                "weight":0.10
-
-            }
+            for key
+            in factors.keys()
 
         }
 
 
 
+    score = 0
 
+    total = 0
 
-    # =========================
-    # NASDAQ
-    # =========================
 
-    if asset == "nasdaq":
 
-        return {
+    for key, weight in weights.items():
 
 
-            "liquidity":{
+        score += (
 
-                "score":macro["liquidity"],
+            factors.get(
+                key,
+                50
+            )
 
-                "weight":0.35
+            *
 
-            },
+            weight
 
+        )
 
-            "real_rates":{
 
-                "score":100-macro["rates"],
+        total += weight
 
-                "weight":0.25
 
-            },
 
+    if total == 0:
 
-            "growth":{
+        return 50
 
-                "score":macro["growth"],
 
-                "weight":0.20
 
-            },
+    return round(
 
+        score / total,
 
-            "valuation":{
+        2
 
-                "score":40,
-
-                "weight":0.10
-
-            },
-
-
-            "momentum":{
-
-                "score":60,
-
-                "weight":0.10
-
-            }
-
-        }
-
-
-
-
-
-
-
-    # =========================
-    # GOLD
-    # =========================
-
-    if asset == "gold":
-
-        return {
-
-
-            "real_yield_support":{
-
-                "score":100-macro["rates"],
-
-                "weight":0.35
-
-            },
-
-
-            "dollar_weakness":{
-
-                "score":50,
-
-                "weight":0.25
-
-            },
-
-
-            "inflation_hedge":{
-
-                "score":macro["inflation"],
-
-                "weight":0.20
-
-            },
-
-
-            "safe_haven":{
-
-                "score":100-macro["credit"],
-
-                "weight":0.15
-
-            },
-
-
-            "liquidity":{
-
-                "score":macro["liquidity"],
-
-                "weight":0.05
-
-            }
-
-        }
-
-
-
-
-
-
-    # =========================
-    # BITCOIN
-    # =========================
-
-    if asset == "bitcoin":
-
-        return {
-
-
-            "global_liquidity":{
-
-                "score":macro["liquidity"],
-
-                "weight":0.40
-
-            },
-
-
-            "real_rates":{
-
-                "score":100-macro["rates"],
-
-                "weight":0.25
-
-            },
-
-
-            "risk_appetite":{
-
-                "score":macro["growth"],
-
-                "weight":0.20
-
-            },
-
-
-            "momentum":{
-
-                "score":55,
-
-                "weight":0.15
-
-            }
-
-        }
-
-
-
-
-
-
-
-    # =========================
-    # BONDS
-    # =========================
-
-    if asset == "bonds":
-
-        return {
-
-
-            "inflation_cooling":{
-
-                "score":100-macro["inflation"],
-
-                "weight":0.30
-
-            },
-
-
-            "growth_slowdown":{
-
-                "score":100-macro["growth"],
-
-                "weight":0.25
-
-            },
-
-
-            "fed_policy":{
-
-                "score":100-macro["rates"],
-
-                "weight":0.25
-
-            },
-
-
-            "safe_haven":{
-
-                "score":100-macro["credit"],
-
-                "weight":0.20
-
-            }
-
-        }
-
-
-
-
-
-
-
-    # =========================
-    # DOLLAR
-    # =========================
-
-    if asset == "dollar":
-
-        return {
-
-
-            "rate_advantage":{
-
-                "score":macro["rates"],
-
-                "weight":0.35
-
-            },
-
-
-            "safe_haven":{
-
-                "score":100-macro["credit"],
-
-                "weight":0.30
-
-            },
-
-
-            "liquidity_tightness":{
-
-                "score":100-macro["liquidity"],
-
-                "weight":0.20
-
-            },
-
-
-            "growth_divergence":{
-
-                "score":50,
-
-                "weight":0.15
-
-            }
-
-        }
-
-
-
-    return {}
+    )
