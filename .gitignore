@@ -1,13 +1,13 @@
+﻿.venv/
 __pycache__/
 *.pyc
-.pytest_cache/
-.mypy_cache/
 
-backend_api.log
-backend_api.err.log
+node_modules/
+.next/
 
-frontend/node_modules/
-frontend/.next/
-frontend/.npm-cache/
-frontend/frontend_next.log
-frontend/frontend_next.err.log
+.env
+.env.local
+
+.cache/
+
+*.log
