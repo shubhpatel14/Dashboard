@@ -1,225 +1,330 @@
-from __future__ import annotations
-
-from typing import Any
-
-from app.engines.macro.scoring.rules import (
-    INDICATOR_RULES,
-)
+# ==================================================
+# TRISHULA MACRO INTERPRETER
+# Central explanation engine
+# ==================================================
 
 
-def score_bias(score: float) -> str:
-    if score >= 80:
-        return "Very Bullish"
-    if score >= 65:
-        return "Bullish"
-    if score >= 45:
-        return "Neutral"
-    if score >= 25:
-        return "Bearish"
-    return "Very Bearish"
+def _safe_float(value, default=50):
+
+    try:
+        return float(value)
+
+    except Exception:
+        return default
 
 
-def tone_state(score: float) -> str:
-    if score >= 60:
-        return "positive"
-    if score <= 40:
-        return "negative"
-    return "neutral"
+
+# ==================================================
+# SCORE STATE HELPERS
+# ==================================================
 
 
-def describe_surprise(
-    name: str,
-    surprise: float,
-    surprise_score: float,
-    lower_is_bullish: bool = False,
-) -> str:
-    if abs(surprise) < 0.0001:
-        return "In line with expectations"
+def score_bias(score):
 
-    positive_for_market = surprise < 0 if lower_is_bullish else surprise > 0
-    
-    if surprise_score >= 80:
-        strength = "Strong"
-    elif surprise_score >= 65:
-        strength = "Moderate"
-    elif surprise_score >= 45:
-        strength = "Slight"
-    elif surprise_score >= 25:
-        strength = "Moderate"
-    else:
-        strength = "Strong"
-
-    result = "Beat" if positive_for_market else "Miss"
-    surprise_abs = abs(surprise)
-    return f"{strength} {result} ({'+' if surprise > 0 else ''}{surprise_abs:.2f})"
-
-
-def describe_trend(
-    name: str,
-    trend_change: float,
-    trend_score: float,
-    lower_is_bullish: bool = False,
-) -> str:
-    if abs(trend_change) < 0.0001:
-        return "Little Changed"
-
-    improving = trend_change < 0 if lower_is_bullish else trend_change > 0
-    
-    if "claim" in name.lower():
-        direction = "Improving" if improving else "Rising"
-    elif any(word in name.lower() for word in ["cpi", "pce", "ppi", "inflation"]):
-        direction = "Cooling" if improving else "Heating Up"
-    elif any(word in name.lower() for word in ["payroll", "employment"]):
-        direction = "Accelerating" if improving else "Cooling"
-    else:
-        direction = "Improving" if improving else "Weakening"
-    
-    magnitude = "significantly" if abs(trend_score - 50) > 20 else "modestly"
-    return f"{direction} {magnitude}"
-
-
-def explain_release(row: dict[str, Any]) -> str:
-    if row.get("bias") == "Neutral":
-
-        return (
-            f"{row.get('name')} came in close to expectations "
-            "and does not materially change the macro outlook."
-        )
-
-    name = str(row.get("name") or "The release")
-    actual = float(row.get("actual") or 0)
-    forecast = float(row.get("forecast") or 0)
-    previous = float(row.get("previous") or 0)
-    surprise = float(row.get("surprise") or 0)
-    trend_change = float(row.get("trend_change") or 0)
-    surprise_score = float(row.get("surprise_score") or 50)
-    lower_is_bullish = bool(row.get("lower_is_bullish"))
-
-    surprise_positive = surprise < 0 if lower_is_bullish else surprise > 0
-    trend_positive = trend_change < 0 if lower_is_bullish else trend_change > 0
-    name_lower = name.lower()
-
-    # Magnitude descriptors based on score distance from neutral
-    def magnitude(score: float) -> str:
-        if score >= 80:
-            return "significantly"
-        if score >= 70:
-            return "notably"
-        if score >= 60:
-            return "moderately"
-        if score >= 45:
-            return "slightly"
-        return "well"
-
-    if any(word in name_lower for word in ["cpi", "pce", "ppi", "inflation"]):
-        mag = magnitude(surprise_score)
-        if surprise_positive and trend_positive:
-            return f"Inflation cooled {mag} faster than expected and improved versus the prior release, increasing expectations for easier monetary policy."
-        if surprise_positive and not trend_positive:
-            return f"Inflation was {mag} cooler than expected, although the sequential trend remains sticky or elevated."
-        if not surprise_positive and trend_positive:
-            return f"Inflation improved versus the prior release but came in {mag} hotter than markets expected."
-        return f"Inflation came in {mag} hotter than expected and moved in the wrong direction versus the prior release."
-
-    if any(word in name_lower for word in ["payroll", "employment", "adp", "jolts", "job"]):
-        mag = magnitude(surprise_score)
-        if surprise_positive and not trend_positive:
-            return f"Labor demand remains {mag} stronger than expected, although hiring momentum is gradually cooling."
-        if surprise_positive and trend_positive:
-            return f"Labor demand beat expectations {mag} and strengthened versus the prior release."
-        if not surprise_positive and trend_positive:
-            return f"Labor momentum improved from the prior release, but the headline disappointed expectations."
-        return f"Labor data missed expectations and softened versus the prior release."
-
-    if any(word in name_lower for word in ["unemployment", "claims"]):
-        mag = magnitude(surprise_score)
-        if surprise_positive and trend_positive:
-            return f"Labor stress was {mag} lower than expected and improved versus the prior reading."
-        if surprise_positive and not trend_positive:
-            return f"Labor stress was {mag} lower than expected, although the trend deteriorated from the prior reading."
-        if not surprise_positive and trend_positive:
-            return f"Labor stress improved from the prior reading but was {mag} worse than expected."
-        return f"Labor stress was {mag} worse than expected and deteriorated versus the prior reading."
-
-    mag = magnitude(surprise_score)
-    if surprise_positive and trend_positive:
-        return f"{name} beat expectations {mag} and improved versus the prior release."
-    if surprise_positive and not trend_positive:
-        return f"{name} beat expectations {mag}, although momentum cooled versus the prior release."
-    if not surprise_positive and trend_positive:
-        return f"{name} improved versus the prior release but disappointed market expectations."
-    return f"{name} missed expectations and weakened versus the prior release."
-
-
-def explain_trend(row: dict[str, Any]) -> str:
-    name = str(row.get("name") or "This indicator")
-    change = float(row.get("change") or 0)
-    lower_is_bullish = bool(row.get("lower_is_bullish"))
-    clean_name = (
-    str(name)
-    .upper()
-    .replace(" ", "_")
-)
-
-
-    rule = INDICATOR_RULES.get(
-        clean_name,
-        None
+    score = _safe_float(
+        score
     )
 
 
-    if rule:
+    if score >= 70:
 
-         improving = (
+        return "Very Bullish"
 
-            change > 0
 
-            if rule["higher_is_better"]
+    if score >= 60:
 
-        else change < 0
+        return "Bullish"
 
+
+    if score <= 30:
+
+        return "Very Bearish"
+
+
+    if score <= 40:
+
+        return "Bearish"
+
+
+    return "Neutral"
+
+
+
+
+def tone_state(score):
+
+    bias = score_bias(
+        score
+    )
+
+
+    if "Bullish" in bias:
+
+        return "positive"
+
+
+    if "Bearish" in bias:
+
+        return "negative"
+
+
+    return "neutral"
+
+
+
+
+
+# ==================================================
+# MAIN MACRO PAGE INTERPRETATION
+# ==================================================
+
+
+def build_macro_interpretation(
+    category,
+    score,
+    drivers=None
+):
+
+    drivers = drivers or {}
+
+
+    positive=[]
+    negative=[]
+
+
+    for name,data in drivers.items():
+
+        s = _safe_float(
+            data.get(
+                "score",
+                50
+            )
         )
 
 
-    else:
+        if s >= 60:
 
-        improving = (
-
-            change < 0
-
-            if lower_is_bullish
-
-            else change > 0
-
-        )   
-
-    if abs(change) < 0.0001:
-        return f"{name} was broadly stable versus the previous reading."
-    if improving:
-
-         impact = "Positive impact"
-
-    else:
-
-        impact = "Negative impact"
+            positive.append(name)
 
 
-# compatibility wrapper
-def interpret_category(*args, **kwargs):
+        elif s <= 40:
+
+            negative.append(name)
+
+
+
+    category = (
+        str(category)
+        .replace("_"," ")
+        .title()
+    )
+
+
+    bias = score_bias(
+        score
+    )
+
+
+    text = (
+        f"{category} is currently {bias.lower()} "
+        "based on current macro conditions."
+    )
+
+
+    if positive:
+
+        text += (
+            " Strength comes from "
+            +
+            ", ".join(positive[:3])
+            +
+            "."
+        )
+
+
+    if negative:
+
+        text += (
+            " Pressure comes from "
+            +
+            ", ".join(negative[:3])
+            +
+            "."
+        )
+
+
+    return text
+
+
+
+
+
+# ==================================================
+# TREND ENGINE COMPATIBILITY
+# ==================================================
+
+
+def describe_trend(
+    current=None,
+    previous=None,
+    *args,
+    **kwargs
+):
 
     try:
-        return explain_trend(*args, **kwargs)
+
+        change = (
+            float(current)
+            -
+            float(previous)
+        )
+
+
+        if change > 0:
+
+            return "Improving"
+
+
+        if change < 0:
+
+            return "Weakening"
+
 
     except Exception:
-        return "No interpretation available"
+
+        pass
+
+
+    return "Stable"
 
 
 
-# compatibility wrapper
-def interpret_indicator(*args, **kwargs):
+
+
+def explain_trend(
+    name,
+    score=50,
+    *args,
+    **kwargs
+):
+
+    return (
+
+        f"{name} trend is "
+        f"{score_bias(score).lower()}."
+
+    )
+
+
+
+
+
+
+# ==================================================
+# SURPRISE ENGINE COMPATIBILITY
+# ==================================================
+
+
+def describe_surprise(
+    name,
+    actual=None,
+    forecast=None,
+    previous=None,
+    score=50,
+    *args,
+    **kwargs
+):
+
 
     try:
-        return explain_trend(*args, **kwargs)
+
+        diff = (
+            float(actual)
+            -
+            float(forecast)
+        )
+
+
+        if diff > 0:
+
+            result="beat expectations"
+
+
+        elif diff < 0:
+
+            result="missed expectations"
+
+
+        else:
+
+            result="matched expectations"
+
+
 
     except Exception:
-        return "No indicator interpretation available"
+
+        result="generated a surprise"
+
+
+
+    return (
+
+        f"{name} {result}. "
+        f"Signal is {score_bias(score)}."
+
+    )
+
+
+
+
+
+def explain_release(
+    name,
+    actual=None,
+    forecast=None,
+    previous=None,
+    score=50,
+    *args,
+    **kwargs
+):
+
+
+    return describe_surprise(
+
+        name,
+        actual,
+        forecast,
+        previous,
+        score
+
+    )
+
+
+
+
+
+# ==================================================
+# EXTRA LEGACY ALIASES
+# protects old engines
+# ==================================================
+
+
+def explain_macro(
+    *args,
+    **kwargs
+):
+
+    return build_macro_interpretation(
+        *args,
+        **kwargs
+    )
+
+
+
+def market_tone(
+    score
+):
+
+    return tone_state(
+        score
+    )

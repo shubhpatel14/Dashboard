@@ -400,7 +400,7 @@ def get_macro_history(category):
         ).all()
 
 
-
+    
         return [
 
             {
