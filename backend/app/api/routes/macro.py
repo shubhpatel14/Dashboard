@@ -240,11 +240,173 @@ def update_economic_data():
         "saved":result
 
     }
+@router.get("/dashboard")
+def macro_dashboard():
+
+
+    categories=[
+        "inflation",
+        "labor",
+        "growth",
+        "rates",
+        "liquidity",
+        "sentiment",
+        "credit",
+        "global_liquidity"
+    ]
+
+
+    category_scores={}
+    heatmap=[]
+    drivers=[]
+    scores=[]
+
+
+    for name in categories:
+
+
+        item=get_latest_category(name)
+
+
+        if not item:
+            continue
+
+
+        score=round(
+            float(
+                item.get("score",50)
+            ),
+            2
+        )
+
+
+        scores.append(score)
+
+
+        bias=(
+
+            "Bullish"
+            if score>=60
+
+            else "Bearish"
+            if score<=40
+
+            else "Neutral"
+
+        )
+
+
+        block={
+
+            "name":name.replace("_"," ").title(),
+
+            "score":score,
+
+            "value":score,
+
+            "bias":bias,
+
+            "trend":"Stable",
+
+            "impact":bias
+
+        }
+
+
+        # supports object frontend
+        category_scores[name]=block
+
+
+        # supports table frontend
+        heatmap.append(block)
 
 
 
+        drivers.append({
+
+            "name":name.replace("_"," ").title(),
+
+            "score":score,
+
+            "contribution":round(
+                score-50,
+                2
+            )
+
+        })
 
 
+
+    macro_score=round(
+        sum(scores)/len(scores),
+        2
+    )
+
+
+    return {
+
+
+        "success":True,
+
+
+        "score":macro_score,
+        "macro_score":macro_score,
+
+
+        "summary":
+        "Macro dashboard loaded successfully.",
+
+
+
+        # ALL FRONTEND VARIANTS
+
+        "categories":category_scores,
+
+
+        "category_scores":category_scores,
+
+
+        "macro_blocks":category_scores,
+
+
+        "heatmap":heatmap,
+
+
+        "global_macro_heatmap":heatmap,
+
+
+        "drivers":drivers,
+
+
+        "contributions":drivers,
+
+
+        "score_breakdown":drivers,
+
+
+
+        "risk_regime":
+
+            "Expansion"
+            if macro_score>=65
+
+            else "Contraction"
+            if macro_score<=35
+
+            else "Neutral",
+
+
+        "bias":
+
+            "Bullish"
+            if macro_score>=60
+
+            else "Bearish"
+            if macro_score<=40
+
+            else "Neutral"
+
+    }
 
 # ==================================================
 # CATEGORY API
@@ -693,3 +855,9 @@ def macro_category(
         )
 
     }
+
+from app.services.intelligence_reader import (
+    get_latest_category
+)
+
+

@@ -24,7 +24,7 @@ type AssetRow = {
 const fallbackMacro: MacroDashboard = {
   success: false,
   data_status: "fallback",
-  macro_score: 50,
+  macro_score: 50,  
   regime: "Neutral",
   trend: "Stable",
   recession_risk: "N/A",
@@ -32,7 +32,8 @@ const fallbackMacro: MacroDashboard = {
   summary: ["Macro API is temporarily unavailable. Neutral cached fallback is being used."],
   asset_outlooks: {},
   category_scores: {},
-  history: [{ date: "Current", score: 50 }]
+  categories: {},
+  macro_blocks: {},  history: [{ date: "Current", score: 50 }]
 };
 
 async function getAsset(slug:string): Promise<AssetRow> {
@@ -224,124 +225,434 @@ function MarketPlaybook({
   categories,
   assets
 }: {
-  categories: [string, number][];
+  categories: [string, any][];
   assets: AssetRow[];
 }) {
 
-  const strongest = assets
-    .filter(a => a.score >= 55)
-    .slice(0,3);
 
-  const weakest = assets
-    .filter(a => a.score <=45)
-    .slice(0,3);
+  const getScore = (key: string) => {
 
 
-  const growth =
-    categories.find(([n]) => n==="growth")?.[1] ?? 50;
+    const item = categories.find(
+      ([name]) =>
+        name.toLowerCase() === key
+    );
 
-  const inflation =
-    categories.find(([n]) => n==="inflation")?.[1] ?? 50;
+
+    if (!item) {
+      return 50;
+    }
 
 
-  let regime="Balanced Macro";
+    const value = item[1];
 
-  if(growth>55 && inflation<50)
-    regime="Goldilocks Expansion";
 
-  else if(growth<50 && inflation>55)
-    regime="Stagflation Risk";
+    if (typeof value === "number") {
+      return value;
+    }
 
-  else if(growth<45 && inflation<45)
-    regime="Recession Pressure";
 
-  else if(growth>55 && inflation>55)
-    regime="Overheating Economy";
+    return value?.score ?? 50;
+
+  };
+
+
+
+
+  const inflation = getScore("inflation");
+
+  const growth = getScore("growth");
+
+  const liquidity = getScore("liquidity");
+
+  const rates = getScore("rates");
+
+  const credit = getScore("credit");
+
+
+
+
+  let regime =
+    "Balanced Macro";
+
+
+  let favored: string[] = [];
+
+
+  let pressure: string[] = [];
+
+
+
+
+  // =============================
+  // TRUE GOLDILOCKS
+  // =============================
+
+
+  if (
+
+    growth >= 60 &&
+
+    liquidity >= 55 &&
+
+    inflation >= 50 &&
+
+    inflation <= 65 &&
+
+    rates >= 50
+
+  ) {
+
+
+    regime =
+      "Goldilocks Expansion";
+
+
+    favored = [
+
+      "SP500",
+
+      "NASDAQ",
+
+      "Growth Stocks"
+
+    ];
+
+
+  }
+
+
+
+
+  // =============================
+  // YOUR CURRENT MACRO STATE
+  // =============================
+
+
+  else if (
+
+    growth >= 60 &&
+
+    liquidity >= 60 &&
+
+    credit >= 60 &&
+
+    rates < 50
+
+  ) {
+
+
+    regime =
+      "Liquidity Driven Expansion";
+
+
+    favored = [
+
+      "SP500",
+
+      "NASDAQ",
+
+      "Bitcoin"
+
+    ];
+
+
+
+    pressure = [
+
+      "Bonds",
+
+      "Rate Sensitive Assets"
+
+    ];
+
+
+  }
+
+
+
+
+  // =============================
+  // STAGFLATION
+  // =============================
+
+
+  else if (
+
+    growth < 50 &&
+
+    inflation > 60
+
+  ) {
+
+
+    regime =
+      "Stagflation Risk";
+
+
+    favored = [
+
+      "Gold",
+
+      "Dollar"
+
+    ];
+
+
+
+    pressure = [
+
+      "Equities"
+
+    ];
+
+
+  }
+
+
+
+
+  // =============================
+  // RECESSION
+  // =============================
+
+
+  else if (
+
+    growth < 45 &&
+
+    credit < 45
+
+  ) {
+
+
+    regime =
+      "Recession Pressure";
+
+
+    favored = [
+
+      "Bonds",
+
+      "Gold"
+
+    ];
+
+
+
+    pressure = [
+
+      "Stocks",
+
+      "Bitcoin"
+
+    ];
+
+
+  }
+
+
+
+  // =============================
+  // ASSET MODEL FALLBACK
+  // =============================
+
+
+  else {
+
+
+    favored =
+      assets
+        .filter(
+          a => a.score >= 55
+        )
+        .map(
+          a => a.asset
+        );
+
+
+
+    pressure =
+      assets
+        .filter(
+          a => a.score <= 45
+        )
+        .map(
+          a => a.asset
+        );
+
+
+  }
+
+
+
+
+
+  if (favored.length === 0) {
+
+
+    favored = [
+
+      "No strong winners"
+
+    ];
+
+  }
+
+
+
+
+  if (pressure.length === 0) {
+
+
+    pressure = [
+
+      "No major stress"
+
+    ];
+
+  }
+
+
+
+
 
 
   return (
 
+
     <Panel>
 
+
       <SectionTitle title="Market Playbook" />
+
+
 
       <div className="grid gap-4 md:grid-cols-3">
 
 
+
         <div>
+
+
           <div className="text-xs text-muted">
+
             Regime
+
           </div>
+
+
 
           <div className="mt-2 text-lg font-semibold">
-            {formatLabel(regime)}
+
+
+            {regime}
+
+
           </div>
+
+
+
         </div>
+
+
+
 
 
 
         <div>
 
+
           <div className="text-xs text-muted">
+
+
             Favored Assets
+
+
           </div>
 
-          {strongest.length ?
 
-            strongest.map(a=>
-              <div 
-                key={a.asset}
-                className="text-positive font-semibold"
+
+
+          {favored.map(
+            item => (
+
+
+              <div
+                key={item}
+                className="font-semibold text-positive"
               >
-                ↑ {formatLabel(a.asset)}
+
+
+                ↑ {item}
+
+
               </div>
+
+
             )
+          )}
 
-            :
 
-            <div className="text-muted">
-              No strong winners
-            </div>
-
-          }
 
         </div>
+
+
+
 
 
 
         <div>
 
+
+
           <div className="text-xs text-muted">
+
+
             Under Pressure
+
+
           </div>
 
-          {weakest.length ?
 
-            weakest.map(a=>
-              <div 
-                key={a.asset}
-                className="text-negative font-semibold"
+
+
+          {pressure.map(
+            item => (
+
+
+              <div
+                key={item}
+                className="font-semibold text-negative"
               >
-                ↓ {formatLabel(a.asset)}
+
+
+                ↓ {item}
+
+
               </div>
+
+
             )
+          )}
 
-            :
 
-            <div className="text-muted">
-              No major stress
-            </div>
-
-          }
 
 
         </div>
+
+
+
 
       </div>
 
+
+
     </Panel>
 
+
   );
+
 }
 
 function RegimeTimeline({ score }: { score: number }) {
@@ -380,7 +691,22 @@ function RegimeTimeline({ score }: { score: number }) {
 export default async function DashboardPage() {
   const macro = await fetchApi<MacroDashboard>("/macro/dashboard", { fallback: fallbackMacro });
   const macroScore = clampScore(macro.macro_score);
-  const categories = macro.category_scores && typeof macro.category_scores === "object" ? Object.entries(macro.category_scores) : [];
+const categoryData =
+  macro.category_scores ||
+  macro.categories ||
+  macro.macro_blocks ||
+  {};
+
+
+const categories =
+  typeof categoryData === "object"
+    ? Object.entries(categoryData).map(
+        ([key,value]:any)=>[
+          key,
+          value.score ?? value.value ?? value
+        ]
+      )
+    : [];
   const summary = asArray<string>(macro.summary);
   const assets = await Promise.all(assetSlugs.map(getAsset));
   const macroMetric = metric(macro.history, macroScore);
