@@ -11,3 +11,9 @@ node_modules/
 .cache/
 
 *.log
+
+# npm
+frontend/.npm-cache/
+
+# database dumps
+*.sql
