@@ -1,31 +1,22 @@
+import os
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-from urllib.parse import quote_plus
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-
-PASSWORD = quote_plus(
-    "Shubh@11"
-)
-
-
-DATABASE_URL = (
-    f"postgresql://postgres:{PASSWORD}"
-    "@localhost:5432/trishula"
-)
-
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set")
 
 engine = create_engine(
-    DATABASE_URL
+    DATABASE_URL,
+    pool_pre_ping=True,
 )
-
 
 SessionLocal = sessionmaker(
     bind=engine,
     autocommit=False,
-    autoflush=False
+    autoflush=False,
 )
-
 
 Base = declarative_base()
