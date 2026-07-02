@@ -10,7 +10,7 @@ import type { Indicator, MacroCategory, MacroDriver } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
-function trendTone(state: string) {
+function trendTone(state?: string) {
   if (state === "positive") {
     return "border-positive text-positive";
   }
@@ -20,7 +20,7 @@ function trendTone(state: string) {
   return "border-neutral text-neutral";
 }
 
-function trendBg(state: string) {
+function trendBg(state?: string) {
   if (state === "positive") {
     return "bg-positive";
   }
@@ -30,7 +30,7 @@ function trendBg(state: string) {
   return "bg-neutral";
 }
 
-function TrendIcon({ state }: { state: string }) {
+function TrendIcon({ state }: { state?: string }) {
   if (state === "positive") {
     return <TrendingUp className="h-4 w-4" aria-hidden="true" />;
   }
@@ -45,8 +45,8 @@ function DriverRow({ driver }: { driver: MacroDriver }) {
     <div className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-line py-3 last:border-b-0">
       <div className="min-w-0">
         <div className="flex min-w-0 items-center gap-2">
-          <span className={trendTone(driver.trend_state)}>
-            <TrendIcon state={driver.trend_state} />
+          <span className={trendTone(driver.trend_state ?? "neutral")}>
+            <TrendIcon state={driver.trend_state ?? "neutral"} />
           </span>
           <div className="truncate text-sm font-semibold text-ink">{formatLabel(driver.name)}</div>
         </div>

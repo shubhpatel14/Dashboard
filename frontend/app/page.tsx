@@ -38,25 +38,21 @@ const fallbackMacro: MacroDashboard = {
 
 async function getAsset(slug:string): Promise<AssetRow> {
 
-  const fallback: AssetResponse = {
-    asset: assetLabels[slug] || titleCase(slug),
-
-    asset_score: 50,
-
-    outlook: "Unavailable",
-
-    drivers: [],
-
-    summary: "Asset unavailable",
-
-    history: [],
-    score: 0,
-    bullish_drivers: undefined,
-    bearish_drivers: undefined,
-    bias: "",
-    trend: ""
-  };
-
+const fallback: AssetResponse = {
+  asset: assetLabels[slug] || titleCase(slug),
+  asset_score: 50,
+  outlook: "Unavailable",
+  drivers: [],
+  summary: "Asset unavailable",
+  history: [],
+  score: 0,
+  bullish_drivers: [],
+  bearish_drivers: [],
+  bias: "",
+  trend: "",
+  explanation: "",
+  components: [],
+};
 
   const data =
     await fetchApi<AssetResponse>(
@@ -698,14 +694,12 @@ const categoryData =
   {};
 
 
-const categories =
+const categories: [string, number][] =
   typeof categoryData === "object"
-    ? Object.entries(categoryData).map(
-        ([key,value]:any)=>[
-          key,
-          value.score ?? value.value ?? value
-        ]
-      )
+    ? Object.entries(categoryData).map(([key, value]: any) => [
+        key,
+        Number(value?.score ?? value?.value ?? value ?? 0),
+      ]) as [string, number][]
     : [];
   const summary = asArray<string>(macro.summary);
   const assets = await Promise.all(assetSlugs.map(getAsset));
